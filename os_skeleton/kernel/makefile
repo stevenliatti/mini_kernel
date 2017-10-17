@@ -1,32 +1,22 @@
-CC=gcc
-NASM=nasm
-OPTIONS=-Wall -Wextra -std=gnu11 -m32
-SRCS=$(wildcard *.c)
-ASSEM=$(wildcard *.s)
-OBJSC=$(SRCS:.c=.o)
-OBJSA=$(ASSEM:.s=.o)
-KERNEL=kernel.elf
-LINKER=kernel.ld
+run: myos.iso
+	qemu-system-i386 -cdrom myos.iso
 
-all : iso
-
-iso : $(KERNEL)
+myos.iso: kernel.elf
 	mkdir -p myos/boot/grub
-	cp ../grub/menu.lst ../grub/stage2_eltorito myos/boot/grub
+	cp ../grub/menu.lst ../grub/stage2_eltorito myos/boot/grub/
 	cp kernel.elf myos/boot
 	genisoimage -R -b boot/grub/stage2_eltorito -input-charset utf8 -no-emul-boot -boot-info-table -o myos.iso myos
 
-$(KERNEL) : $(OBJSA) $(OBJSC)
-	$(CC) $(OBJSA) $(OBJSC) -T $(LINKER) -m32 -ffreestanding -nostdlib -o $@ -static
+kernel.elf: bootstrap_asm.o kernel.o
+	gcc $^ -T kernel.ld -static -m32 -ffreestanding -nostdlib -o $@
 
-$(OBJSA) : $(ASSEM)
-	$(NASM) -f elf32 $(ASSEM)
+kernel.o: kernel.c
+	gcc -Wall -Wextra -g  -std=gnu11 -m32 -c $^
 
-$(OBJSC) : $(SRCS)
-	$(CC) $(OPTIONS) -c $(SRCS)
-
-run :
-	qemu-system-i386 -cdrom $(ISO)
+bootstrap_asm.o: bootstrap_asm.s
+	nasm -f elf32 $^
 
 clean:
-	rm -rf $(OBJSA) $(OBJSC) $(KERNEL) $(ISO)
+	rm -rf kernel.elf *.o myos/ myos.iso
+
+rebuild: clean run
