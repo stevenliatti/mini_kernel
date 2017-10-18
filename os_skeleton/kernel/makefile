@@ -1,7 +1,7 @@
 run: myos.iso
 	qemu-system-i386 -cdrom myos.iso
 
-myos.iso: kernel.elf
+myos.iso: kernel.elf ../grub/menu.lst
 	mkdir -p myos/boot/grub
 	cp ../grub/menu.lst ../grub/stage2_eltorito myos/boot/grub/
 	cp kernel.elf myos/boot
