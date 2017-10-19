@@ -1,0 +1,4 @@
+default=0
+timeout=10
+title MyOS
+kernel /boot/kernel.elf
