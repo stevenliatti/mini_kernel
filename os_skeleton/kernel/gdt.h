@@ -1,6 +1,8 @@
 #ifndef _GDT_H_
 #define _GDT_H_
 
+#include "base.h"
+
 // Structure of a GDT descriptor. There are 2 types of descriptors: segments and TSS.
 // Section 3.4.5 of Intel 64 & IA32 architectures software developer's manual describes
 // segment descriptors while section 6.2.2 describes TSS descriptors.

@@ -1,6 +1,7 @@
 
 #include "multiboot.h"
-#include "../common/types.h"
+#include "gdt.h"
+
 
 #define VRAM 0xb8000
 
@@ -38,6 +39,7 @@ void write(char* str) {
 }
 
 uint kernel_entry(multiboot_info_t* boot_info) {
+	gdt_init();
 	clrscr();
 	write("HELLO");
 	while (1) {
