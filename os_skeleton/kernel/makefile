@@ -1,5 +1,11 @@
+SRCASM=$(wildcard *.s)
+SRCC=$(wildcard *.c)
+OBJC=$(SRCC:%.c=%.o)
+OBJASM=$(SRCASM:%.s=%.o)
+ARGS=-Wall -Wextra -g -static -std=gnu11 -m32 -ffreestanding -nostdlib 
+
 run: myos.iso
-	qemu-system-i386 -cdrom myos.iso
+	qemu-system-i386 -monitor stdio -cdrom myos.iso
 
 myos.iso: kernel.elf ../grub/menu.lst
 	mkdir -p myos/boot/grub
@@ -7,22 +13,13 @@ myos.iso: kernel.elf ../grub/menu.lst
 	cp kernel.elf myos/boot
 	genisoimage -R -b boot/grub/stage2_eltorito -input-charset utf8 -no-emul-boot -boot-info-table -o myos.iso myos
 
-kernel.elf: base.o gdt.o kernel.o bootstrap_asm.o gdt_asm.o
-	gcc -T kernel.ld -static -m32 -ffreestanding -nostdlib $^ -o $@
+kernel.elf: $(OBJC) $(OBJASM)
+	gcc -T kernel.ld $(ARGS) $^ -o $@
 
-gdt.o: gdt.c
-	gcc -Wall -Wextra -g -std=gnu11 -m32 -ffreestanding -nostdlib -c $^
+%.o: %.c
+	gcc $(ARGS) -c $^
 
-base.o: base.c
-	gcc -Wall -Wextra -g -std=gnu11 -m32 -ffreestanding -nostdlib -c $^
-
-kernel.o: kernel.c
-	gcc -Wall -Wextra -g -std=gnu11 -m32 -ffreestanding -nostdlib -c $^
-
-bootstrap_asm.o: bootstrap_asm.s
-	nasm -f elf32 $^
-
-gdt_asm.o: gdt_asm.s
+%_asm.o: %_asm.s
 	nasm -f elf32 $^
 
 clean:

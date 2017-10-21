@@ -8,6 +8,19 @@ void *memset(void *dst, int value, uint count) {
 	return dst;
 }
 
-// void *memcpy(void *dst, void *src, uint count);
+void *memcpy(void *dst, void *src, uint count) {
+	char *dp = dst;
+	const char *sp = src;
+	for (uchar i = 0; i < count; i++) {
+		dp[i] = sp[i];
+	}
+	return dst;
+}
 
-// int strncmp(const char *p, const char *q, uint n);
+int strncmp(const char *p, const char *q, uint n) {
+	for (uchar i = 0; i < n; i++) {
+		if (p[i] != q[i]) 
+			return (int)(p[i] - q[i]);
+	}
+    return 0;
+}
