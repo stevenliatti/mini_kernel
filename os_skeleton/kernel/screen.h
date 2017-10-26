@@ -24,10 +24,23 @@
 #define YELLOW 0xe
 #define WHITE 0xf
 
+typedef struct scr_xy{
+	uchar x;
+	uchar y;
+} scr_xy_t;
+
+typedef struct screen {
+    scr_xy_t cursor;		// cursor coordinate in the screen
+    ushort* screen_ptr;		// points to VRAM
+    uchar fg_color;			// foreground color
+    uchar bg_color;			// background color
+} screen_t;
+
 void init_scr(void);
 void write(char* str);
 void set_theme(uchar bg_color, uchar fg_color);
 uchar get_fg_color();
 uchar get_bg_color();
+void printf(char* str, ...);
 
 #endif
