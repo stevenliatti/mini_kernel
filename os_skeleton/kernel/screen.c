@@ -97,7 +97,7 @@ void printf(char* str, ...) {
 	char buffer[128];
 	uint* next_arg = (uint*) &str + 1;
 	while (*str != '\0') {
-		if (strncmp((uchar*) str, (uchar*) "%", 1) == 0 && strncmp((uchar*) str - 1, (uchar*) "\\", 1) != 0) {
+		if (strncmp((uchar*) str, (uchar*) "%", 1) == 0) {
 			str++;
 			switch(*str) {
 				case 'c' : 
@@ -119,6 +119,14 @@ void printf(char* str, ...) {
 					print_char_on_cursor(*str);
 			}
 			next_arg++;
+		} else if (strncmp((uchar*) str, (uchar*) "\\", 1) == 0) {
+			str++;
+			switch(*str) {
+				case 'n' : 
+					// printf("(%d,%d)", screen.cursor.x, screen.cursor.y);
+					move_cursor(0, screen.cursor.y + 1);
+					break;
+			}
 		} else {
 			print_char_on_cursor(*str);
 		}
