@@ -37,6 +37,7 @@ typedef struct screen {
 } screen_t;
 
 void init_scr(void);
+void clrscr(void);
 void write(char* str);
 void set_theme(uchar bg_color, uchar fg_color);
 uchar get_fg_color();

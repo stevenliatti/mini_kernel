@@ -19,15 +19,20 @@ scr_xy_t offset_to_xy(ushort offset) {
 	return temp;
 }
 
-void move_cursor(ushort x, ushort y) {
+void move_cursor(uchar x, uchar y) {
 	ushort cur_val = xy_to_offset(x, y);
 	outw(0x3d4, 0xe);
 	outw(0x3d5, cur_val >> 8);
 	outw(0x3d4, 0xf);
 	outw(0x3d5, cur_val & 0xff);
 	// screen.cursor_ptr = (ushort*) VRAM + cur_val;
-	screen.cursor.x = x;
-	screen.cursor.y = y;
+	if (x == 80) {
+		screen.cursor.x = 0;
+		screen.cursor.y += 1;
+	} else {
+		screen.cursor.x = x;
+		screen.cursor.y = y;
+	}
 }
 
 /*!
@@ -37,6 +42,7 @@ void clrscr(void) {
 	for (ushort i = 0; i < SCREEN_WORDS_NB; i++) {
 		screen.screen_ptr[i] = 0xf00;
 	}
+	move_cursor(0, 0);
 }
 
 /*!
@@ -44,28 +50,52 @@ void clrscr(void) {
  */
 void init_scr(void) {
 	screen.screen_ptr = (ushort *) VRAM;
-	screen.fg_color = WHITE;
+	screen.fg_color = LIGHT_GRAY;
 	screen.bg_color = BLACK;
 	clrscr();
 	move_cursor(0, 0);
 }
 
-void print_char_by_xy(ushort x, ushort y, char c) {
-	ushort offset = xy_to_offset(x, y);
+void print_char_by_offset(ushort offset, uchar c) {
 	screen.screen_ptr[offset] = (((screen.bg_color << 4) | screen.fg_color) << 8) | c;
+}
+
+void shift_up() {
+	for (uchar y = 1; y < 25; y++) {
+		for (uchar x = 0; x < 80; x++) {
+			uchar offset = xy_to_offset(x, y);
+			uchar ascii_val = screen.screen_ptr[offset] & 0xff;
+			print_char_by_offset(xy_to_offset(x, y - 1), ascii_val);
+		}
+	}
+	// for (uchar x = 0; x < 80; x++) {
+	// 	print_char_by_offset(xy_to_offset(x, 24), '\0');
+	// }
+}
+
+void print_char_by_xy(ushort x, ushort y, char c) {
+	if (x == 80) {
+		x = 0;
+		y += 1;
+	}
+	if (y == 25) {
+		y = 24;
+		shift_up();
+	}
+	print_char_by_offset(xy_to_offset(x, y), c);
 }
 
 // TODO: ask if we have to update the screen after changing colors
 void set_theme(uchar fg_color, uchar bg_color) {
 	screen.fg_color = fg_color;
 	screen.bg_color = bg_color;
-	for (uchar x = 0; x < 80; x++) {
-		for (uchar y = 0; y < 25; y++) {
-			uchar offset = xy_to_offset(x, y);
-			uchar ascii_val = screen.screen_ptr[offset] & 0xff;
-			print_char_by_xy(x, y, ascii_val);
-		}
-	}
+	// for (uchar x = 0; x < 80; x++) {
+	// 	for (uchar y = 0; y < 25; y++) {
+	// 		uchar offset = xy_to_offset(x, y);
+	// 		uchar ascii_val = screen.screen_ptr[offset] & 0xff;
+	// 		print_char_by_xy(x, y, ascii_val);
+	// 	}
+	// }
 }
 
 void print_char_on_cursor(char c) {
@@ -97,7 +127,7 @@ void printf(char* str, ...) {
 	char buffer[128];
 	uint* next_arg = (uint*) &str + 1;
 	while (*str != '\0') {
-		if (strncmp((uchar*) str, (uchar*) "%", 1) == 0) {
+		if (*str == '%') {
 			str++;
 			switch(*str) {
 				case 'c' : 
@@ -119,14 +149,8 @@ void printf(char* str, ...) {
 					print_char_on_cursor(*str);
 			}
 			next_arg++;
-		} else if (strncmp((uchar*) str, (uchar*) "\\", 1) == 0) {
-			str++;
-			switch(*str) {
-				case 'n' : 
-					// printf("(%d,%d)", screen.cursor.x, screen.cursor.y);
-					move_cursor(0, screen.cursor.y + 1);
-					break;
-			}
+		} else if (*str == '\n') {
+			move_cursor(0, screen.cursor.y + 1);
 		} else {
 			print_char_on_cursor(*str);
 		}
