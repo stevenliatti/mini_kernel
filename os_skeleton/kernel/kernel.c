@@ -6,7 +6,6 @@
 uint kernel_entry(multiboot_info_t* boot_info) {
 	init_scr();
 
-	printf("TEST is ");
 	#ifdef TEST
 
 	set_theme(LIGHT_GREEN, RED);
@@ -17,11 +16,10 @@ uint kernel_entry(multiboot_info_t* boot_info) {
 
 	#else
 
-	printf("NOT defined\n");
-	printf("Screen has been initialised.\n");
 	gdt_init();
+	printf("Screen has been initialised.\n");
 	printf("GDT has been initialised.\n");
-	printf( "Memory upper : %d", boot_info->mem_upper);
+	printf("Memory upper : %d", boot_info->mem_upper);
 	
 	#endif
 
