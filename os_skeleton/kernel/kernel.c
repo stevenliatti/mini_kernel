@@ -13,6 +13,7 @@ uint kernel_entry(multiboot_info_t* boot_info) {
 	for (int i = 0; i < 26; i++) {
 		printf("line %d : defined\n", i);
 	}
+	// printf("raed\n");
 
 	#else
 

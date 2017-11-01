@@ -31,7 +31,10 @@ void move_cursor(uchar x, uchar y) {
 		screen.cursor.y += 1;
 	} else {
 		screen.cursor.x = x;
-		screen.cursor.y = y;
+		if (screen.cursor.y == 25)
+			screen.cursor.y = 24;
+		else
+			screen.cursor.y = y;
 	}
 }
 
@@ -61,13 +64,16 @@ void print_char_by_offset(ushort offset, uchar c) {
 }
 
 void shift_up() {
+	// memcpy(screen.screen_ptr, screen.screen_ptr + 80, 80 * 23 * 2);
 	for (uchar y = 1; y < 25; y++) {
-		for (uchar x = 0; x < 80; x++) {
-			uchar offset = xy_to_offset(x, y);
-			uchar ascii_val = screen.screen_ptr[offset] & 0xff;
-			print_char_by_offset(xy_to_offset(x, y - 1), ascii_val);
-		}
+		// for (uchar x = 0; x < 80; x++) {
+			// uchar offset = xy_to_offset(x, y);
+		memcpy(screen.screen_ptr + 80 * (y - 1), screen.screen_ptr + 80 * y, 80 * 2);
+	// 		uchar ascii_val = screen.screen_ptr[offset] & 0xff;
+	// 		print_char_by_offset(xy_to_offset(x, y - 1), ascii_val);
+		// }
 	}
+	memset(screen.screen_ptr + 80 * 24, '\0', 80 * 2);
 	// for (uchar x = 0; x < 80; x++) {
 	// 	print_char_by_offset(xy_to_offset(x, 24), '\0');
 	// }
