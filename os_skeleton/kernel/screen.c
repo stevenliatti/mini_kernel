@@ -48,19 +48,10 @@ void init_scr(void) {
 }
 
 void shift_up() {
-	// memcpy(screen.screen_ptr, screen.screen_ptr + SCREEN_WIDTH, SCREEN_WIDTH * 23 * 2);
-	for (uchar y = 1; y < SCREEN_HEIGHT; y++) {
-		// for (uchar x = 0; x < SCREEN_WIDTH; x++) {
-			// uchar offset = xy_to_offset(x, y);
-		memcpy(screen.screen_ptr + SCREEN_WIDTH * (y - 1), screen.screen_ptr + SCREEN_WIDTH * y, SCREEN_WIDTH * 2);
-	// 		uchar ascii_val = screen.screen_ptr[offset] & 0xff;
-	// 		print_char_by_offset(xy_to_offset(x, y - 1), ascii_val);
-		// }
-	}
-	memset(screen.screen_ptr + SCREEN_WIDTH * SCREEN_HEIGHT - 1, '\0', SCREEN_WIDTH * 2);
-	// for (uchar x = 0; x < SCREEN_WIDTH; x++) {
-	// 	print_char_by_offset(xy_to_offset(x, SCREEN_HEIGHT - 1), '\0');
-	// }
+	uchar scr_w_in_mem = SCREEN_WIDTH * 2;
+	memcpy(FIRST_ADDR, FIRST_ADDR + scr_w_in_mem, LAST_ADDR - FIRST_ADDR - scr_w_in_mem);
+	// TODO: understand why the cursor disapear if we put '\0' for value in memset
+	memset(FIRST_ADDR + scr_w_in_mem * SCREEN_HEIGHT - scr_w_in_mem, 'a', scr_w_in_mem);
 }
 
 void print_char_by_xy(ushort x, ushort y, char c) {

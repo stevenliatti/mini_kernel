@@ -1,27 +1,24 @@
 #include "base.h"
 
 void *memset(void *dst, uint value, uint count) {
-	uchar *str = dst;
-	for (uchar i = 0; i < count; i++) {
-		str[i] = (uchar) value;
-	}
-	return dst;
+    uchar* p=dst;
+    while (count--)
+        *p++ = (uchar) value;
+    return dst;
 }
 
 void *memcpy(void *dst, void *src, uint count) {
-	uchar *dp = dst;
-	const uchar *sp = src;
-	for (uchar i = 0; i < count; i++) {
-		dp[i] = sp[i];
-	}
-	return dst;
+    uchar *dp = dst;
+    const uchar *sp = src;
+    while (count--)
+        *dp++ = *sp++;
+    return dst;
 }
 
 uint strncmp(const uchar *p, const uchar *q, uint n) {
-	for (uchar i = 0; i < n; i++) {
-		if (p[i] != q[i]) 
-			return (uint)(p[i] - q[i]);
-	}
+    while (n--)
+        if (*p++ != *q++)
+            return *(uchar*)(p - 1) - *(uchar*)(q - 1);
     return 0;
 }
 
