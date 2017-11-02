@@ -47,16 +47,22 @@ void init_scr(void) {
 	clrscr();
 }
 
-void shift_up() {
-	uchar scr_w_in_mem = SCREEN_WIDTH * 2;
-	memcpy(FIRST_ADDR, FIRST_ADDR + scr_w_in_mem, LAST_ADDR - FIRST_ADDR - scr_w_in_mem);
-	// TODO: understand why the cursor disapear if we put '\0' for value in memset
-	memset(FIRST_ADDR + scr_w_in_mem * SCREEN_HEIGHT - scr_w_in_mem, 'a', scr_w_in_mem);
+void print_char_by_xy(ushort x, ushort y, char c) {
+	screen.screen_ptr[xy_to_offset(x, y)] = (((screen.bg_color << 4) | screen.fg_color) << 8) | c;
 }
 
-void print_char_by_xy(ushort x, ushort y, char c) {
-	if (c != '\n')
-		screen.screen_ptr[xy_to_offset(x, y)] = (((screen.bg_color << 4) | screen.fg_color) << 8) | c;
+void print_char_by_xy_color(ushort x, ushort y, uchar c, uchar bg, uchar fg) {
+	screen.screen_ptr[xy_to_offset(x, y)] = (((bg << 4) | fg) << 8) | c;
+}
+
+void shift_up() {
+	uchar scr_w_in_mem = SCREEN_WIDTH * 2;
+	memcpy((int*)FIRST_ADDR, FIRST_ADDR + scr_w_in_mem, LAST_ADDR - FIRST_ADDR - scr_w_in_mem);
+	// TODO: understand why the cursor disapear if we put '\0' for value in memset
+	// memset(FIRST_ADDR + scr_w_in_mem * SCREEN_HEIGHT - scr_w_in_mem, 'a', scr_w_in_mem);
+	for (int i = 0; i < 80; i++) {
+		print_char_by_xy_color(i, 24, '\0', BLACK, LIGHT_GRAY);
+	}
 }
 
 void set_theme(uchar fg_color, uchar bg_color) {
@@ -84,7 +90,8 @@ void print_char_on_cursor(char c) {
 		new_cur_y = SCREEN_HEIGHT - 1;
 	}
 
-	print_char_by_xy(new_char_x, new_char_y, c);
+	if (c != '\n')
+		print_char_by_xy(new_char_x, new_char_y, c);
 	move_cursor(new_cur_x, new_cur_y);
 }
 

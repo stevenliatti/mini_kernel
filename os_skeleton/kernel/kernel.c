@@ -9,10 +9,9 @@ uint kernel_entry(multiboot_info_t* boot_info) {
 	#ifdef TEST
 
 	set_theme(LIGHT_GREEN, RED);
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 85; i++) {
 		printf("line %d : defined\n", i);
 	}
-	// printf("raed\n");
 
 	#else
 
