@@ -12,4 +12,3 @@ typedef unsigned long long ulong;
 #define NULL 0
 
 #endif
-

@@ -9,14 +9,6 @@ ushort xy_to_offset(ushort x, ushort y) {
 	return (y * SCREEN_WIDTH + x);
 }
 
-scr_xy_t offset_to_xy(ushort offset) {
-	scr_xy_t temp = {
-		.x = (uchar) offset % SCREEN_WIDTH,
-		.y = (uchar) offset / SCREEN_WIDTH
-	};
-	return temp;
-}
-
 void move_cursor(uchar x, uchar y) {
 	ushort cur_val = xy_to_offset(x, y);
 	outw(COMMAND_PORT, 0xe);
@@ -30,7 +22,7 @@ void move_cursor(uchar x, uchar y) {
 /*!
  * \brief Clear screen
  */
-void clrscr(void) {
+void clr_scr(void) {
 	for (ushort i = 0; i < CHAR_COUNT; i++) {
 		screen.screen_ptr[i] = 0xf00;
 	}
@@ -44,30 +36,23 @@ void init_scr(void) {
 	screen.screen_ptr = (ushort *) VRAM;
 	screen.fg_color = LIGHT_GRAY;
 	screen.bg_color = BLACK;
-	clrscr();
-}
-
-void print_char_by_xy(ushort x, ushort y, char c) {
-	screen.screen_ptr[xy_to_offset(x, y)] = (((screen.bg_color << 4) | screen.fg_color) << 8) | c;
+	clr_scr();
 }
 
 void print_char_by_xy_color(ushort x, ushort y, uchar c, uchar bg, uchar fg) {
 	screen.screen_ptr[xy_to_offset(x, y)] = (((bg << 4) | fg) << 8) | c;
 }
 
+void print_char_by_xy(ushort x, ushort y, char c) {
+	print_char_by_xy_color(x, y, c, screen.bg_color, screen.fg_color);
+}
+
 void shift_up() {
 	uchar scr_w_in_mem = SCREEN_WIDTH * 2;
 	memcpy((int*)FIRST_ADDR, FIRST_ADDR + scr_w_in_mem, LAST_ADDR - FIRST_ADDR - scr_w_in_mem);
-	// TODO: understand why the cursor disapear if we put '\0' for value in memset
-	// memset(FIRST_ADDR + scr_w_in_mem * SCREEN_HEIGHT - scr_w_in_mem, 'a', scr_w_in_mem);
 	for (int i = 0; i < 80; i++) {
 		print_char_by_xy_color(i, 24, '\0', BLACK, LIGHT_GRAY);
 	}
-}
-
-void set_theme(uchar fg_color, uchar bg_color) {
-	screen.fg_color = fg_color;
-	screen.bg_color = bg_color;
 }
 
 void print_char_on_cursor(char c) {
@@ -90,8 +75,10 @@ void print_char_on_cursor(char c) {
 		new_cur_y = SCREEN_HEIGHT - 1;
 	}
 
-	if (c != '\n')
+	if (c != '\n') {
 		print_char_by_xy(new_char_x, new_char_y, c);
+	}
+		
 	move_cursor(new_cur_x, new_cur_y);
 }
 
@@ -99,18 +86,6 @@ void print_string_on_cursor(char* str) {
 	for (uint i = 0; str[i] != 0; i++) {
 		print_char_on_cursor(str[i]);
 	}
-}
-
-uchar get_fg_color() {
-	return screen.fg_color;
-}
-
-uchar get_bg_color() {
-	return screen.bg_color;
-}
-
-scr_xy_t get_cursor_pos() {
-	return screen.cursor;
 }
 
 void printf(char* str, ...) {
@@ -145,4 +120,21 @@ void printf(char* str, ...) {
 		}
 		str++;
 	}
+}
+
+uchar get_fg_color() {
+	return screen.fg_color;
+}
+
+uchar get_bg_color() {
+	return screen.bg_color;
+}
+
+scr_xy_t get_cursor_pos() {
+	return screen.cursor;
+}
+
+void set_theme(uchar fg_color, uchar bg_color) {
+	screen.fg_color = fg_color;
+	screen.bg_color = bg_color;
 }

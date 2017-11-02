@@ -38,12 +38,12 @@
 
 // Disable hardware interrupts.
 static inline void cli() {
-    asm volatile("cli");
+	asm volatile("cli");
 }
 
 // Enable hardware interrupts.
 static inline void sti() {
-    asm volatile("sti");
+	asm volatile("sti");
 }
 
 // Halt the processor.

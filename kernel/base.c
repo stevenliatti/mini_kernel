@@ -1,6 +1,6 @@
 #include "base.h"
 
-void *memset(void *dst, uint value, uint count) {
+void *memset(void *dst, int value, uint count) {
     uchar* p=dst;
     while (count--)
         *p++ = (uchar) value;
@@ -15,7 +15,7 @@ void *memcpy(void *dst, void *src, uint count) {
     return dst;
 }
 
-uint strncmp(const uchar *p, const uchar *q, uint n) {
+uint strncmp(const char *p, const char *q, uint n) {
     while (n--)
         if (*p++ != *q++)
             return *(uchar*)(p - 1) - *(uchar*)(q - 1);
