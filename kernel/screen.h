@@ -3,14 +3,6 @@
 
 #include "../common/types.h"
 
-#define VRAM            0xb8000
-#define COMMAND_PORT    0x3d4
-#define DATA_PORT       0x3d5
-#define SCREEN_WIDTH    80
-#define SCREEN_HEIGHT   25
-#define FIRST_ADDR      (uchar*)VRAM
-#define LAST_ADDR       (FIRST_ADDR + SCREEN_WIDTH * SCREEN_HEIGHT * 2 - 2)
-#define CHAR_COUNT      (SCREEN_WIDTH * SCREEN_HEIGHT)
 #define COLORS_NB       15
 
 #define BLACK           0x0
@@ -33,24 +25,24 @@
 typedef struct scr_xy {
 	uchar x;
 	uchar y;
-} scr_xy_t;
+} __attribute__((packed)) scr_xy_t;
 
 typedef struct screen {
 	scr_xy_t cursor;		// cursor coordinate in the screen
 	ushort* screen_ptr;		// points to VRAM
 	uchar fg_color;			// foreground color
 	uchar bg_color;			// background color
-} screen_t;
+} __attribute__((packed)) screen_t;
 
-void move_cursor(uchar x, uchar y);
-void print_char_on_cursor(char c);
-void print_string_on_cursor(char* str);
-
-void init_scr(void);
-void clr_scr(void);
-void printf(char* str, ...);
-void set_theme(uchar bg_color, uchar fg_color);
-uchar get_fg_color();
-uchar get_bg_color();
+extern void clr_scr();
+extern void init_scr();
+extern void printf(char* str, ...);
+extern void set_theme(uchar bg_color, uchar fg_color);
+extern uchar get_fg_color();
+extern uchar get_bg_color();
+extern scr_xy_t get_cursor_pos();
+#ifdef TEST
+extern void test_screen();
+#endif
 
 #endif

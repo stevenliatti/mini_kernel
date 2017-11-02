@@ -15,11 +15,25 @@ void *memcpy(void *dst, void *src, uint count) {
     return dst;
 }
 
-uint strncmp(const char *p, const char *q, uint n) {
+int strncmp(const char *p, const char *q, uint n) {
     while (n--)
         if (*p++ != *q++)
             return *(uchar*)(p - 1) - *(uchar*)(q - 1);
     return 0;
+}
+
+static void negate_and_revert(int x, char* str, int i) {
+	if (x < 0) {
+		str[i] = '-';
+	} else {
+		i--;
+	}
+	//reversing
+	for (int j = 0; j < i; j++, i--) {
+		char c = str[i];
+		str[i] = str[j];
+		str[j] = c;
+	}
 }
 
 void itoa (int x, char* str) {
@@ -33,17 +47,7 @@ void itoa (int x, char* str) {
 		temp = temp / 10;
 		i++;
 	}
-	if (x < 0) {
-		str[i] = '-';
-	} else {
-		i--;
-	}
-	//reversing
-	for (int j = 0; j < i; j++, i--) {
-		char c = str[i];
-		str[i] = str[j];
-		str[j] = c;
-	}
+	negate_and_revert(x, str, i);
 }
 
 void itox (int x, char* str) {
@@ -64,15 +68,5 @@ void itox (int x, char* str) {
 	}
 	str[i++] = 'x';
 	str[i++] = '0';
-	if (x < 0) {
-		str[i] = '-';
-	} else {
-		i--;
-	}
-	//reversing
-	for (int j = 0; j < i; j++, i--) {
-		char c = str[i];
-		str[i] = str[j];
-		str[j] = c;
-	}
+	negate_and_revert(x, str, i);
 }

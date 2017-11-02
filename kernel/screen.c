@@ -1,15 +1,24 @@
 #include "screen.h"
 #include "base.h"
 
+#define VRAM            0xb8000
+#define COMMAND_PORT    0x3d4
+#define DATA_PORT       0x3d5
+#define SCREEN_WIDTH    80
+#define SCREEN_HEIGHT   25
+#define FIRST_ADDR      (uchar*)VRAM
+#define LAST_ADDR       (FIRST_ADDR + SCREEN_WIDTH * SCREEN_HEIGHT * 2 - 2)
+#define CHAR_COUNT      (SCREEN_WIDTH * SCREEN_HEIGHT)
+
 extern void outw(uint16_t port, uint8_t data);
 
-screen_t screen;
+static screen_t screen;
 
-ushort xy_to_offset(ushort x, ushort y) {
+static ushort xy_to_offset(ushort x, ushort y) {
 	return (y * SCREEN_WIDTH + x);
 }
 
-void move_cursor(uchar x, uchar y) {
+static void move_cursor(uchar x, uchar y) {
 	ushort cur_val = xy_to_offset(x, y);
 	outw(COMMAND_PORT, 0xe);
 	outw(DATA_PORT, cur_val >> 8);
@@ -19,35 +28,15 @@ void move_cursor(uchar x, uchar y) {
 	screen.cursor.y = y;
 }
 
-/*!
- * \brief Clear screen
- */
-void clr_scr(void) {
-	for (ushort i = 0; i < CHAR_COUNT; i++) {
-		screen.screen_ptr[i] = 0xf00;
-	}
-	move_cursor(0, 0);
-}
-
-/*!
- * \brief Initialise the screen (text color, background color and screen)
- */
-void init_scr(void) {
-	screen.screen_ptr = (ushort *) VRAM;
-	screen.fg_color = LIGHT_GRAY;
-	screen.bg_color = BLACK;
-	clr_scr();
-}
-
-void print_char_by_xy_color(ushort x, ushort y, uchar c, uchar bg, uchar fg) {
+static void print_char_by_xy_color(ushort x, ushort y, uchar c, uchar bg, uchar fg) {
 	screen.screen_ptr[xy_to_offset(x, y)] = (((bg << 4) | fg) << 8) | c;
 }
 
-void print_char_by_xy(ushort x, ushort y, char c) {
+static void print_char_by_xy(ushort x, ushort y, char c) {
 	print_char_by_xy_color(x, y, c, screen.bg_color, screen.fg_color);
 }
 
-void shift_up() {
+static void shift_up() {
 	uchar scr_w_in_mem = SCREEN_WIDTH * 2;
 	memcpy((int*)FIRST_ADDR, FIRST_ADDR + scr_w_in_mem, LAST_ADDR - FIRST_ADDR - scr_w_in_mem);
 	for (int i = 0; i < 80; i++) {
@@ -55,7 +44,7 @@ void shift_up() {
 	}
 }
 
-void print_char_on_cursor(char c) {
+static void print_char_on_cursor(char c) {
 	uchar new_char_x = screen.cursor.x;
 	uchar new_char_y = screen.cursor.y;
 	uchar new_cur_x = screen.cursor.x + 1;
@@ -82,10 +71,30 @@ void print_char_on_cursor(char c) {
 	move_cursor(new_cur_x, new_cur_y);
 }
 
-void print_string_on_cursor(char* str) {
+static void print_string_on_cursor(char* str) {
 	for (uint i = 0; str[i] != 0; i++) {
 		print_char_on_cursor(str[i]);
 	}
+}
+
+/*!
+ * \brief Clear screen
+ */
+void clr_scr() {
+	for (ushort i = 0; i < CHAR_COUNT; i++) {
+		screen.screen_ptr[i] = 0xf00;
+	}
+	move_cursor(0, 0);
+}
+
+/*!
+ * \brief Initialise the screen (text color, background color and screen)
+ */
+void init_scr() {
+	screen.screen_ptr = (ushort *) VRAM;
+	screen.fg_color = LIGHT_GRAY;
+	screen.bg_color = BLACK;
+	clr_scr();
 }
 
 void printf(char* str, ...) {
@@ -122,6 +131,11 @@ void printf(char* str, ...) {
 	}
 }
 
+void set_theme(uchar fg_color, uchar bg_color) {
+	screen.fg_color = fg_color;
+	screen.bg_color = bg_color;
+}
+
 uchar get_fg_color() {
 	return screen.fg_color;
 }
@@ -134,7 +148,22 @@ scr_xy_t get_cursor_pos() {
 	return screen.cursor;
 }
 
-void set_theme(uchar fg_color, uchar bg_color) {
-	screen.fg_color = fg_color;
-	screen.bg_color = bg_color;
+#ifdef TEST
+void test_screen() {
+	set_theme(LIGHT_GREEN, RED);
+	for (int i = 0; i < 85; i++) {
+		printf("line %d : defined\n", i);
+	}
+	print_char_on_cursor('r');
+
+	set_theme(BROWN, LIGHT_BLUE);
+	move_cursor(40, 10);
+	print_string_on_cursor("Raed");
+	move_cursor(55, 10);
+	print_string_on_cursor("Steven");
+	move_cursor(40, 11);
+	print_string_on_cursor("Abdennadher");
+	move_cursor(55, 11);
+	print_string_on_cursor("Liatti");
 }
+#endif

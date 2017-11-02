@@ -3,10 +3,10 @@
 
 #include "../common/types.h"
 
-void *memset(void *dst, int value, uint count);
-void *memcpy(void *dst, void *src, uint count);
-uint strncmp(const char *p, const char *q, uint n);
-void itoa (int x, char* str);
-void itox (int x, char* str);
+extern void *memset(void *dst, int value, uint count);
+extern void *memcpy(void *dst, void *src, uint count);
+extern int strncmp(const char *p, const char *q, uint n);
+extern void itoa (int x, char* str);
+extern void itox (int x, char* str);
 
 #endif

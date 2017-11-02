@@ -1,17 +1,33 @@
-kernel:
-	$(MAKE) myos.iso -C kernel
+KERNEL_NAME=kernel
+KERNEL_FOLDER=$(KERNEL_NAME)
+OS_NAME=myos
 
-run:
-	$(MAKE) run -C kernel
+$(OS_NAME).iso: $(KERNEL_NAME).elf grub/menu.lst
+	mkdir -p $(OS_NAME)/boot/grub
+	cp grub/menu.lst grub/stage2_eltorito $(OS_NAME)/boot/grub/
+	cp $(KERNEL_FOLDER)/$(KERNEL_NAME).elf $(OS_NAME)/boot
+	genisoimage -R -b boot/grub/stage2_eltorito -input-charset utf8 -no-emul-boot -boot-info-table -o $(OS_NAME).iso $(OS_NAME)
 
-help:
-	@echo "Targets available : \n\thelp : this help\n\tkernel : compile and run the kernel"
-	@echo "\ttest_kernel : do visual tests for kernel\n\tclean : call clean targets of subfolders"
+run: $(OS_NAME).iso
+	qemu-system-i386 -monitor stdio -cdrom $(OS_NAME).iso
+
+$(KERNEL_NAME).elf:
+	$(MAKE) $@ -C $(KERNEL_FOLDER)
 
 test_kernel:
-	$(MAKE) test -C kernel
+	$(MAKE) $@ -C $(KERNEL_FOLDER)
 
 clean:
-	$(MAKE) clean -C kernel
+	rm -rf $(OS_NAME)/ $(OS_NAME).iso
+	$(MAKE) clean -C $(KERNEL_FOLDER)
 
-.PHONY: kernel clean
+help:
+	@echo "Targets available :"
+	@echo "\thelp : this help"
+	@echo "\t$(KERNEL_NAME).elf : compile the kernel"
+	@echo "\ttest_kernel : compile kernel in test mode"
+	@echo "\t$(OS_NAME).iso (default) : create iso file of OS"
+	@echo "\trun : lauch the kernel"
+	@echo "\tclean : remove $(OS_NAME).iso and call clean targets of subfolders"
+
+.PHONY: clean

@@ -2,22 +2,13 @@ SRCASM=$(wildcard *.s)
 SRCC=$(wildcard *.c)
 OBJC=$(SRCC:%.c=%.o)
 OBJASM=$(SRCASM:%.s=%.o)
-ARGS=-Wall -Wextra -g -static -std=gnu11 -m32 -ffreestanding -nostdlib 
-
-run: myos.iso
-	qemu-system-i386 -monitor stdio -cdrom myos.iso
-
-test:
-	make TEST_MODE=-DTEST
-
-myos.iso: kernel.elf ../grub/menu.lst
-	mkdir -p myos/boot/grub
-	cp ../grub/menu.lst ../grub/stage2_eltorito myos/boot/grub/
-	cp kernel.elf myos/boot
-	genisoimage -R -b boot/grub/stage2_eltorito -input-charset utf8 -no-emul-boot -boot-info-table -o myos.iso myos
+ARGS=-Wall -Wextra -g -static -std=gnu11 -m32 -ffreestanding -nostdlib -lgcc
 
 kernel.elf: $(OBJC) $(OBJASM)
 	gcc -T kernel.ld $(ARGS) $^ -o $@
+
+test_kernel:
+	make TEST_MODE=-DTEST
 
 %.o: %.c
 	gcc $(TEST_MODE) $(ARGS) -c $^
@@ -26,6 +17,6 @@ kernel.elf: $(OBJC) $(OBJASM)
 	nasm -f elf32 $^
 
 clean:
-	rm -rf kernel.elf *.o myos/ myos.iso
+	rm -rf kernel.elf *.o
 
 rebuild: clean run
