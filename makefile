@@ -22,7 +22,7 @@ clean:
 	$(MAKE) clean -C $(KERNEL_FOLDER)
 
 help:
-	@echo "Targets available :"
+	@echo "Available targets :"
 	@echo "\thelp : this help"
 	@echo "\t$(KERNEL_NAME).elf : compile the kernel"
 	@echo "\ttest_kernel : compile kernel in test mode"
@@ -30,4 +30,4 @@ help:
 	@echo "\trun : lauch the kernel"
 	@echo "\tclean : remove $(OS_NAME).iso and call clean targets of subfolders"
 
-.PHONY: clean
+.PHONY: clean help
