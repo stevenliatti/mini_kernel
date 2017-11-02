@@ -23,17 +23,8 @@ void move_cursor(uchar x, uchar y) {
 	outw(DATA_PORT, cur_val >> 8);
 	outw(COMMAND_PORT, 0xf);
 	outw(DATA_PORT, cur_val & 0xff);
-	// screen.cursor_ptr = (ushort*) VRAM + cur_val;
-	if (x == SCREEN_WIDTH) {
-		screen.cursor.x = 0;
-		screen.cursor.y += 1;
-	} else {
-		screen.cursor.x = x;
-		if (screen.cursor.y == SCREEN_HEIGHT)
-			screen.cursor.y = SCREEN_HEIGHT - 1;
-		else
-			screen.cursor.y = y;
-	}
+	screen.cursor.x = x;
+	screen.cursor.y = y;
 }
 
 /*!
@@ -73,15 +64,8 @@ void shift_up() {
 }
 
 void print_char_by_xy(ushort x, ushort y, char c) {
-	if (x == SCREEN_WIDTH) {
-		x = 0;
-		y += 1;
-	}
-	if (y == SCREEN_HEIGHT) {
-		y = SCREEN_HEIGHT - 1;
-		shift_up();
-	}
-	screen.screen_ptr[xy_to_offset(x, y)] = (((screen.bg_color << 4) | screen.fg_color) << 8) | c;
+	if (c != '\n')
+		screen.screen_ptr[xy_to_offset(x, y)] = (((screen.bg_color << 4) | screen.fg_color) << 8) | c;
 }
 
 void set_theme(uchar fg_color, uchar bg_color) {
@@ -90,8 +74,27 @@ void set_theme(uchar fg_color, uchar bg_color) {
 }
 
 void print_char_on_cursor(char c) {
-	print_char_by_xy(screen.cursor.x, screen.cursor.y, c);
-	move_cursor(screen.cursor.x + 1, screen.cursor.y);
+	uchar new_char_x = screen.cursor.x;
+	uchar new_char_y = screen.cursor.y;
+	uchar new_cur_x = screen.cursor.x + 1;
+	uchar new_cur_y = screen.cursor.y;
+	
+	if (c == '\n') {
+		new_cur_x = 0;
+		new_cur_y++;
+	}
+	if (new_cur_x == SCREEN_WIDTH) {
+		new_cur_x = 0;
+		new_cur_y++;
+	}
+	if (new_cur_y >= SCREEN_HEIGHT) {
+		shift_up();
+		new_char_y = screen.cursor.y - 1;
+		new_cur_y = SCREEN_HEIGHT - 1;
+	}
+
+	print_char_by_xy(new_char_x, new_char_y, c);
+	move_cursor(new_cur_x, new_cur_y);
 }
 
 void print_string_on_cursor(char* str) {
@@ -138,9 +141,8 @@ void printf(char* str, ...) {
 					print_char_on_cursor(*str);
 			}
 			next_arg++;
-		} else if (*str == '\n') {
-			move_cursor(0, screen.cursor.y + 1);
-		} else {
+		}
+		else {
 			print_char_on_cursor(*str);
 		}
 		str++;
