@@ -1,3 +1,14 @@
+/**
+ * @file 		screen.h
+ * @brief 		Header of screen functions to print and move cursor.
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		November 3, 2017
+ * @version		1.0
+ */
+
 #ifndef _SCREEN_H_
 #define _SCREEN_H_
 
@@ -22,11 +33,17 @@
 #define YELLOW          0xe
 #define WHITE           0xf
 
+/**
+ * @brief represent x and y coordinates on screen
+ */
 typedef struct scr_xy {
 	uchar x;
 	uchar y;
 } __attribute__((packed)) scr_xy_t;
 
+/**
+ * @brief represent the screen
+ */
 typedef struct screen {
 	scr_xy_t cursor;		// cursor coordinate in the screen
 	ushort* screen_ptr;		// points to VRAM
@@ -41,6 +58,7 @@ extern void set_theme(uchar bg_color, uchar fg_color);
 extern uchar get_fg_color();
 extern uchar get_bg_color();
 extern scr_xy_t get_cursor_pos();
+
 #ifdef TEST
 extern void test_screen();
 #endif

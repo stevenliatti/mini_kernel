@@ -1,3 +1,15 @@
+/**
+ * @file 		gdt.h
+ * @brief 		Header of GDT functions and declarations.
+ *
+ * @author		Florent Glück
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		November 3, 2017
+ * @version		1.0
+ */
+
 #ifndef _GDT_H_
 #define _GDT_H_
 

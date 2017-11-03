@@ -41,9 +41,6 @@ entrypoint:
 	; - Call the kernel entry point (C code)
 	call 	kernel_entry
 
-	; ...
-
-
 	; infinite loop (should never get here)
 .forever:
 	hlt

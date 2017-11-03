@@ -1,3 +1,14 @@
+/**
+ * @file 		base.h
+ * @brief 		Header base functions.
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		November 3, 2017
+ * @version		1.0
+ */
+
 #ifndef _BASE_H_
 #define _BASE_H_
 

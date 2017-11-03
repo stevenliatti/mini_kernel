@@ -1,3 +1,15 @@
+/**
+ * @file 		gdt.c
+ * @brief 		GDT functions and declarations.
+ *
+ * @author		Florent Glück
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		November 3, 2017
+ * @version		1.0
+ */
+
 #include "../common/types.h"
 #include "gdt.h"
 #include "x86.h"
@@ -17,7 +29,7 @@ static gdt_ptr_t   gdt_ptr;
 // granularity indicates 1 byte or 4KB granularity
 // dpl is the privilege level
 static gdt_entry_t build_entry(uint32_t base, uint32_t limit, uint8_t type, uint8_t s, uint8_t db,
-							   uint8_t granularity, uint8_t dpl) {
+                               uint8_t granularity, uint8_t dpl) {
 	gdt_entry_t entry;
 	// For a TSS and LDT, base is the addresse of the TSS/LDT structure
 	// and limit is the size of the structure.
