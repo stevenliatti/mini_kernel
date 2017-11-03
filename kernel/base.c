@@ -43,38 +43,46 @@ void clear_buffer(char* buffer) {
 }
 
 void itoa (int x, char* str) {
-	int temp = x;
-	if (x < 0) {
-		temp = -x;
-	}
 	clear_buffer(str);
-	int i = 0;
-	while (temp != 0) {
-		str[i] = '0' + temp % 10;
-		temp = temp / 10;
-		i++;
+	if (x == 0) {
+		str[0] = '0';
+	} else {
+		int temp = x;
+		if (x < 0) {
+			temp = -x;
+		}
+		int i = 0;
+		while (temp != 0) {
+			str[i] = '0' + temp % 10;
+			temp = temp / 10;
+			i++;
+		}
+		negate_and_revert(x, str, i);
 	}
-	negate_and_revert(x, str, i);
 }
 
 void itox (int x, char* str) {
-	int temp = x;
-	if (x < 0) {
-		temp = -x;
-	}
 	clear_buffer(str);
-	int i = 0;
-	while (temp != 0) {
-		int r = temp % 16;
-		if (r > 9) {
-			str[i] = 'a' + r % 10;
-		} else {
-			str[i] = '0' + r;
+	if (x == 0) {
+		str[0] = '0';
+	} else {
+		int temp = x;
+		if (x < 0) {
+			temp = -x;
 		}
-		temp = temp / 16;
-		i++;
+		int i = 0;
+		while (temp != 0) {
+			int r = temp % 16;
+			if (r > 9) {
+				str[i] = 'a' + r % 10;
+			} else {
+				str[i] = '0' + r;
+			}
+			temp = temp / 16;
+			i++;
+		}
+		str[i++] = 'x';
+		str[i++] = '0';
+		negate_and_revert(x, str, i);
 	}
-	str[i++] = 'x';
-	str[i++] = '0';
-	negate_and_revert(x, str, i);
 }

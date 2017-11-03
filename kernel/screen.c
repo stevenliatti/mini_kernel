@@ -179,12 +179,12 @@ void test_screen() {
 	print_char_by_xy_color(79, 24, '*', WHITE, RED);
 
 	set_theme(BLACK, YELLOW);
-	move_cursor(1, 1);
+	move_cursor(2, 1);
 	scr_xy_t pos = get_cursor_pos();
 	printf("get_cursor_pos() = (%d,%d) , the position of 'g' character", pos.x, pos.y);
-	move_cursor(1, 2);
+	move_cursor(2, 2);
 	printf("get_bg_color() = %d", get_bg_color());
-	move_cursor(1, 3);
+	move_cursor(2, 3);
 	printf("get_fg_color() = %d", get_fg_color());
 }
 #endif
