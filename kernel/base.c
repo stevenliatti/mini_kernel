@@ -36,11 +36,18 @@ static void negate_and_revert(int x, char* str, int i) {
 	}
 }
 
+void clear_buffer(char* buffer) {
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+		buffer[i] = 0;
+	}
+}
+
 void itoa (int x, char* str) {
 	int temp = x;
 	if (x < 0) {
 		temp = -x;
 	}
+	clear_buffer(str);
 	int i = 0;
 	while (temp != 0) {
 		str[i] = '0' + temp % 10;
@@ -55,6 +62,7 @@ void itox (int x, char* str) {
 	if (x < 0) {
 		temp = -x;
 	}
+	clear_buffer(str);
 	int i = 0;
 	while (temp != 0) {
 		int r = temp % 16;

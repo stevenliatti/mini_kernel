@@ -41,6 +41,7 @@ extern void set_theme(uchar bg_color, uchar fg_color);
 extern uchar get_fg_color();
 extern uchar get_bg_color();
 extern scr_xy_t get_cursor_pos();
+extern void move_cursor(uchar x, uchar y);
 #ifdef TEST
 extern void test_screen();
 #endif

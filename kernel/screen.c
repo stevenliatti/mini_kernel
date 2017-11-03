@@ -18,21 +18,11 @@ static ushort xy_to_offset(ushort x, ushort y) {
 	return (y * SCREEN_WIDTH + x);
 }
 
-static void move_cursor(uchar x, uchar y) {
-	ushort cur_val = xy_to_offset(x, y);
-	outw(COMMAND_PORT, 0xe);
-	outw(DATA_PORT, cur_val >> 8);
-	outw(COMMAND_PORT, 0xf);
-	outw(DATA_PORT, cur_val & 0xff);
-	screen.cursor.x = x;
-	screen.cursor.y = y;
-}
-
-static void print_char_by_xy_color(ushort x, ushort y, uchar c, uchar bg, uchar fg) {
+static void print_char_by_xy_color(ushort x, ushort y, uchar c, uchar bg, uchar fg) { //
 	screen.screen_ptr[xy_to_offset(x, y)] = (((bg << 4) | fg) << 8) | c;
 }
 
-static void print_char_by_xy(ushort x, ushort y, char c) {
+static void print_char_by_xy(ushort x, ushort y, char c) { //
 	print_char_by_xy_color(x, y, c, screen.bg_color, screen.fg_color);
 }
 
@@ -44,7 +34,7 @@ static void shift_up() {
 	}
 }
 
-static void print_char_on_cursor(char c) {
+static void print_char_on_cursor(char c) { //
 	uchar new_char_x = screen.cursor.x;
 	uchar new_char_y = screen.cursor.y;
 	uchar new_cur_x = screen.cursor.x + 1;
@@ -71,7 +61,7 @@ static void print_char_on_cursor(char c) {
 	move_cursor(new_cur_x, new_cur_y);
 }
 
-static void print_string_on_cursor(char* str) {
+static void print_string_on_cursor(char* str) { //
 	for (uint i = 0; str[i] != 0; i++) {
 		print_char_on_cursor(str[i]);
 	}
@@ -80,7 +70,7 @@ static void print_string_on_cursor(char* str) {
 /*!
  * \brief Clear screen
  */
-void clr_scr() {
+void clr_scr() { //
 	for (ushort i = 0; i < CHAR_COUNT; i++) {
 		screen.screen_ptr[i] = 0xf00;
 	}
@@ -97,8 +87,18 @@ void init_scr() {
 	clr_scr();
 }
 
-void printf(char* str, ...) {
-	char buffer[128];
+void move_cursor(uchar x, uchar y) { //
+	ushort cur_val = xy_to_offset(x, y);
+	outw(COMMAND_PORT, 0xe);
+	outw(DATA_PORT, cur_val >> 8);
+	outw(COMMAND_PORT, 0xf);
+	outw(DATA_PORT, cur_val & 0xff);
+	screen.cursor.x = x;
+	screen.cursor.y = y;
+}
+
+void printf(char* str, ...) { //
+	char buffer[BUFFER_SIZE];
 	uint* next_arg = (uint*) &str + 1;
 	while (*str != '\0') {
 		if (*str == '%') {
@@ -131,7 +131,7 @@ void printf(char* str, ...) {
 	}
 }
 
-void set_theme(uchar fg_color, uchar bg_color) {
+void set_theme(uchar fg_color, uchar bg_color) { //
 	screen.fg_color = fg_color;
 	screen.bg_color = bg_color;
 }
@@ -150,20 +150,41 @@ scr_xy_t get_cursor_pos() {
 
 #ifdef TEST
 void test_screen() {
+	printf("HELLO\n");
+	clr_scr();
+
 	set_theme(LIGHT_GREEN, RED);
-	for (int i = 0; i < 85; i++) {
-		printf("line %d : defined\n", i);
+	for (int i = 65; i < 91; i++) {
+		printf("%s \"%c\" => %d => %x negate %d\n", "Char", i, i, i, -i);
 	}
-	print_char_on_cursor('r');
+
+	move_cursor(40, 20);
+	printf("Decimal Base : -(%d) = %d", 10, -10);
+	move_cursor(40, 21);
+	printf("Hexadecimal Base : -(%x) = %x", 10, -10);
 
 	set_theme(BROWN, LIGHT_BLUE);
 	move_cursor(40, 10);
 	print_string_on_cursor("Raed");
-	move_cursor(55, 10);
-	print_string_on_cursor("Steven");
 	move_cursor(40, 11);
 	print_string_on_cursor("Abdennadher");
+	move_cursor(55, 10);
+	print_string_on_cursor("Steven");
 	move_cursor(55, 11);
 	print_string_on_cursor("Liatti");
+
+	print_char_by_xy(78, 0, '&');
+	print_char_by_xy(78, 24, '&');
+	print_char_by_xy_color(79, 0, '*', WHITE, RED);
+	print_char_by_xy_color(79, 24, '*', WHITE, RED);
+
+	set_theme(BLACK, YELLOW);
+	move_cursor(1, 1);
+	scr_xy_t pos = get_cursor_pos();
+	printf("get_cursor_pos() = (%d,%d) , the position of 'g' character", pos.x, pos.y);
+	move_cursor(1, 2);
+	printf("get_bg_color() = %d", get_bg_color());
+	move_cursor(1, 3);
+	printf("get_fg_color() = %d", get_fg_color());
 }
 #endif
