@@ -3,6 +3,8 @@
 #include "screen.h"
 #include "pic.h"
 #include "x86.h"
+#include "keyboard.h"
+#include "timer.h"
 
 #define IDT_SIZE 256
 
@@ -112,16 +114,16 @@ void exception_handler(regs_t *regs) {
 	halt();
 }
 
-// Exception handler
+// IRQ handler
 void irq_handler(regs_t *regs) {
 	switch (regs->number) {
 		case 0:
-			printf("System timer (PIT)");
-			// timer_handler();
+			// printf("System timer (PIT)");
+			timer_handler();
 			break;
 		case 1:
-			printf("Keyboard");
-			// keyboard_handler();
+			// printf("Keyboard");
+			keyboard_handler();
 			break;
 		case 2:
 			printf("Redirected to slave PIC");
@@ -217,8 +219,8 @@ void idt_init() {
 	idt[46] = idt_build_entry(GDT_KERNEL_CODE_SELECTOR, (uint32_t) &_irq_14, TYPE_INTERRUPT_GATE, DPL_KERNEL);
 	idt[47] = idt_build_entry(GDT_KERNEL_CODE_SELECTOR, (uint32_t) &_irq_15, TYPE_INTERRUPT_GATE, DPL_KERNEL);
 	
-	idt_ptr.base = (uint32_t) idt; // Base of idt is the first element of idt	
-	idt_ptr.limit = IDT_SIZE - 1; // Limit is the size of IDT - 1
+	idt_ptr.base = (uint32_t) idt;	 
+	idt_ptr.limit = IDT_SIZE - 1;
 
 	idt_load(&idt_ptr);
 }
