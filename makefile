@@ -1,6 +1,6 @@
 KERNEL_NAME=kernel
 KERNEL_FOLDER=$(KERNEL_NAME)
-OS_NAME=myos
+OS_NAME=dogeos
 
 $(OS_NAME).iso: $(KERNEL_NAME).elf grub/menu.lst
 	mkdir -p $(OS_NAME)/boot/grub

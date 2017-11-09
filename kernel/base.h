@@ -14,7 +14,7 @@
 
 #include "../common/types.h"
 
-#define BUFFER_SIZE 128
+#define SCREEN_BUFFER_SIZE 128
 
 extern void *memset(void *dst, int value, uint count);
 extern void *memcpy(void *dst, void *src, uint count);

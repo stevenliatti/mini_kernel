@@ -28,9 +28,6 @@ typedef struct idt_ptr_st {
 extern void idt_init();
 extern void idt_load();
 
-// extern void exception_handler(regs_t *regs);
-// extern void irq_handler(regs_t *regs);
-
 // Exception handler
 extern void _exception_0();
 extern void _exception_1();

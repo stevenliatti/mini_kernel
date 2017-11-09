@@ -12,13 +12,13 @@ align 4         ; the code must be 4 byte aligned
 %macro exception 1
 global _exception_%1
 _exception_%1:
-	cli         ; disable interrupts
+	cli         	; disable interrupts
 	; this if is for exceptions without error code
 	%if %1 < 8 || %1 == 9 || %1 == 15 || %1 == 16 || %1 > 17
-	push 0  ; dummy error code in certain case
+	push 	0  		; dummy error code in certain case
 	%endif
-	push %1     ; exception number
-	jmp exception_wrapper
+	push 	%1		; exception number
+	jmp 	exception_wrapper
 %endmacro
 ; Creation of all exceptions (0 to 20), total = 21
 %assign i 0
@@ -29,7 +29,7 @@ exception i
 
 ;------------------------------------------------
 ; IRQ
-; Macro for irq with one argument (the irq number)
+; Macro for irq
 %macro irq 1
 global _irq_%1
 _irq_%1:
