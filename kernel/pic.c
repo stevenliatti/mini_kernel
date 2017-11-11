@@ -3,6 +3,10 @@
 #define PIC2_CMD        0xA0
 #define PIC2_DATA       0xA1
 
+#include "../common/types.h"
+
+extern void outb(uint16_t port, uint8_t data);
+
 // End Of Interrupt (reactivate the specified PIC)
 #define PIC_EOI         0x20
 

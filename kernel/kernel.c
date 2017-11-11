@@ -12,6 +12,9 @@
 #include "multiboot.h"
 #include "gdt.h"
 #include "screen.h"
+#include "pic.h"
+#include "timer.h"
+#include "idt.h"
 
 /**
  * @brief entry point of kernel. Mode test available
@@ -28,10 +31,20 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	#else
 
 	gdt_init();
-	printf("Screen has been initialized.\n");
-	printf("GDT has been initialized.\n");
-	printf("Memory upper : %d", boot_info->mem_upper);
+	idt_init();
+	pic_init();
+	timer_init(18);
+
+	printf("%d\n", get_ticks());
+
+	// printf("Screen has been initialized.\n");
+	// printf("GDT has been initialized.\n");
+	// printf("Memory upper : %d", boot_info->mem_upper);
 	
+	// for(int i = 0; i < 20; i++) {
+
+	// }
+
 	#endif
 
 	while (1) {}

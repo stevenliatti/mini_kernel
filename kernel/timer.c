@@ -20,17 +20,19 @@ void timer_init(uint freq_hz) {
 
 	ushort div = 0;
 	if (freq_hz < MIN_FREQ) {
-		div = MIN_DIV;
+		div = MAX_DIV;
 		timer.freq_hz = MIN_FREQ;
 	}
 	else if (freq_hz > MAX_FREQ) {
-		div = MAX_DIV;
+		div = MIN_DIV;
 		timer.freq_hz = MAX_FREQ;
 	}
 	else {
 		div = MAX_FREQ / freq_hz;
 		timer.freq_hz = freq_hz;
 	}
+
+	printf("In timer_init, div : %d, freq : %d\n", div, timer.freq_hz);
 
 	// PIT programmation
 	// set divisor selection and repetition mode

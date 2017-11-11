@@ -118,7 +118,7 @@ void exception_handler(regs_t *regs) {
 void irq_handler(regs_t *regs) {
 	switch (regs->number) {
 		case 0:
-			// printf("System timer (PIT)");
+			printf("System timer (PIT)");
 			timer_handler();
 			break;
 		case 1:
@@ -223,4 +223,5 @@ void idt_init() {
 	idt_ptr.limit = IDT_SIZE - 1;
 
 	idt_load(&idt_ptr);
+	printf("end idt init\n");
 }
