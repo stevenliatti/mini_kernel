@@ -123,7 +123,7 @@ void irq_handler(regs_t *regs) {
 			break;
 		case 1:
 			// printf("Keyboard");
-			// keyboard_handler();
+			keyboard_handler();
 			break;
 		case 2:
 			printf("Redirected to slave PIC");
@@ -223,5 +223,4 @@ void idt_init() {
 	idt_ptr.limit = sizeof(idt) - 1;
 
 	idt_load(&idt_ptr);
-	printf("end idt init\n");
 }

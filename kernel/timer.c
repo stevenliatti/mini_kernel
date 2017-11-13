@@ -38,7 +38,7 @@ void timer_init(uint freq_hz) {
 
 void timer_handler() {
 	timer.ticks++;
-	printf("Ticks : %d\n", timer.ticks);
+	// printf("Ticks : %d\n", timer.ticks);
 }
 
 uint get_ticks() {

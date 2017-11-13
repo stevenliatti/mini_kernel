@@ -37,17 +37,31 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	timer_init(18);
 	sti();
 
-	for(int i = 0; i < 20; i++) {
-		int ticks = get_ticks();
-		sleep(1000);		
-		printf("%d sec, %d (ticks), ticks diff = %d\n", i, get_ticks(), get_ticks() - ticks);
+	printf("Screen has been initialized.\n");
+	printf("PIC has been initialized.\n");	
+	printf("GDT has been initialized.\n");
+	printf("IDT has been initialized.\n");
+	printf("Timer has been initialized.\n");
+	printf("Memory upper : %d\n", boot_info->mem_upper);
+
+	// for(int i = 0; i < 5; i++) {
+	// 	int ticks = get_ticks();
+	// 	sleep(1000);		
+	// 	printf("%d sec, %d (ticks), ticks diff = %d\n", i, get_ticks(), get_ticks() - ticks);
+	// }
+
+	while (1) {
+		char c = (char)(getc());
+		if ((int)(c) >= 0) {
+			if (c == 'Q') {
+				printf("\nShutdown");
+				halt();
+			}
+			else {
+				printf("%c", c);
+			}
+		}
 	}
 
-	// printf("Screen has been initialized.\n");
-	// printf("GDT has been initialized.\n");
-	// printf("Memory upper : %d", boot_info->mem_upper);
-
 	#endif
-
-	while (1) {}
 }
