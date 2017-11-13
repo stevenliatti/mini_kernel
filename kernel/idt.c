@@ -43,7 +43,7 @@ static idt_entry_t idt_build_entry(uint16_t selector, uint32_t offset, uint8_t t
 // Exception handler
 void exception_handler(regs_t *regs) {
 	clr_scr();
-	set_theme(BLACK, RED);
+	set_theme(RED, BLACK);
 	switch (regs->number) {
 		case 0:
 			printf("Exception 0 - Divide Error");
@@ -118,12 +118,12 @@ void exception_handler(regs_t *regs) {
 void irq_handler(regs_t *regs) {
 	switch (regs->number) {
 		case 0:
-			printf("System timer (PIT)");
+			// printf("System timer (PIT)");
 			timer_handler();
 			break;
 		case 1:
 			// printf("Keyboard");
-			keyboard_handler();
+			// keyboard_handler();
 			break;
 		case 2:
 			printf("Redirected to slave PIC");
@@ -219,8 +219,8 @@ void idt_init() {
 	idt[46] = idt_build_entry(GDT_KERNEL_CODE_SELECTOR, (uint32_t) &_irq_14, TYPE_INTERRUPT_GATE, DPL_KERNEL);
 	idt[47] = idt_build_entry(GDT_KERNEL_CODE_SELECTOR, (uint32_t) &_irq_15, TYPE_INTERRUPT_GATE, DPL_KERNEL);
 	
-	idt_ptr.base = (uint32_t) idt;	 
-	idt_ptr.limit = IDT_SIZE - 1;
+	idt_ptr.base = (uint32_t) &idt;
+	idt_ptr.limit = sizeof(idt) - 1;
 
 	idt_load(&idt_ptr);
 	printf("end idt init\n");

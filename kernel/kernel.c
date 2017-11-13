@@ -15,6 +15,7 @@
 #include "pic.h"
 #include "timer.h"
 #include "idt.h"
+#include "x86.h"
 
 /**
  * @brief entry point of kernel. Mode test available
@@ -30,20 +31,21 @@ void kernel_entry(multiboot_info_t* boot_info) {
 
 	#else
 
+	pic_init();	
 	gdt_init();
 	idt_init();
-	pic_init();
 	timer_init(18);
+	sti();
 
-	printf("%d\n", get_ticks());
+	for(int i = 0; i < 20; i++) {
+		int ticks = get_ticks();
+		sleep(1000);		
+		printf("%d sec, %d (ticks), ticks diff = %d\n", i, get_ticks(), get_ticks() - ticks);
+	}
 
 	// printf("Screen has been initialized.\n");
 	// printf("GDT has been initialized.\n");
 	// printf("Memory upper : %d", boot_info->mem_upper);
-	
-	// for(int i = 0; i < 20; i++) {
-
-	// }
 
 	#endif
 
