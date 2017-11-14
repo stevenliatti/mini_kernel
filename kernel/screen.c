@@ -22,6 +22,24 @@
 
 extern void outw(uint16_t port, uint8_t data);
 
+/**
+ * @brief represent x and y coordinates on screen
+ */
+typedef struct scr_xy {
+	uchar x;
+	uchar y;
+} __attribute__((packed)) scr_xy_t;
+
+/**
+ * @brief represent the screen
+ */
+typedef struct screen {
+	scr_xy_t cursor;		// cursor coordinate in the screen
+	ushort* screen_ptr;		// points to VRAM
+	uchar fg_color;			// foreground color
+	uchar bg_color;			// background color
+} __attribute__((packed)) screen_t;
+
 static screen_t screen;
 
 /**
@@ -64,8 +82,8 @@ static void print_char_by_xy(ushort x, ushort y, char c) {
  */
 static void shift_up() {
 	memcpy((int*)FIRST_ADDR, FIRST_ADDR + SCREEN_WIDTH, LAST_ADDR - FIRST_ADDR - SCREEN_WIDTH);
-	for (int i = 0; i < 80; i++) {
-		print_char_by_xy_color(i, 24, '\0', BLACK, LIGHT_GRAY);
+	for (int i = 0; i < SCREEN_WIDTH; i++) {
+		print_char_by_xy_color(i, SCREEN_HEIGHT - 1, '\0', BLACK, LIGHT_GRAY);
 	}
 }
 

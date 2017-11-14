@@ -82,7 +82,7 @@ static void negate_and_revert(int x, char* str, int i) {
  * @brief clear the buffer given
  * @param buffer the buffer string
  */
-void clear_buffer(char* buffer) {
+static void clear_buffer(char* buffer) {
 	for (int i = 0; i < SCREEN_BUFFER_SIZE; i++) {
 		buffer[i] = 0;
 	}
