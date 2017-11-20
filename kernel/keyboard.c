@@ -2,7 +2,7 @@
 #include "screen.h"
 #include "../common/types.h"
 
-#define KEYBOARD_BUFFER_SIZE 1024
+#define KEYBOARD_BUFFER_SIZE 5
 
 #define SHIFT_LEFT 		0x2A
 #define SHIFT_RIGHT 	0x36
@@ -27,13 +27,15 @@ void keyboard_init() {
 void keyboard_handler() {
 	// If the buffer is full, print it and return
 
-	// if (circ_buffer.read == circ_buffer.write) {
-	// 	uchar color = get_fg_color();
-	// 	set_theme(get_bg_color(), RED);
-	// 	printf("Keyboard buffer full");
-	// 	set_theme(get_bg_color(), color);		
-	// 	return;
-	// }
+	printf("read : %d, write : %d ", circ_buffer.read, circ_buffer.write);
+
+	if (circ_buffer.read == (circ_buffer.write + 1) % KEYBOARD_BUFFER_SIZE) {
+		uchar color = get_fg_color();
+		set_theme(RED, get_bg_color());
+		printf("Keyboard buffer full");
+		set_theme(color, get_bg_color());		
+		return;
+	}
 
 	uchar key = inb(0x60);
 	// If bit 7 is 0, the key is pressed
