@@ -58,7 +58,7 @@ void kernel_entry(multiboot_info_t* boot_info) {
 				halt();
 			}
 			else {
-				printf("code = %d\n", c);
+				printf("%c", c);
 			}
 		}
 	}

@@ -4,9 +4,14 @@
 
 #define KEYBOARD_BUFFER_SIZE 1024
 
-#define SHIFT_LEFT 		0x2A
-#define SHIFT_RIGHT 	0x36
-#define RETURN 			0x1C
+#define ESC 			1
+#define BACKSPACE		2
+#define TAB				3
+#define ENTER			'\n'
+#define CTRL			5
+#define SHIFT_LEFT 		6
+#define SHIFT_RIGHT 	7
+#define ALT				8
 
 extern uint8_t inb(uint16_t port);
 
@@ -17,8 +22,10 @@ static struct {
 	uint count; 
 } circ_buffer = {{}, 0, 0, 0};
 
-static uchar mapping[] =       "--1234567890'^--qwertzuiope---asdfghjklea-,\\yxcvbnm,.--12 456789abcdefghijklknopqrtuwv<yz";
-static uchar mapping_shift[] = "--+\"*c%&/()=?`--QWERTZUIOPu!--ASDFGHJKLEA-L<YXCVBNM;:_-12 4567------------------------>--";
+static uchar mapping_shift[] = 	{0,0  ,'+','"','*','ç','%','&','/','(',')','=','?' ,'`',0        ,0  ,'Q','W','E','R','T','Z','U','I','O','P','ü','!',ENTER,0   ,'A','S','D','F','G','H','J','K','L','ö','ä','°',0         ,'£','Y','X','C','V','B','N','M',';',':','_',0          ,0,0  ,' '};
+static uchar mapping[] = 		{0,ESC,'1','2','3','4','5','6','7','8','9','0','\'','^',BACKSPACE,TAB,'q','w','e','r','t','z','u','i','o','p','è','¨',ENTER,CTRL,'a','s','d','f','g','h','j','k','l','é','à','§',SHIFT_LEFT,'$','y','x','c','v','b','n','m',',','.','-',SHIFT_RIGHT,0,ALT,' '};
+// static uchar mapping[] =       "--1234567890'^--qwertzuiope---asdfghjklea-,\\yxcvbnm,.--12 456789abcdefghijklknopqrtuwv<yz";
+// static uchar mapping_shift[] = "--+\"*c%&/()=?`--QWERTZUIOPu!--ASDFGHJKLEA-L<YXCVBNM;:_-12 4567------------------------>--";
 static uchar shift = false;
 
 void keyboard_init() {
@@ -39,33 +46,24 @@ void keyboard_handler() {
 		}
 		// If bit 7 is 0, the key is pressed
 		if (!(key >> 7)) {
-			switch (key) {
-				case SHIFT_LEFT:
-				case SHIFT_RIGHT:
-					shift = true;
-					break;
-				case RETURN:
-					circ_buffer.buffer[circ_buffer.write] = '\n';
-					circ_buffer.write = (circ_buffer.write + 1) % KEYBOARD_BUFFER_SIZE;
-					circ_buffer.count++;
-					break;
-				default:
-					if (shift) {
-						circ_buffer.buffer[circ_buffer.write] = key;
-					}
-					else {
-						circ_buffer.buffer[circ_buffer.write] = key;
-					}
-					circ_buffer.write = (circ_buffer.write + 1) % KEYBOARD_BUFFER_SIZE;
-					circ_buffer.count++;
-					break;
+			if (mapping[key] == SHIFT_LEFT || mapping[key] == SHIFT_RIGHT) {
+				shift = true;
+				return;
 			}
+			if (shift) {
+				circ_buffer.buffer[circ_buffer.write] = mapping_shift[key];
+			}
+			else {
+				circ_buffer.buffer[circ_buffer.write] = mapping[key];
+			}
+			circ_buffer.write = (circ_buffer.write + 1) % KEYBOARD_BUFFER_SIZE;
+			circ_buffer.count++;
 		}
 		// If bit 7 is 1, the key is released
 		else {
 			// Set the bit 7 to 0 for shift use
 			key &= ~(0x1 << 7);
-			if (key == SHIFT_LEFT || key == SHIFT_RIGHT) {
+			if (mapping[key] == SHIFT_LEFT || mapping[key] == SHIFT_RIGHT) {
 				shift = false;
 			}
 		}
