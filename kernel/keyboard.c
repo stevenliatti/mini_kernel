@@ -27,11 +27,9 @@ void keyboard_init() {
 
 void keyboard_handler() {
 	// If the buffer is full, print it and return
-	uchar state = inb(0x64);
-	if (state & 0x1 == 0x1) {
+	if (keypressed()) {
 
 		uchar key = inb(0x60);
-
 		if (circ_buffer.count == KEYBOARD_BUFFER_SIZE) {
 			uchar color = get_fg_color();
 			set_theme(RED, get_bg_color());
@@ -53,10 +51,10 @@ void keyboard_handler() {
 					break;
 				default:
 					if (shift) {
-						circ_buffer.buffer[circ_buffer.write] = mapping_shift[key];
+						circ_buffer.buffer[circ_buffer.write] = key;
 					}
 					else {
-						circ_buffer.buffer[circ_buffer.write] = mapping[key];
+						circ_buffer.buffer[circ_buffer.write] = key;
 					}
 					circ_buffer.write = (circ_buffer.write + 1) % KEYBOARD_BUFFER_SIZE;
 					circ_buffer.count++;
@@ -83,7 +81,7 @@ int getc() {
 	return circ_buffer.buffer[pos];
 }
 
-// Non-blocking call. Return an int > 0 if a key is pressed
+// Non-blocking call. Return 1 if a key is pressed
 int keypressed() {
-	circ_buffer.count;
+	return inb(0x64) & 0x1;
 }
