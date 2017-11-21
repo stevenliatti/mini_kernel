@@ -33,7 +33,7 @@ void keyboard_handler() {
 		uchar color = get_fg_color();
 		set_theme(RED, get_bg_color());
 		printf("Keyboard buffer full");
-		set_theme(color, get_bg_color());		
+		set_theme(color, get_bg_color());
 		return;
 	}
 
@@ -80,9 +80,7 @@ int getc() {
 	return -1;
 }
 
-// Non-blocking call. Return 1 if a key is pressed
+// Non-blocking call. Return an int > 0 if a key is pressed
 int keypressed() {
-	uchar key = inb(0x60);
-	if (!(key >> 7)) return 1;
-	else return 0;
+	circ_buffer.count;
 }
