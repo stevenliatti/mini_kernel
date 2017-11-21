@@ -49,7 +49,6 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	// 	sleep(1000);		
 	// 	printf("%d sec, %d (ticks), ticks diff = %d\n", i, get_ticks(), get_ticks() - ticks);
 	// }
-	sleep(5000);
 	
 	while (1) {
 		char c = (char)(getc());
@@ -59,7 +58,7 @@ void kernel_entry(multiboot_info_t* boot_info) {
 				halt();
 			}
 			else {
-				printf("%c", c);
+				printf("code = %d\n", c);
 			}
 		}
 	}
