@@ -19,7 +19,7 @@
 extern void *memset(void *dst, int value, uint count);
 extern void *memcpy(void *dst, void *src, uint count);
 extern int strncmp(const char *p, const char *q, uint n);
-extern void itoa (int x, char* str);
-extern void itox (int x, char* str);
+extern void itoa (int x, uchar* str);
+extern void itox (int x, uchar* str);
 
 #endif

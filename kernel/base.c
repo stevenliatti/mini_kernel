@@ -63,7 +63,7 @@ int strncmp(const char *p, const char *q, uint n) {
  * @param str the resulted string
  * @param i   index
  */
-static void negate_and_revert(int x, char* str, int i) {
+static void negate_and_revert(int x, uchar* str, int i) {
 	if (x < 0) {
 		str[i] = '-';
 	} 
@@ -82,7 +82,7 @@ static void negate_and_revert(int x, char* str, int i) {
  * @brief clear the buffer given
  * @param buffer the buffer string
  */
-static void clear_buffer(char* buffer) {
+static void clear_buffer(uchar* buffer) {
 	for (int i = 0; i < SCREEN_BUFFER_SIZE; i++) {
 		buffer[i] = 0;
 	}
@@ -93,7 +93,7 @@ static void clear_buffer(char* buffer) {
  * @param x   int to convert
  * @param str string storing the value converted
  */
-void itoa(int x, char* str) {
+void itoa(int x, uchar* str) {
 	clear_buffer(str);
 	if (x == 0) {
 		str[0] = '0';
@@ -118,7 +118,7 @@ void itoa(int x, char* str) {
  * @param x   int to convert
  * @param str string storing the value converted
  */
-void itox(int x, char* str) {
+void itox(int x, uchar* str) {
 	clear_buffer(str);
 	if (x == 0) {
 		str[0] = '0';

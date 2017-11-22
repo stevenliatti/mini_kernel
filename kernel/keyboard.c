@@ -22,8 +22,8 @@ static struct {
 	uint count; 
 } circ_buffer = {{}, 0, 0, 0};
 
-static uchar mapping_shift[] = 	{0,0  ,'+','"','*','√ß','%','&','/','(',')','=','?' ,'`',0        ,0  ,'Q','W','E','R','T','Z','U','I','O','P','√º','!',ENTER,0   ,'A','S','D','F','G','H','J','K','L','√∂','√§','¬∞',0         ,'¬£','Y','X','C','V','B','N','M',';',':','_',0          ,0,0  ,' '};
-static uchar mapping[] = 		{0,ESC,'1','2','3','4','5','6','7','8','9','0','\'','^',BACKSPACE,TAB,'q','w','e','r','t','z','u','i','o','p','√®','¬®',ENTER,CTRL,'a','s','d','f','g','h','j','k','l','√©','√†','¬ß',SHIFT_LEFT,'$','y','x','c','v','b','n','m',',','.','-',SHIFT_RIGHT,0,ALT,' '};
+static uchar mapping_shift[] = 	{0,0  ,'+','"','*','á','%','&','/','(',')','=','?' ,'`',0        ,0  ,'Q','W','E','R','T','Z','U','I','O','P','Å','!',ENTER,0   ,'A','S','D','F','G','H','J','K','L','î','Ñ','¯',0         ,'ú','Y','X','C','V','B','N','M',';',':','_',0          ,0,0  ,' '};
+static uchar mapping[] = 		{0,ESC,'1','2','3','4','5','6','7','8','9','0','\'','^',BACKSPACE,TAB,'q','w','e','r','t','z','u','i','o','p','ä','?',ENTER,CTRL,'a','s','d','f','g','h','j','k','l','Ç','Ö','?',SHIFT_LEFT,'$','y','x','c','v','b','n','m',',','.','-',SHIFT_RIGHT,0,ALT,' '};
 // static uchar mapping[] =       "--1234567890'^--qwertzuiope---asdfghjklea-,\\yxcvbnm,.--12 456789abcdefghijklknopqrtuwv<yz";
 // static uchar mapping_shift[] = "--+\"*c%&/()=?`--QWERTZUIOPu!--ASDFGHJKLEA-L<YXCVBNM;:_-12 4567------------------------>--";
 static uchar shift = false;

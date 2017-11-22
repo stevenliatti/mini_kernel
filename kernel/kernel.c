@@ -16,6 +16,7 @@
 #include "timer.h"
 #include "idt.h"
 #include "x86.h"
+#include "keyboard.h"
 
 /**
  * @brief entry point of kernel. Mode test available
@@ -51,15 +52,13 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	// }
 	
 	while (1) {
-		char c = (char)(getc());
-		if ((int)(c) >= 0) {
-			if (c == 'Q') {
-				printf("\nShutdown");
-				halt();
-			}
-			else {
-				printf("%c", c);
-			}
+		uchar c = getc();
+		if (c == 'Q') {
+			printf("\nShutdown");
+			halt();
+		}
+		else {
+			printf("%c", c);
 		}
 	}
 

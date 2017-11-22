@@ -55,7 +55,7 @@ static void print_char_by_xy_color(ushort x, ushort y, uchar c, uchar bg, uchar 
  * @param y  y coordinate
  * @param c  character
  */
-static void print_char_by_xy(ushort x, ushort y, char c) {
+static void print_char_by_xy(ushort x, ushort y, uchar c) {
 	print_char_by_xy_color(x, y, c, screen.bg_color, screen.fg_color);
 }
 
@@ -73,7 +73,7 @@ static void shift_up() {
  * @brief print char at the cursor position. Check if the coordinates are correct.
  * @param c the character
  */
-static void print_char_on_cursor(char c) {
+static void print_char_on_cursor(uchar c) {
 	uchar new_char_x = screen.cursor.x;
 	uchar new_char_y = screen.cursor.y;
 	uchar new_cur_x = screen.cursor.x + 1;
@@ -104,7 +104,7 @@ static void print_char_on_cursor(char c) {
  * @brief print a char array (string) at the cursor position.
  * @param str [description]
  */
-static void print_string_on_cursor(char* str) {
+static void print_string_on_cursor(uchar* str) {
 	for (uint i = 0; str[i] != 0; i++) {
 		print_char_on_cursor(str[i]);
 	}
@@ -150,7 +150,7 @@ void move_cursor(uchar x, uchar y) { //
  * @brief format and print data
  */
 void printf(char* str, ...) { //
-	char buffer[SCREEN_BUFFER_SIZE];
+	uchar buffer[SCREEN_BUFFER_SIZE];
 	uint* next_arg = (uint*) &str + 1;
 	while (*str != '\0') {
 		if (*str == '%') {
@@ -160,7 +160,7 @@ void printf(char* str, ...) { //
 					print_char_on_cursor(*next_arg);
 					break;
 				case 's' :
-					print_string_on_cursor((char*) *next_arg);
+					print_string_on_cursor((uchar*) *next_arg);
 					break;
 				case 'd' :
 					itoa((int) *next_arg, buffer);
