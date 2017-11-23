@@ -7,7 +7,7 @@ section .txt
 
 outb:
 	mov		byte dx, [esp+4]      ; Port
-	mov     byte al, [esp+8]     ; Data
+	mov     byte al, [esp+8]      ; Data
 	out     dx, al
 	ret
 

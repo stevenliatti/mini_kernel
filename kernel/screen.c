@@ -14,12 +14,15 @@
 #include "pio.h"
 
 #define COMMAND_PORT    0x3d4
+#define FIRST_COMMAND 	0xe
+#define SECOND_COMMAND 	0xf
 #define DATA_PORT       0x3d5
 #define SCREEN_WIDTH    80
 #define SCREEN_HEIGHT   25
 #define FIRST_ADDR      (ushort*) 0xb8000
 #define LAST_ADDR       (FIRST_ADDR + SCREEN_WIDTH * SCREEN_HEIGHT * 2)
 #define CHAR_COUNT      (SCREEN_WIDTH * SCREEN_HEIGHT)
+#define RESET_BG_FG 	0xf00
 
 static screen_t screen;
 
@@ -127,7 +130,7 @@ static void print_string_on_cursor(uchar* str) {
  */
 void clr_scr() { //
 	for (ushort i = 0; i < CHAR_COUNT; i++) {
-		screen.screen_ptr[i] = 0xf00;
+		screen.screen_ptr[i] = RESET_BG_FG;
 	}
 	move_cursor(0, 0);
 }
@@ -150,9 +153,9 @@ void init_scr() {
  */
 void move_cursor(uchar x, uchar y) { //
 	ushort cur_val = xy_to_offset(x, y);
-	outw(COMMAND_PORT, 0xe);
+	outw(COMMAND_PORT, FIRST_COMMAND);
 	outw(DATA_PORT, cur_val >> 8);
-	outw(COMMAND_PORT, 0xf);
+	outw(COMMAND_PORT, SECOND_COMMAND);
 	outw(DATA_PORT, cur_val & 0xff);
 	screen.cursor.x = x;
 	screen.cursor.y = y;

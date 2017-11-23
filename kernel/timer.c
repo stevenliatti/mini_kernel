@@ -2,6 +2,10 @@
 #include "screen.h"
 #include "pio.h"
 
+#define PIT_COMMAND_PORT 			0X43
+#define PIT_SELECT_DIV_AND_REPEAT 	0X36
+#define PIT_CANAL_0 				0X40
+
 #define MAX_FREQ 	1193180
 #define MIN_FREQ 	19
 
@@ -29,10 +33,10 @@ void timer_init(uint freq_hz) {
 
 	// PIT programmation
 	// set divisor selection and repetition mode
-	outb(0x43, 0x36);
+	outb(PIT_COMMAND_PORT, PIT_SELECT_DIV_AND_REPEAT);
 	// write in canal 0 LSB and MSB of divisor
-	outb(0x40, (div & 0xFF));
-	outb(0x40, (div >> 8));
+	outb(PIT_CANAL_0, (div & 0xFF));
+	outb(PIT_CANAL_0, (div >> 8));
 }
 
 void timer_handler() {

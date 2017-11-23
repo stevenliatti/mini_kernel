@@ -5,6 +5,9 @@
 
 #define KEYBOARD_BUFFER_SIZE 1024
 
+#define KEYBOARD_DATA_PORT 	0x60
+#define KEYBOARD_STATE_PORT 0x64
+
 #define ESC 			27
 #define BACKSPACE		'\b'
 #define TAB				9
@@ -38,7 +41,7 @@ static uchar shift = false;
 void keyboard_handler() {
 	// If the buffer is full, print it and return
 	if (keypressed()) {
-		uchar key = inb(0x60);
+		uchar key = inb(KEYBOARD_DATA_PORT);
 		if (circ_buffer.count == KEYBOARD_BUFFER_SIZE) {
 			uchar color = get_fg_color();
 			set_theme(RED, get_bg_color());
@@ -74,7 +77,7 @@ void keyboard_handler() {
 
 int getc() {
 	// Read a character from the buffer if it's not empty
-	while (circ_buffer.count == 0) {}
+	while (circ_buffer.count == 0);
 	ushort pos = circ_buffer.read;
 	circ_buffer.read = (circ_buffer.read + 1) % KEYBOARD_BUFFER_SIZE;
 	circ_buffer.count--;
@@ -83,5 +86,5 @@ int getc() {
 
 // Non-blocking call. Return 1 if a key is pressed
 int keypressed() {
-	return inb(0x64) & 0x1;
+	return inb(KEYBOARD_STATE_PORT) & 0x1;
 }
