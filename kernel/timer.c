@@ -1,10 +1,9 @@
 #include "base.h"
 #include "screen.h"
+#include "pio.h"
 
 #define MAX_FREQ 	1193180
 #define MIN_FREQ 	19
-
-extern void outb(uint16_t port, uint8_t data);
 
 typedef struct timer_st {
 	uint ticks;

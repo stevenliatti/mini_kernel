@@ -1,6 +1,7 @@
 #include "keyboard.h"
 #include "screen.h"
 #include "../common/types.h"
+#include "pio.h"
 
 #define KEYBOARD_BUFFER_SIZE 1024
 
@@ -12,8 +13,6 @@
 #define SHIFT_LEFT 		6
 #define SHIFT_RIGHT 	7
 #define ALT				18
-
-extern uint8_t inb(uint16_t port);
 
 static struct {
 	uint buffer[KEYBOARD_BUFFER_SIZE];

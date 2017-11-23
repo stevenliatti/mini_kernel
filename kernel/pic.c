@@ -4,8 +4,7 @@
 #define PIC2_DATA       0xA1
 
 #include "../common/types.h"
-
-extern void outb(uint16_t port, uint8_t data);
+#include "pio.h"
 
 // End Of Interrupt (reactivate the specified PIC)
 #define PIC_EOI         0x20
@@ -44,4 +43,3 @@ void pic_eoi(int irq) {
 		outb(PIC2_CMD, PIC_EOI);
 	outb(PIC1_CMD, PIC_EOI);
 }
-

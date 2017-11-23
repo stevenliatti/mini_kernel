@@ -11,6 +11,7 @@
 
 #include "screen.h"
 #include "base.h"
+#include "pio.h"
 
 #define COMMAND_PORT    0x3d4
 #define DATA_PORT       0x3d5
@@ -19,8 +20,6 @@
 #define FIRST_ADDR      (ushort*) 0xb8000
 #define LAST_ADDR       (FIRST_ADDR + SCREEN_WIDTH * SCREEN_HEIGHT * 2)
 #define CHAR_COUNT      (SCREEN_WIDTH * SCREEN_HEIGHT)
-
-extern void outw(uint16_t port, uint8_t data);
 
 static screen_t screen;
 

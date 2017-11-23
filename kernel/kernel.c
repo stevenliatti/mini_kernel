@@ -35,7 +35,7 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	pic_init();	
 	gdt_init();
 	idt_init();
-	timer_init(18);
+	timer_init(75);
 	sti();
 
 	printf("Screen has been initialized.\n");
