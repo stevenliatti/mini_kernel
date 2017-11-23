@@ -4,14 +4,14 @@
 
 #define KEYBOARD_BUFFER_SIZE 1024
 
-#define ESC 			1
-#define BACKSPACE		2
-#define TAB				3
+#define ESC 			27
+#define BACKSPACE		'\b'
+#define TAB				9
 #define ENTER			'\n'
-#define CTRL			5
+#define CTRL			17
 #define SHIFT_LEFT 		6
 #define SHIFT_RIGHT 	7
-#define ALT				8
+#define ALT				18
 
 extern uint8_t inb(uint16_t port);
 
@@ -22,20 +22,23 @@ static struct {
 	uint count; 
 } circ_buffer = {{}, 0, 0, 0};
 
-static uchar mapping_shift[] = 	{0,0  ,'+','"','*','á','%','&','/','(',')','=','?' ,'`',0        ,0  ,'Q','W','E','R','T','Z','U','I','O','P','Å','!',ENTER,0   ,'A','S','D','F','G','H','J','K','L','î','Ñ','¯',0         ,'ú','Y','X','C','V','B','N','M',';',':','_',0          ,0,0  ,' '};
-static uchar mapping[] = 		{0,ESC,'1','2','3','4','5','6','7','8','9','0','\'','^',BACKSPACE,TAB,'q','w','e','r','t','z','u','i','o','p','ä','?',ENTER,CTRL,'a','s','d','f','g','h','j','k','l','Ç','Ö','?',SHIFT_LEFT,'$','y','x','c','v','b','n','m',',','.','-',SHIFT_RIGHT,0,ALT,' '};
-// static uchar mapping[] =       "--1234567890'^--qwertzuiope---asdfghjklea-,\\yxcvbnm,.--12 456789abcdefghijklknopqrtuwv<yz";
-// static uchar mapping_shift[] = "--+\"*c%&/()=?`--QWERTZUIOPu!--ASDFGHJKLEA-L<YXCVBNM;:_-12 4567------------------------>--";
+static uchar mapping_shift[] = {
+	0,0,'+','"','*','á','%','&','/','(',')','=','?','`',0,
+	0,'Q','W','E','R','T','Z','U','I','O','P','Å','!',ENTER,
+	0,'A','S','D','F','G','H','J','K','L','î','Ñ','¯',0,'ú',
+	'Y','X','C','V','B','N','M',';',':','_',0,0,0,' '
+};
+static uchar mapping[] = {
+	0,ESC,'1','2','3','4','5','6','7','8','9','0','\'','^',BACKSPACE,
+	TAB,'q','w','e','r','t','z','u','i','o','p','ä','?',ENTER,
+	CTRL,'a','s','d','f','g','h','j','k','l','Ç','Ö','?',SHIFT_LEFT,'$',
+	'y','x','c','v','b','n','m',',','.','-',SHIFT_RIGHT,0,ALT,' '
+};
 static uchar shift = false;
-
-void keyboard_init() {
-
-}
 
 void keyboard_handler() {
 	// If the buffer is full, print it and return
 	if (keypressed()) {
-
 		uchar key = inb(0x60);
 		if (circ_buffer.count == KEYBOARD_BUFFER_SIZE) {
 			uchar color = get_fg_color();

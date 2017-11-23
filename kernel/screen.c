@@ -79,6 +79,21 @@ static void print_char_on_cursor(uchar c) {
 	uchar new_cur_x = screen.cursor.x + 1;
 	uchar new_cur_y = screen.cursor.y;
 	
+	if (c == '\b') {
+		if (new_char_x == 0 && new_char_y == 0) {
+			new_cur_x -= 1;
+		}
+		else if (new_char_x == 0 && new_char_y > 0) {
+			new_cur_x = SCREEN_WIDTH - 1;
+			new_cur_y -= 1;
+		}
+		else {
+			new_cur_x -= 2;
+		}
+		new_char_x = new_cur_x;
+		new_char_y = new_cur_y;
+		print_char_by_xy(new_char_x, new_char_y, '\0');
+	}
 	if (c == '\n') {
 		new_cur_x = 0;
 		new_cur_y++;
@@ -92,11 +107,9 @@ static void print_char_on_cursor(uchar c) {
 		new_char_y = screen.cursor.y - 1;
 		new_cur_y = SCREEN_HEIGHT - 1;
 	}
-
-	if (c != '\n') {
+	if (c != '\n' && c != '\b') {
 		print_char_by_xy(new_char_x, new_char_y, c);
 	}
-		
 	move_cursor(new_cur_x, new_cur_y);
 }
 
