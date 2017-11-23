@@ -9,8 +9,11 @@ ARGS=-Wall -Wextra -g -static -std=gnu11 -m32 -ffreestanding -nostdlib -lgcc -MM
 $(KERNEL_NAME).elf: $(OBJC) $(OBJASM)
 	gcc -T $(KERNEL_NAME).ld $(ARGS) $^ -o $@
 
-test_kernel:
-	make TEST_MODE=-DTEST
+test_screen:
+	make TEST_MODE=-DTEST_SCREEN
+
+test_timer:
+	make TEST_MODE=-DTEST_TIMER
 
 %.o: %.c
 	gcc $(TEST_MODE) $(ARGS) -c $< -o $@

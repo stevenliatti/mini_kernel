@@ -60,8 +60,4 @@ extern uchar get_fg_color();
 extern uchar get_bg_color();
 extern scr_xy_t get_cursor_pos();
 
-#ifdef TEST
-extern void test_screen();
-#endif
-
 #endif

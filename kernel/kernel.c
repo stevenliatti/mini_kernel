@@ -17,6 +17,7 @@
 #include "idt.h"
 #include "x86.h"
 #include "keyboard.h"
+#include "test.h"
 
 /**
  * @brief entry point of kernel. Mode test available
@@ -25,18 +26,17 @@
  */
 void kernel_entry(multiboot_info_t* boot_info) {
 	init_scr();
-
-	#ifdef TEST
-
-	test_screen();
-
-	#else
-
 	pic_init();	
 	gdt_init();
 	idt_init();
 	timer_init(75);
 	sti();
+
+	#ifdef TEST_SCREEN
+	test_screen();
+	#elif TEST_TIMER
+	test_timer();
+	#else
 
 	printf("Screen has been initialized.\n");
 	printf("PIC has been initialized.\n");	
@@ -44,12 +44,6 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	printf("IDT has been initialized.\n");
 	printf("Timer has been initialized.\n");
 	printf("Memory upper : %d\n", boot_info->mem_upper);
-
-	// for(int i = 0; i < 5; i++) {
-	// 	int ticks = get_ticks();
-	// 	sleep(1000);		
-	// 	printf("%d sec, %d (ticks), ticks diff = %d\n", i, get_ticks(), get_ticks() - ticks);
-	// }
 	
 	while (1) {
 		uchar c = getc();
