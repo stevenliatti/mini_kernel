@@ -6,7 +6,8 @@
 #include "keyboard.h"
 #include "timer.h"
 
-#define IDT_SIZE 256
+#define IDT_SIZE 			256
+#define EXCEPTION_NUMBER 	21
 
 // Declaration of IDT
 static idt_entry_t idt[IDT_SIZE];
@@ -40,136 +41,47 @@ static idt_entry_t idt_build_entry(uint16_t selector, uint32_t offset, uint8_t t
 	return entry;
 }
 
+static const char* exception_messages[] = {
+	"Exception 0 - Divide Error",
+	"Exception 1 - RESERVED",
+	"Exception 2 - NMI Interrupt",
+	"Exception 3 - Breakpoint",
+	"Exception 4 - Overflow",
+	"Exception 5 - BOUND Range Exceeded",
+	"Exception 6 - Invalid Opcode (Undefined Opcode)",
+	"Exception 7 - Device Not Available (No Math Coprocessor)",
+	"Exception 8 - Double Fault",
+	"Exception 9 - Coprocessor Segment Overrun (reserved)",
+	"Exception 10 - Invalid TSS",
+	"Exception 11 - Segment Not Present",
+	"Exception 12 - Stack-Segment Fault",
+	"Exception 13 - General Protection",
+	"Exception 14 - Page Fault",
+	"Exception 15 - (Inter reserved. Do not use.)",
+	"Exception 16 - x87 FPU Floating-Point Error (Math Fault)",
+	"Exception 17 - Alignment Check",
+	"Exception 18 - Machine Check",
+	"Exception 19 - SIMD Floating-Point Exception",
+	"Exception 20 - Virtualization Exception"
+};
+
 // Exception handler
 void exception_handler(regs_t *regs) {
 	clr_scr();
 	set_theme(RED, BLACK);
-	switch (regs->number) {
-		case 0:
-			printf("Exception 0 - Divide Error");
-			break;
-		case 1:
-			printf("Exception 1 - RESERVED");
-			break;
-		case 2:
-			printf("Exception 2 - NMI Interrupt");
-			break;
-		case 3:
-			printf("Exception 3 - Breakpoint");
-			break;
-		case 4:
-			printf("Exception 4 - Overflow");
-			break;
-		case 5:
-			printf("Exception 5 - BOUND Range Exceeded");
-			break;
-		case 6:
-			printf("Exception 6 - Invalid Opcode (Undefined Opcode)");
-			break;
-		case 7:
-			printf("Exception 7 - Device Not Available (No Math Coprocessor)");
-			break;
-		case 8:
-			printf("Exception 8 - Double Fault");
-			break;
-		case 9:
-			printf("Exception 9 - Coprocessor Segment Overrun (reserved)");
-			break;
-		case 10:
-			printf("Exception 10 - Invalid TSS");
-			break;
-		case 11:
-			printf("Exception 11 - Segment Not Present");
-			break;
-		case 12:
-			printf("Exception 12 - Stack-Segment Fault");
-			break;
-		case 13:
-			printf("Exception 13 - General Protection");
-			break;
-		case 14:
-			printf("Exception 14 - Page Fault");
-			break;
-		case 15:
-			printf("Exception 15 - (Inter reserved. Do not use.)");
-			break;
-		case 16:
-			printf("Exception 16 - x87 FPU Floating-Point Error (Math Fault)");
-			break;
-		case 17:
-			printf("Exception 17 - Alignment Check");
-			break;
-		case 18:
-			printf("Exception 18 - Machine Check");
-			break;
-		case 19:
-			printf("Exception 19 - SIMD Floating-Point Exception");
-			break;
-		case 20:
-			printf("Exception 20 - Virtualization Exception");
-			break;
-		default:
-			break;
+	if (regs->number <= EXCEPTION_NUMBER) {
+		printf("%s", exception_messages[regs->number]);
 	}
 	halt();
 }
 
 // IRQ handler
 void irq_handler(regs_t *regs) {
-	switch (regs->number) {
-		case 0:
-			// printf("System timer (PIT)");
-			timer_handler();
-			break;
-		case 1:
-			// printf("Keyboard");
-			keyboard_handler();
-			break;
-		case 2:
-			printf("Redirected to slave PIC");
-			break;
-		case 3:
-			printf("Serial port (COM2/COM4)");
-			break;
-		case 4:
-			printf("Serial port (COM1/COM3)");
-			break;
-		case 5:
-			printf("Sound card");
-			break;
-		case 6:
-			printf("Floppy disk controller");
-			break;
-		case 7:
-			printf("Parallel port");
-			break;
-		case 8:
-			printf("Real time clock");
-			break;
-		case 9:
-			printf("Redirected to IRQ2");
-			break;
-		case 10:
-			printf("Reserved");
-			break;
-		case 11:
-			printf("Reserved");
-			break;
-		case 12:
-			printf("PS/2 mouse");
-			break;
-		case 13:
-			printf("Math coprocessor");
-			break;
-		case 14:
-			printf("Hard disk controller");
-			break;
-		case 15:
-			printf("Reserved");
-			break;
-		default:
-			break;
-	}
+	void (*handlers[]) (void) = {
+		timer_handler,
+		keyboard_handler
+	};
+	(*handlers[regs->number])();
 	pic_eoi(regs->number);
 }
 
