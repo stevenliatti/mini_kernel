@@ -9,6 +9,9 @@
 #define MAX_FREQ 	1193180
 #define MIN_FREQ 	19
 
+/**
+ * @brief	represent the timer (ticks and fequency)
+ */
 typedef struct timer_st {
 	uint ticks;
 	uint freq_hz;
@@ -16,6 +19,11 @@ typedef struct timer_st {
 
 static timer_t timer;
 
+/**
+ * @brief	Initialise the timer with given frequency
+ * 
+ * @param	freq_hz The timer frequency
+ */
 void timer_init(uint freq_hz) {
 	timer.ticks = 0;
 
@@ -39,15 +47,27 @@ void timer_init(uint freq_hz) {
 	outb(PIT_CANAL_0, (div >> 8));
 }
 
+/**
+ * @brief	The handler of the timer : increment the timer ticks
+ */
 void timer_handler() {
 	timer.ticks++;
-	// printf("Ticks : %d\n", timer.ticks);
 }
 
+/**
+ * @brief	Get the timer ticks
+ *
+ * @return The timer ticks
+ */
 uint get_ticks() {
 	return timer.ticks;
 }
 
+/**
+ * @brief	Sleep for the fiven duration in milliseconds
+ *
+ * @return 	ms Duration in milliseconds
+ */
 void sleep(uint ms) {
 	uint ticks_count = get_ticks() + (ms / 1000 * timer.freq_hz);
 	while (get_ticks() != ticks_count);

@@ -164,8 +164,8 @@ void move_cursor(uchar x, uchar y) { //
 /**
  * @brief format and print data
  */
-void printf(char* str, ...) { //
-	uchar buffer[SCREEN_BUFFER_SIZE];
+void printf(char* str, ...) {
+	uchar buffer[CONVERT_BUFFER_SIZE];
 	uint* next_arg = (uint*) &str + 1;
 	while (*str != '\0') {
 		if (*str == '%') {

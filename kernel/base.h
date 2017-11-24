@@ -14,7 +14,10 @@
 
 #include "../common/types.h"
 
-#define SCREEN_BUFFER_SIZE 128
+// int(32) range : (-2^31-1) = -2147483647 to (2^31-1) = 2147483647
+// ==> max possible length : 11 digits (-2147483647)
+// ==> max length of the buffer used to convert int[] to char[] is 12 char (0 at the end)
+#define CONVERT_BUFFER_SIZE 12
 
 extern void *memset(void *dst, int value, uint count);
 extern void *memcpy(void *dst, void *src, uint count);

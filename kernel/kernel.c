@@ -26,9 +26,9 @@
  */
 void kernel_entry(multiboot_info_t* boot_info) {
 	init_scr();
-	pic_init();	
 	gdt_init();
 	idt_init();
+	pic_init();
 	timer_init(75);
 	sti();
 
@@ -39,9 +39,9 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	#else
 
 	printf("Screen has been initialized.\n");
-	printf("PIC has been initialized.\n");	
 	printf("GDT has been initialized.\n");
 	printf("IDT has been initialized.\n");
+	printf("PIC has been initialized.\n");
 	printf("Timer has been initialized.\n");
 	printf("Memory upper : %d\n", boot_info->mem_upper);
 	
@@ -52,7 +52,8 @@ void kernel_entry(multiboot_info_t* boot_info) {
 			halt();
 		}
 		else {
-			printf("%c", c);
+			if (c != ND)
+				printf("%c", c);
 		}
 	}
 

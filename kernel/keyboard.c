@@ -1,3 +1,14 @@
+/**
+ * @file 		keyboard.c
+ * @brief 		Keyboard functions (interact with user)
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		November 24, 2017
+ * @version		1.0
+ */
+
 #include "keyboard.h"
 #include "screen.h"
 #include "../common/types.h"
@@ -8,15 +19,9 @@
 #define KEYBOARD_DATA_PORT 	0x60
 #define KEYBOARD_STATE_PORT 0x64
 
-#define ESC 			27
-#define BACKSPACE		'\b'
-#define TAB				9
-#define ENTER			'\n'
-#define CTRL			17
-#define SHIFT_LEFT 		6
-#define SHIFT_RIGHT 	7
-#define ALT				18
-
+/**
+ * @brief	represent a circular buffer used to stock keys values when pressed
+ */
 static struct {
 	uint buffer[KEYBOARD_BUFFER_SIZE];
 	uint read;
@@ -25,19 +30,22 @@ static struct {
 } circ_buffer = {{}, 0, 0, 0};
 
 static uchar mapping_shift[] = {
-	0,0,'+','"','*','á','%','&','/','(',')','=','?','`',0,
-	0,'Q','W','E','R','T','Z','U','I','O','P','Å','!',ENTER,
-	0,'A','S','D','F','G','H','J','K','L','î','Ñ','¯',0,'ú',
-	'Y','X','C','V','B','N','M',';',':','_',0,0,0,' '
+	ND,ND,'+','"','*','á','%','&','/','(',')','=','?','`',ND,
+	ND,'Q','W','E','R','T','Z','U','I','O','P','Å','!',ENTER,
+	ND,'A','S','D','F','G','H','J','K','L','î','Ñ','¯',ND,'ú',
+	'Y','X','C','V','B','N','M',';',':','_',ND,ND,ND,' '
 };
 static uchar mapping[] = {
-	0,ESC,'1','2','3','4','5','6','7','8','9','0','\'','^',BACKSPACE,
+	ND,ESC,'1','2','3','4','5','6','7','8','9','0','\'','^',BACKSPACE,
 	TAB,'q','w','e','r','t','z','u','i','o','p','ä','?',ENTER,
 	CTRL,'a','s','d','f','g','h','j','k','l','Ç','Ö','?',SHIFT_LEFT,'$',
-	'y','x','c','v','b','n','m',',','.','-',SHIFT_RIGHT,0,ALT,' '
+	'y','x','c','v','b','n','m',',','.','-',SHIFT_RIGHT,ND,ALT,' '
 };
 static uchar shift = false;
 
+/**
+ * @brief	The handler of the keyboard : map the keyboard keys with CP 437
+ */
 void keyboard_handler() {
 	// If the buffer is full, print it and return
 	if (keypressed()) {
@@ -75,6 +83,11 @@ void keyboard_handler() {
 	}
 }
 
+/**
+ * @brief	Get the code of the pressed key
+ * 
+ * @return	int The code of the pressed key
+ */
 int getc() {
 	// Read a character from the buffer if it's not empty
 	while (circ_buffer.count == 0);
@@ -84,7 +97,11 @@ int getc() {
 	return circ_buffer.buffer[pos];
 }
 
-// Non-blocking call. Return 1 if a key is pressed
+/**
+ * @brief	Non-blocking call. Return 1 if a key is pressed
+ *
+ * @return	int 0x1 if there is a key pressed, 0x0 else
+ */
 int keypressed() {
 	return inb(KEYBOARD_STATE_PORT) & 0x1;
 }

@@ -41,6 +41,7 @@ static idt_entry_t idt_build_entry(uint16_t selector, uint32_t offset, uint8_t t
 	return entry;
 }
 
+// Exception messages array : represent messages displayed for each exception
 static const char* exception_messages[] = {
 	"Exception 0 - Divide Error",
 	"Exception 1 - RESERVED",
@@ -65,6 +66,13 @@ static const char* exception_messages[] = {
 	"Exception 20 - Virtualization Exception"
 };
 
+// Handlers (array of functions) : represent handlers functions executed
+// for each interuption
+static void (*handlers[]) (void) = {
+	timer_handler,
+	keyboard_handler
+};
+
 // Exception handler
 void exception_handler(regs_t *regs) {
 	clr_scr();
@@ -77,10 +85,6 @@ void exception_handler(regs_t *regs) {
 
 // IRQ handler
 void irq_handler(regs_t *regs) {
-	void (*handlers[]) (void) = {
-		timer_handler,
-		keyboard_handler
-	};
 	(*handlers[regs->number])();
 	pic_eoi(regs->number);
 }

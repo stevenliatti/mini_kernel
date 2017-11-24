@@ -83,7 +83,7 @@ static void negate_and_revert(int x, uchar* str, int i) {
  * @param buffer the buffer string
  */
 static void clear_buffer(uchar* buffer) {
-	for (int i = 0; i < SCREEN_BUFFER_SIZE; i++) {
+	for (int i = 0; i < CONVERT_BUFFER_SIZE; i++) {
 		buffer[i] = 0;
 	}
 }
