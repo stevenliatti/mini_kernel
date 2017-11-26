@@ -36,7 +36,6 @@ help:
 	@echo "\tkernel_rule : compile the kernel"
 	@echo "\ttest_screen : compile kernel to test screen"
 	@echo "\ttest_timer : compile kernel to test timer"
-	@echo "\t$(KERNEL_BOOT) : create folder structure to generate iso after"
 	@echo "\t$(OS_NAME).iso (default) : create iso file of OS"
 	@echo "\trun : lauch the kernel"
 	@echo "\tclean : remove $(OS_NAME).iso and call clean targets of subfolders"
