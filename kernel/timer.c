@@ -2,9 +2,9 @@
 #include "screen.h"
 #include "pio.h"
 
-#define PIT_COMMAND_PORT 			0X43
-#define PIT_SELECT_DIV_AND_REPEAT 	0X36
-#define PIT_CANAL_0 				0X40
+#define PIT_COMMAND_PORT 			0x43
+#define PIT_SELECT_DIV_AND_REPEAT 	0x36
+#define PIT_CANAL_0 				0x40
 
 #define MAX_FREQ 	1193180
 #define MIN_FREQ 	19

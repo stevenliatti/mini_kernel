@@ -14,7 +14,7 @@
 #include "../common/types.h"
 #include "pio.h"
 
-#define KEYBOARD_BUFFER_SIZE 10
+#define KEYBOARD_BUFFER_SIZE 20
 
 #define KEYBOARD_DATA_PORT 	0x60
 #define KEYBOARD_STATE_PORT 0x64

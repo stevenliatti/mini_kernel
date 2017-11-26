@@ -52,7 +52,7 @@ typedef struct screen {
 } screen_t;
 
 extern void clr_scr();
-extern void init_scr();
+extern void scr_init();
 extern void move_cursor(uchar x, uchar y);
 extern void printf(char* str, ...);
 extern void set_theme(uchar bg_color, uchar fg_color);

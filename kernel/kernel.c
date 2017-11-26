@@ -25,7 +25,7 @@
  * @param boot_info structure with informations about boot process
  */
 void kernel_entry(multiboot_info_t* boot_info) {
-	init_scr();
+	scr_init();
 	gdt_init();
 	idt_init();
 	pic_init();

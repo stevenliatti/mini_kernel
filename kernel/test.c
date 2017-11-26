@@ -15,6 +15,7 @@ void test_screen() {
 	set_theme(LIGHT_GREEN, RED);
 	for (int i = 65; i < 91; i++) {
 		printf("%s \"%c\" => %d => %x negate %d\n", "Char", i, i, i, -i);
+		for(int i = 0; i < 10000000; i++);
 	}
 
 	move_cursor(40, 20);
