@@ -10,6 +10,10 @@
 #define SHIFT_LEFT 		6
 #define SHIFT_RIGHT 	7
 #define ALT				18
+#define ARROW_UP		224
+#define ARROW_LEFT		225
+#define ARROW_RIGHT		226
+#define ARROW_DOWN		227
 
 extern void keyboard_handler();
 extern int getc();

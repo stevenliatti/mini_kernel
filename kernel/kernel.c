@@ -52,8 +52,38 @@ void kernel_entry(multiboot_info_t* boot_info) {
 			halt();
 		}
 		else {
-			if (c != ND)
-				printf("%c", c);
+
+			if (c != ND) {
+				switch(c) {
+					case ESC:
+						printf("ESC\n");
+						break;
+					case TAB:
+						printf("TAB\n");
+						break;
+					case CTRL:
+						printf("CTRL\n");
+						break;
+					case ALT:
+						printf("ALT\n");
+						break;
+					case ARROW_UP:
+						printf("ARROW_UP\n");
+						break;
+					case ARROW_LEFT:
+						printf("ARROW_LEFT\n");
+						break;
+					case ARROW_RIGHT:
+						printf("ARROW_RIGHT\n");
+						break;
+					case ARROW_DOWN:
+						printf("ARROW_DOWN\n");
+						break;
+					default:
+						printf("%c", c);
+						break;
+				}
+			}
 		}
 	}
 

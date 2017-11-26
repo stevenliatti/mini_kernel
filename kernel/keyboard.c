@@ -33,13 +33,17 @@ static uchar mapping_shift[] = {
 	ND,ND,'+','"','*','á','%','&','/','(',')','=','?','`',ND,
 	ND,'Q','W','E','R','T','Z','U','I','O','P','Å','!',ENTER,
 	ND,'A','S','D','F','G','H','J','K','L','î','Ñ','¯',ND,'ú',
-	'Y','X','C','V','B','N','M',';',':','_',ND,ND,ND,' '
+	'Y','X','C','V','B','N','M',';',':','_',ND,ND,ND,' ',
+	ND,ND,ND,ND,ND,ND,ND,ND,ND,ND,ND,ND,ND,ND,ARROW_UP,
+	ND,ND,ARROW_LEFT,ND,ARROW_RIGHT,ND,ND,ARROW_DOWN
 };
 static uchar mapping[] = {
 	ND,ESC,'1','2','3','4','5','6','7','8','9','0','\'','^',BACKSPACE,
 	TAB,'q','w','e','r','t','z','u','i','o','p','ä','?',ENTER,
 	CTRL,'a','s','d','f','g','h','j','k','l','Ç','Ö','?',SHIFT_LEFT,'$',
-	'y','x','c','v','b','n','m',',','.','-',SHIFT_RIGHT,ND,ALT,' '
+	'y','x','c','v','b','n','m',',','.','-',SHIFT_RIGHT,ND,ALT,' ',
+	ND,ND,ND,ND,ND,ND,ND,ND,ND,ND,ND,ND,ND,ND,ARROW_UP,
+	ND,ND,ARROW_LEFT,ND,ARROW_RIGHT,ND,ND,ARROW_DOWN
 };
 static uchar shift = false;
 
