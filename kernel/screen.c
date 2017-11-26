@@ -138,7 +138,7 @@ void clr_scr() { //
 /**
  * @brief Initialise the screen (text color, background color and screen)
  */
-void init_scr() {
+void scr_init() {
 	screen.screen_ptr = FIRST_ADDR;
 	screen.fg_color = LIGHT_GRAY;
 	screen.bg_color = BLACK;

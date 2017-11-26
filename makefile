@@ -6,7 +6,7 @@ KERNEL_BOOT=$(OS_NAME)/boot/$(KERNEL_NAME).elf
 
 default: kernel_rule $(OS_NAME).iso
 
-run: $(OS_NAME).iso
+run: kernel_rule $(OS_NAME).iso
 	qemu-system-i386 -monitor stdio -cdrom $(OS_NAME).iso
 
 $(OS_NAME).iso: $(KERNEL_BOOT)
