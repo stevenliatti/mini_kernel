@@ -69,6 +69,6 @@ uint get_ticks() {
  * @return 	ms Duration in milliseconds
  */
 void sleep(uint ms) {
-	uint ticks_count = get_ticks() + (ms / 1000 * timer.freq_hz);
+	uint ticks_count = get_ticks() + (ms * timer.freq_hz / 1000);
 	while (get_ticks() != ticks_count);
 }
