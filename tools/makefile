@@ -8,18 +8,18 @@ all: $(OUT)
 %: %.c
 	gcc $(ARGS) $< -o $@
 
-clean:
+clean: clean_img
 	rm -rf $(OUT) *.o *.d
 
-test_fs_create:
+clean_img: 
 	rm -rf *.img
-	make
-	./fs_create doge_fs 512 fs.img 4096
 
-test_fs_add:
-	make
+test_fs_create: all clean_img
+	./fs_create doge_fs 512 fs.img 5120
+
+test_fs_add: all
 	./fs_add hello.txt fs.img
 
-rebuild: clean clean_img all
+rebuild: clean all
 
 .PHONY: clean rebuild

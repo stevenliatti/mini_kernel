@@ -96,15 +96,17 @@ int fwrite_fat_blocks(int total_block_nb, int block_size, int first_dir_entry_in
 	printf("fat size in bytes: %d\n", fat_occuped_bytes);
 	*total += fat_occuped_bytes;
 
-	int rest_size = block_size - fat_occuped_bytes % block_size;
-	char* rest = calloc(rest_size, sizeof(char));
-	if (rest == NULL) {
-		fprintf(stderr, "Failure in allocating memory!!\n");
-		return 0;
-	}
-	if (fwrite(rest, sizeof(char), rest_size, fd) == 0) {
-		fprintf(stderr, "Failure in writing data!!\n");
-		return 0;
+	int rest_size = (block_size - fat_occuped_bytes % block_size) % block_size; // retrieve the
+	if (rest_size != 0) {
+		char* rest = calloc(rest_size, sizeof(char));
+		if (rest == NULL) {
+			fprintf(stderr, "Failure in allocating memory!!\n");
+			return 0;
+		}
+		if (fwrite(rest, sizeof(char), rest_size, fd) == 0) {
+			fprintf(stderr, "Failure in writing data!!\n");
+			return 0;
+		}
 	}
 
 	printf("rest fat: %d\n", rest_size * sizeof(char));
@@ -164,7 +166,9 @@ int main(int argc, char *argv[]) {
 
 		// fat blocks number
 		int fat_len = total_block_nb;
-		int fat_occuped_bytes = fat_len * sizeof(int);
+		int fat_occuped_bytes = fat_len * sizeof(int); // why int? because the file system can 
+								// be 2^32 bytes size and if a size block = 512
+								// so 2^32 / 512 = 8388608 (0x800000) ==> 24 bits
 		int fat_block_nb = 1;
 		int div = fat_occuped_bytes / block_size;
 		if (div != 0) {

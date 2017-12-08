@@ -6,12 +6,12 @@
 #include <string.h>
 
 #define LABEL_SIZE 20 // fixé au bol
-#define ENTRY_NAME_SIZE 28 	// 28 + sizeof(int) in the dir_entry_t struct = 32
+#define ENTRY_NAME_SIZE 24 	// 24 + 2 * sizeof(int) in the dir_entry_t struct = 32
 							// so we can store (block_size / 32) entry in a block
 
 typedef struct dir_entry_st {
 	char name[ENTRY_NAME_SIZE];
-	// int size;
+	int size;
 	int start;
 } __attribute__((packed)) dir_entry_t;
 
