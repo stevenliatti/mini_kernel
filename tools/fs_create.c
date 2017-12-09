@@ -129,19 +129,19 @@ int main(int argc, char *argv[]) {
 		// write super block in the first block and write 0 in the rest of 
 		// the block (of size block_size)
 		CHECK_ERR(fwrite_super_block(argv[1], block_size, fat_block_nb, total_block_nb, 
-		first_dir_entry_index, fd, &total), "Failure in writing the super block!\n")
+			first_dir_entry_index, fd, &total), "Failure in writing the super block!\n")
 
 		// write fat in the second block. If the size of the fat is greater than block_size
 		// then extend fat to the next block and write 0 in the rest of the last block
 		CHECK_ERR(fwrite_fat_blocks(total_block_nb, block_size, first_dir_entry_index, fd, &total),
-		"Failure in writing the fat blocks\n")
+			"Failure in writing the fat blocks\n")
 
 		const int rest_total_block_nb = total_block_nb - 1 - fat_block_nb;
 		printf("rest total block nb: %d\n", rest_total_block_nb);
 		char* rest = calloc(rest_total_block_nb, sizeof(char) * block_size);
 		CHECK_ERR(rest == NULL, "Failure in allocating memory!!\n")
 		CHECK_ERR(fwrite(rest, sizeof(char), rest_total_block_nb * block_size, fd) == 0, 
-		"Failure in writing data!\n")
+			"Failure in writing data!\n")
 
 		printf("rest of all fs (bytes): %d\n", rest_total_block_nb * block_size * sizeof(char));
 		total += rest_total_block_nb * block_size * sizeof(char);
