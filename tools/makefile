@@ -1,7 +1,7 @@
 SRCS=$(wildcard *.c)
 
 OUT=$(SRCS:%.c=%)
-ARGS=-Wall -Wextra -g -std=gnu11 -m32 -lgcc
+ARGS=-Wall -Wextra -g -std=gnu11 -m32
 
 all: $(OUT)
 

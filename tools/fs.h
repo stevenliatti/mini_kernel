@@ -1,13 +1,16 @@
 #ifndef _FS_H_
-#define _FS_H_ value
+#define _FS_H_
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define LABEL_SIZE 20 // fixé au bol
-#define ENTRY_NAME_SIZE 24 	// 24 + 2 * sizeof(int) in the dir_entry_t struct = 32
-							// so we can store (block_size / 32) entry in a block
+#define LABEL_SIZE 20 // TODO: fixé au bol
+// 24 + 2 * sizeof(int) in the dir_entry_t struct = 32
+// so we can store (block_size / 32) entry in a block
+#define ENTRY_NAME_SIZE 24
+
+#define CHECK_ERR(expr, ...) if (expr) { fprintf(stderr, __VA_ARGS__); return EXIT_FAILURE; }
 
 typedef struct dir_entry_st {
 	char name[ENTRY_NAME_SIZE];
