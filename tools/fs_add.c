@@ -1,5 +1,4 @@
-#include "fs.h"
-#include <sys/stat.h>
+#include "tools.h"
 
 static int valid_arguments(char* file_name, char* fs_name) {
 	FILE* fd = fopen(fs_name, "r");
@@ -7,12 +6,6 @@ static int valid_arguments(char* file_name, char* fs_name) {
 	fd = fopen(file_name, "r");
 	CHECK_ERR(fd == NULL, "error: File with name \"%s\" doesn't exist\n", file_name)
 	return EXIT_SUCCESS;
-}
-
-static int get_file_size(const char * file_name) {
-	struct stat sb;
-	CHECK_ERR(stat(file_name, & sb) != 0, "error: stat failed for \"%s\"\n", file_name)
-	return sb.st_size;
 }
 
 static int get_next_available_block(int* fat, int fat_len, int first) {
@@ -73,7 +66,7 @@ static int find_and_set_entry(char* file_name, int* fat, super_block_t* sb, FILE
 	printf("readed_data: %d\n", readed_data);
 	printf("pos: %d\n", pos);
 	printf("temp->start: %d\n", temp->start);
-	// si on arrive au bout du dernier block de meta-data et que l'emplacement n'est pas disponible
+	// si on arrive au bout du dernier block de meta-data et que l'emplacement est déjà occupé par un dir_entry
 	if (readed_data == sb->block_size && pos == 0 && temp->start != 0) {
 		int next_index = get_next_available_block(fat, sb->fat_len, sb->first_dir_entry);
 		CHECK_ERR(next_index == 0, "No space available for the meta-data!\n")
@@ -87,14 +80,6 @@ static int find_and_set_entry(char* file_name, int* fat, super_block_t* sb, FILE
 		CHECK_ERR(fseek(fd, -sizeof(dir_entry_t), SEEK_CUR) != 0, "Seeking file failed!\n")
 	}
 	return EXIT_SUCCESS;
-}
-
-static void print_fat(int* fat, int fat_len) {
-	printf("fat table: \n|");
-	for (int i = 0; i < fat_len; i++) {
-		printf("%d|", fat[i]);
-	}
-	printf("\n");
 }
 
 static int update_fat_and_dir_entry(int file_needed_block, int* available_blocks, 

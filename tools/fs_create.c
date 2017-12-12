@@ -1,4 +1,4 @@
-#include "fs.h"
+#include "tools.h"
 
 #define FS_MAGIC 0x66
 #define FS_VERSION 1
