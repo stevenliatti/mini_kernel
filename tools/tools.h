@@ -33,6 +33,6 @@ int get_file_size(const char * file_name);
 
 void print_fat(int* fat, int fat_len);
 
-void display_super_block(super_block_t* super_block);
+void print_super_block(super_block_t* super_block);
 
 #endif
