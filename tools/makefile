@@ -14,21 +14,21 @@ fs_%: fs_%.o tools.o
 	gcc $(ARGS) -c $<
 
 clean:
-	rm -rf $(OUT) *.o *.d
+	rm -rf $(OUT) *.o *.d *.img
 
 clean_img:
 	rm -rf *.img
 
-test_fs_create: all clean_img
+test_fs_create: fs_create clean_img
 	./fs_create doge_fs 512 fs.img 307200
 
-test_fs_add: all
+test_fs_add: fs_add
 	./fs_add txt_files/hello.txt fs.img
 
-test_fs_list: all
+test_fs_list: fs_list
 	./fs_list fs.img
 
-test_fs_del: all
+test_fs_del: fs_del
 	./fs_del hello.txt fs.img
 
 rebuild: clean all

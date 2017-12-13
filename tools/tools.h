@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libgen.h>
 
 #define LABEL_SIZE 20 // TODO: fixé au bol
 // 24 + 2 * sizeof(int) in the dir_entry_t struct = 32

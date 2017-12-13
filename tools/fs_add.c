@@ -1,6 +1,8 @@
 #include "tools.h"
 
 static int valid_arguments(char* file_name, char* fs_name) {
+	CHECK_ERR(strlen(basename(file_name)) >= ENTRY_NAME_SIZE, "file_name too long, must be <= %d\n", 
+		ENTRY_NAME_SIZE - 1)
 	FILE* fd = fopen(fs_name, "r");
 	CHECK_ERR(fd == NULL, "error: File system with name \"%s\" doesn't exist\n", fs_name)
 	fd = fopen(file_name, "r");
@@ -116,7 +118,7 @@ static int update_fat_and_dir_entry(int file_needed_block, int* available_blocks
 	dir_entry_t* dir_entry = malloc(sizeof(dir_entry_t));
 	CHECK_ERR(dir_entry == NULL, "Failure in allocating memory!!\n")
 	
-	strcpy(dir_entry->name, file_name);
+	strcpy(dir_entry->name, basename(file_name));
 	dir_entry->size = get_file_size(file_name);
 	dir_entry->start = available_blocks[0];
 	CHECK_ERR(fwrite(dir_entry, sizeof(dir_entry_t), 1, fd) == 0, "Failure in writing data!!\n")
