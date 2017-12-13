@@ -55,9 +55,9 @@ static int find_and_set_entry(char* file_name, int* fat, super_block_t* sb, FILE
 			printf("dir:\n\tname: %s\n\tstart: %d\n", temp->name, temp->start);
 			CHECK_ERR(strcmp(temp->name, file_name) == 0, "File with name \"%s\" \
 			already exists in file system!\n", file_name)
-		} // temp->start is zero means that the place is available
-		while (temp->start != 0 && readed_data < sb->block_size);
-		if (temp->start == 0) {
+		} // fat[temp->start] is -1 means that the place is available
+		while (fat[temp->start] != -1 && readed_data < sb->block_size);
+		if (fat[temp->start] == -1) {
 			break;
 		}
 		pos = sb->block_size * fat[last_pos];
@@ -65,9 +65,9 @@ static int find_and_set_entry(char* file_name, int* fat, super_block_t* sb, FILE
 	
 	printf("readed_data: %d\n", readed_data);
 	printf("pos: %d\n", pos);
-	printf("temp->start: %d\n", temp->start);
+	printf("fat[temp->start]: %d\n", fat[temp->start]);
 	// si on arrive au bout du dernier block de meta-data et que l'emplacement est déjà occupé par un dir_entry
-	if (readed_data == sb->block_size && pos == 0 && temp->start != 0) {
+	if (readed_data == sb->block_size && pos == 0 && fat[temp->start] != -1) {
 		int next_index = get_next_available_block(fat, sb->fat_len, sb->first_dir_entry);
 		CHECK_ERR(next_index == 0, "No space available for the meta-data!\n")
 		
