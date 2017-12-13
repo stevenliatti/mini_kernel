@@ -56,6 +56,7 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 	int pos = sb->first_dir_entry * sb->block_size;
 	int readed_data = 0;
 	do {
+		readed_data = 0;
 		last_pos = pos / sb->block_size;
 		printf("pos: %d\n", pos);
 		CHECK_ERR(fseek(fd, pos, SEEK_SET) != 0, "Seeking file failed!\n")

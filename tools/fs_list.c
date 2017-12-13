@@ -43,7 +43,6 @@ int main(int argc, char *argv[]) {
 		// print_fat(fat, sb->fat_len);
 
 		// check for dir entries
-		printf("\nFile name \t\tsize (byte)\t\tFirst block num\n\n");
 		dir_entry_t* dir_entry = malloc(sizeof(dir_entry_t));
 		CHECK_ERR(dir_entry == NULL, "Failure in allocating memory!!\n")
 		int files_count = 0;
@@ -51,6 +50,7 @@ int main(int argc, char *argv[]) {
 		printf("current metadata block: %d\t", metadata_block_offset);
 		printf("next metadata block: %d\n", fat[metadata_block_offset]);
 		do {
+			printf("\nFile name \t\t\t\tsize (byte)\t\tFirst block num\n");
 			int dir_entry_offset = 0;
 			do {
 				get_dir_entry(fd, metadata_block_offset, dir_entry_offset, sb->block_size, dir_entry);
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 				dir_entry_offset += sizeof(dir_entry_t);
 			} while (dir_entry_offset != sb->block_size);
 			metadata_block_offset = fat[metadata_block_offset];
-			printf("\ncurrent metadata block: %d\t", metadata_block_offset);
+			printf("\n\ncurrent metadata block: %d\t", metadata_block_offset);
 			printf("next metadata block: %d\n", fat[metadata_block_offset]);
 		} while (fat[metadata_block_offset] != -1);
 
