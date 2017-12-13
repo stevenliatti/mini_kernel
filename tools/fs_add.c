@@ -5,8 +5,11 @@ static int valid_arguments(char* file_name, char* fs_name) {
 		ENTRY_NAME_SIZE - 1)
 	FILE* fd = fopen(fs_name, "r");
 	CHECK_ERR(fd == NULL, "error: File system with name \"%s\" doesn't exist\n", fs_name)
+	fclose(fd);
+
 	fd = fopen(file_name, "r");
 	CHECK_ERR(fd == NULL, "error: File with name \"%s\" doesn't exist\n", file_name)
+	fclose(fd);
 	return EXIT_SUCCESS;
 }
 
@@ -33,9 +36,9 @@ static int get_available_blocks(int* needed_block, int* fat, int first, int fat_
 
 static int get_needed_block(char* file_name, super_block_t* sb) {
 	int file_size = get_file_size(file_name);
-	printf("file_size: %d\n", file_size);
+	printf("File size: %d\n", file_size);
 	int file_needed_block = file_size / sb->block_size + (file_size % sb->block_size == 0 ? 0 : 1);
-	printf("file_needed_block: %d\n", file_needed_block);
+	printf("Number of needed block: %d\n", file_needed_block);
 	return file_needed_block;
 }
 
@@ -60,7 +63,7 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 	do {
 		readed_data = 0;
 		last_pos = pos / sb->block_size;
-		printf("pos: %d\n", pos);
+		// printf("pos: %d\n", pos);
 		CHECK_ERR(fseek(fd, pos, SEEK_SET) != 0, "Seeking file failed!\n")
 		
 		do {
@@ -68,7 +71,7 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 			CHECK_ERR((data_len = fread(temp, sizeof(dir_entry_t), 1, fd)) == 0, 
 				"Failure in reading dir_entry\n")
 			readed_data += sizeof(dir_entry_t);
-			printf("dir:\n\tname: %s\n\tstart: %d\n", temp->name, temp->start);
+			// printf("dir:\n\tname: %s\n\tstart: %d\n", temp->name, temp->start);
 			CHECK_ERR(strcmp(temp->name, file_name) == 0 && fat[temp->start] != -1, 
 				"File with name \"%s\" already exists in file system!\n", file_name)
 		} // fat[temp->start] is -1 means that the place is available
@@ -79,9 +82,9 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 		pos = sb->block_size * fat[last_pos];
 	} while (pos != 0);
 	
-	printf("readed_data: %d\n", readed_data);
-	printf("pos: %d\n", pos);
-	printf("fat[temp->start]: %d\n", fat[temp->start]);
+	// printf("readed_data: %d\n", readed_data);
+	// printf("pos: %d\n", pos);
+	// printf("fat[temp->start]: %d\n", fat[temp->start]);
 	// si on arrive au bout du dernier block de meta-data et que l'emplacement est déjà occupé par un dir_entry
 	if (readed_data == sb->block_size && pos == 0 && fat[temp->start] != -1) {
 		int next_index = get_next_available_block(fat, sb->fat_len, sb->first_dir_entry);
@@ -103,6 +106,8 @@ static int update_fat_and_dir_entry(int file_needed_block, int* available_blocks
 
 	CHECK_ERR(get_available_blocks(available_blocks, fat, sb->first_dir_entry, 
 		sb->fat_len, file_needed_block), "No blocks available!\n")
+	printf("File content will be added in blocks:\n");
+	printf("|");
 	for (int i = 0; i < file_needed_block; i++)	{
 		printf("%d|", available_blocks[i]);
 	}
@@ -113,7 +118,7 @@ static int update_fat_and_dir_entry(int file_needed_block, int* available_blocks
 		fat[available_blocks[i]] = available_blocks[i + 1];
 	}
 	fat[available_blocks[i]] = 0;
-	print_fat(fat, sb->fat_len);
+	// print_fat(fat, sb->fat_len);
 
 	// write the new dir_entry in the fs
 	dir_entry_t* dir_entry = malloc(sizeof(dir_entry_t));
@@ -149,7 +154,7 @@ static int write_all(super_block_t* sb, FILE* fd, int* fat, char* file_name) {
 		CHECK_ERR((buffer_real_size = fread(buffer, sizeof(char), sb->block_size, fd2)) == 0, 
 			"Failure in reading fat table\n")
 
-		printf("buffer_real_size: %d\n", buffer_real_size);
+		// printf("buffer_real_size: %d\n", buffer_real_size);
 		pos = sb->block_size * available_blocks[i];
 		CHECK_ERR(fseek(fd, pos, SEEK_SET) != 0, "Seeking file failed!\n")
 		CHECK_ERR(fwrite(buffer, sizeof(char), buffer_real_size, fd) == 0, 
@@ -163,11 +168,11 @@ static int write_all(super_block_t* sb, FILE* fd, int* fat, char* file_name) {
 int main(int argc, char *argv[]) {
 	if (argc == 3) {
 		// check arguments
-		char* file_name = malloc(sizeof(char) * strlen(argv[1]));
+		char* file_name = malloc(sizeof(char) * strlen(argv[1]) + 1);
 		CHECK_ERR(file_name == NULL, "Failure in allocating memory!!\n")
 		strcpy(file_name, argv[1]);
 
-		char* fs_name = malloc(sizeof(char) * strlen(argv[2]));
+		char* fs_name = malloc(sizeof(char) * strlen(argv[2]) + 1);
 		CHECK_ERR(fs_name == NULL, "Failure in allocating memory!!\n")
 		strcpy(fs_name, argv[2]);
 
@@ -180,7 +185,7 @@ int main(int argc, char *argv[]) {
 		super_block_t* sb = malloc(sizeof(super_block_t));
 		CHECK_ERR(sb == NULL, "Failure in allocating memory!!\n")
 		CHECK_ERR(fread(sb, sizeof(super_block_t), 1, fd) == 0, "Failure in reading super block\n")
-		print_super_block(sb);
+		// print_super_block(sb);
 
 		// load the fat
 		int fat_pos = sb->block_size;
@@ -188,16 +193,17 @@ int main(int argc, char *argv[]) {
 		int* fat = malloc(sb->fat_len * sizeof(int));
 		CHECK_ERR(fat == NULL, "Failure in allocating memory!!\n")
 		CHECK_ERR(fread(fat, sizeof(int), sb->fat_len, fd) == 0, "Failure in reading fat table\n")
-		print_fat(fat, sb->fat_len);
 
 		// find the first empty place to write the new dir_entry and try to set it
 		dir_entry_t* temp = malloc(sizeof(dir_entry_t));
 		CHECK_ERR(temp == NULL, "Failure in allocating memory!!\n")
-		CHECK_ERR(find_empty_entry(file_name, fat, sb, fd, temp), "error in find_empty_entry\n")
+		CHECK_ERR(find_empty_entry(basename(file_name), fat, sb, fd, temp), "error in find_empty_entry\n")
 
 		// write fat and file content in the file system
 		CHECK_ERR(write_all(sb, fd, fat, file_name), 
 			"error in write_all\n")
+
+		// print_fat(fat, sb->fat_len);
 
 		fclose(fd);
 		return EXIT_SUCCESS;
