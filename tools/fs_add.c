@@ -56,6 +56,7 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 	int pos = sb->first_dir_entry * sb->block_size;
 	int readed_data = 0;
 	do {
+		readed_data = 0;
 		last_pos = pos / sb->block_size;
 		printf("pos: %d\n", pos);
 		CHECK_ERR(fseek(fd, pos, SEEK_SET) != 0, "Seeking file failed!\n")
@@ -63,14 +64,14 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 		do {
 			int data_len;
 			CHECK_ERR((data_len = fread(temp, sizeof(dir_entry_t), 1, fd)) == 0, 
-			"Failure in reading dir_entry\n")
+				"Failure in reading dir_entry\n")
 			readed_data += sizeof(dir_entry_t);
 			printf("dir:\n\tname: %s\n\tstart: %d\n", temp->name, temp->start);
 			CHECK_ERR(strcmp(temp->name, file_name) == 0 && fat[temp->start] != -1, 
 				"File with name \"%s\" already exists in file system!\n", file_name)
-		} // temp->start is zero means that the place is available
-		while (temp->start != 0 && readed_data < sb->block_size);
-		if (temp->start == 0) {
+		} // fat[temp->start] is -1 means that the place is available
+		while (fat[temp->start] != -1 && readed_data < sb->block_size);
+		if (fat[temp->start] == -1) {
 			break;
 		}
 		pos = sb->block_size * fat[last_pos];
@@ -78,9 +79,9 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 	
 	printf("readed_data: %d\n", readed_data);
 	printf("pos: %d\n", pos);
-	printf("temp->start: %d\n", temp->start);
-	
-	if (readed_data == sb->block_size && pos == 0 && temp->start != 0) {
+	printf("fat[temp->start]: %d\n", fat[temp->start]);
+	// si on arrive au bout du dernier block de meta-data et que l'emplacement est déjà occupé par un dir_entry
+	if (readed_data == sb->block_size && pos == 0 && fat[temp->start] != -1) {
 		int next_index = get_next_available_block(fat, sb->fat_len, sb->first_dir_entry);
 		CHECK_ERR(next_index == 0, "No space available for the meta-data!\n")
 		
