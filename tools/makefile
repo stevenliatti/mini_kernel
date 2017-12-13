@@ -23,7 +23,7 @@ test_fs_create: all clean_img
 	./fs_create doge_fs 512 fs.img 307200
 
 test_fs_add: all
-	./fs_add /txt_files/hello.txt fs.img
+	./fs_add txt_files/hello.txt fs.img
 
 test_fs_list: all
 	./fs_list fs.img

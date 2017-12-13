@@ -37,7 +37,20 @@ static int get_needed_block(char* file_name, super_block_t* sb) {
 	return file_needed_block;
 }
 
-static int find_and_set_entry(char* file_name, int* fat, super_block_t* sb, FILE* fd, 
+/**
+ * @brief  This function search a place to put a new entry of meta-data.
+ * We iterate on the first bloc (with fread) until we reach the end of it.
+ * If we reach the last block of meta-data and the place is already taken by
+ * an entry, we search a new empty block in FAT to extends entries.
+ * 
+ * @param  file_name the file's name to add
+ * @param  fat our fat
+ * @param  sb the super block
+ * @param  fd the file descriptor of the file
+ * @param  temp a temporary struct dir_entry for the loop
+ * @return EXIT_SUCCESS or EXIT_FAILURE in case of success or failure
+ */
+static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* fd, 
 	dir_entry_t* temp) {
 	int last_pos = 0;
 	int pos = sb->first_dir_entry * sb->block_size;
@@ -50,11 +63,11 @@ static int find_and_set_entry(char* file_name, int* fat, super_block_t* sb, FILE
 		do {
 			int data_len;
 			CHECK_ERR((data_len = fread(temp, sizeof(dir_entry_t), 1, fd)) == 0, 
-			"Failure in reading dir_entry\n")
+				"Failure in reading dir_entry\n")
 			readed_data += sizeof(dir_entry_t);
 			printf("dir:\n\tname: %s\n\tstart: %d\n", temp->name, temp->start);
-			CHECK_ERR(strcmp(temp->name, file_name) == 0, "File with name \"%s\" \
-			already exists in file system!\n", file_name)
+			CHECK_ERR(strcmp(temp->name, file_name) == 0 && fat[temp->start] != -1, 
+				"File with name \"%s\" already exists in file system!\n", file_name)
 		} // fat[temp->start] is -1 means that the place is available
 		while (fat[temp->start] != -1 && readed_data < sb->block_size);
 		if (fat[temp->start] == -1) {
@@ -149,10 +162,13 @@ int main(int argc, char *argv[]) {
 		char* file_name = malloc(sizeof(char) * strlen(argv[1]));
 		CHECK_ERR(file_name == NULL, "Failure in allocating memory!!\n")
 		strcpy(file_name, argv[1]);
+
 		char* fs_name = malloc(sizeof(char) * strlen(argv[2]));
 		CHECK_ERR(fs_name == NULL, "Failure in allocating memory!!\n")
 		strcpy(fs_name, argv[2]);
+
 		CHECK_ERR(valid_arguments(file_name, fs_name), "invalid arguments\n")
+
 		FILE* fd = fopen(fs_name, "r+");
 		CHECK_ERR(fd == NULL, "Failure in opening file \"%s\" (in r+ mode)!\n", file_name)
 
@@ -160,7 +176,7 @@ int main(int argc, char *argv[]) {
 		super_block_t* sb = malloc(sizeof(super_block_t));
 		CHECK_ERR(sb == NULL, "Failure in allocating memory!!\n")
 		CHECK_ERR(fread(sb, sizeof(super_block_t), 1, fd) == 0, "Failure in reading super block\n")
-		display_super_block(sb);
+		print_super_block(sb);
 
 		// load the fat
 		int fat_pos = sb->block_size;
@@ -173,7 +189,7 @@ int main(int argc, char *argv[]) {
 		// find the first empty place to write the new dir_entry and try to set it
 		dir_entry_t* temp = malloc(sizeof(dir_entry_t));
 		CHECK_ERR(temp == NULL, "Failure in allocating memory!!\n")
-		CHECK_ERR(find_and_set_entry(file_name, fat, sb, fd, temp), "error in find_and_set_entry\n")
+		CHECK_ERR(find_empty_entry(file_name, fat, sb, fd, temp), "error in find_empty_entry\n")
 
 		// write fat and file content in the file system
 		CHECK_ERR(write_all(sb, fd, fat, file_name), 

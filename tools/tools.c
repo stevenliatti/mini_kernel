@@ -15,7 +15,7 @@ void print_fat(int* fat, int fat_len) {
 	printf("\n");
 }
 
-void display_super_block(super_block_t* super_block) {
+void print_super_block(super_block_t* super_block) {
 	printf("super_block : \n");
 	printf("\tmagic: %x\n", super_block->magic);
 	printf("\tversion: %d\n", super_block->version);
