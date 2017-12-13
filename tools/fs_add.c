@@ -170,7 +170,7 @@ int main(int argc, char *argv[]) {
 		CHECK_ERR(valid_arguments(file_name, fs_name), "invalid arguments\n")
 
 		FILE* fd = fopen(fs_name, "r+");
-		CHECK_ERR(fd == NULL, "Failure in opening file \"%s\" (in r+ mode)!\n", file_name)
+		CHECK_ERR(fd == NULL, "Failure in opening file \"%s\" (in r+ mode)!\n", fs_name)
 
 		// read super block
 		super_block_t* sb = malloc(sizeof(super_block_t));
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]) {
 	}
 	else {
 		fprintf(stderr, "\nfs_add <file> <fs_name>\n\n"
-					"• file : Name of the file to be added to the file system\n"
+					"• file : Name of the file to be added in the fs\n"
 					"• fs_name : File system name\n\n"
 					"Example: fs_add hello.txt fs.img\n\n");
 		return EXIT_FAILURE;

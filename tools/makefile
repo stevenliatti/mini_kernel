@@ -25,6 +25,9 @@ test_fs_create: all clean_img
 test_fs_add: all
 	./fs_add hello.txt fs.img
 
+test_fs_del: all
+	./fs_del hello.txt fs.img
+
 rebuild: clean all
 
 .PHONY: clean rebuild
