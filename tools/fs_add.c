@@ -100,7 +100,8 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 
 static int update_fat_and_dir_entry(int file_needed_block, int* available_blocks, 
 	char* file_name, super_block_t* sb, int* fat, FILE* fd) {
-		CHECK_ERR(get_available_blocks(available_blocks, fat, sb->first_dir_entry, 
+
+	CHECK_ERR(get_available_blocks(available_blocks, fat, sb->first_dir_entry, 
 		sb->fat_len, file_needed_block), "No blocks available!\n")
 	for (int i = 0; i < file_needed_block; i++)	{
 		printf("%d|", available_blocks[i]);
