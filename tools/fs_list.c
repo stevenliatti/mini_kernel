@@ -16,6 +16,19 @@ int get_dir_entry(FILE* fd, int metadata_block_offset, int dir_entry_offset, int
 	return EXIT_SUCCESS;
 }
 
+void print_horizontal_line() {
+	char border[] = "---------------------------------";
+	printf(" %.*s", 26, border);
+	printf(" %.*s", 17, border);
+	printf(" %.*s\n", 17, border);
+}
+
+void print_table_header() {
+	print_horizontal_line();
+	printf("| %24s | %15s | %15s |\n", "File name", "size (byte)", "First block num");
+	print_horizontal_line();
+}
+
 int main(int argc, char *argv[]) {
 	if (argc == 2) {
 		// check arguments
@@ -47,22 +60,26 @@ int main(int argc, char *argv[]) {
 		CHECK_ERR(dir_entry == NULL, "Failure in allocating memory!!\n")
 		int files_count = 0;
 		int metadata_block_offset = sb->first_dir_entry;
-		printf("current metadata block: %d\t", metadata_block_offset);
-		printf("next metadata block: %d\n", fat[metadata_block_offset]);
+		printf("current metadata block: %10d\t", metadata_block_offset);
+		printf("next metadata block: %10d\n", fat[metadata_block_offset]);
 		do {
-			printf("\nFile name \t\t\t\tsize (byte)\t\tFirst block num\n");
+			print_table_header();
+
 			int dir_entry_offset = 0;
 			do {
 				get_dir_entry(fd, metadata_block_offset, dir_entry_offset, sb->block_size, dir_entry);
 				if (fat[dir_entry->start] != -1) {
-					printf("%s\t\t%d\t\t\t%d\n", dir_entry->name, dir_entry->size, dir_entry->start);
+					printf("| %24s | %15d | %15d |\n", dir_entry->name, dir_entry->size, dir_entry->start);
 					files_count++;
 				}
 				dir_entry_offset += sizeof(dir_entry_t);
 			} while (dir_entry_offset != sb->block_size);
 			metadata_block_offset = fat[metadata_block_offset];
-			printf("\n\ncurrent metadata block: %d\t", metadata_block_offset);
-			printf("next metadata block: %d\n", fat[metadata_block_offset]);
+
+			print_horizontal_line();
+
+			printf("\ncurrent metadata block: %10d\t", metadata_block_offset);
+			printf("next metadata block: %10d\n", fat[metadata_block_offset]);
 		} while (fat[metadata_block_offset] != -1);
 
 		printf("\nFiles count: %d\n", files_count);

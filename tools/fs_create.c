@@ -13,15 +13,15 @@ static int valid_arguments(char* label, int block_size, int file_size, char* fil
 	// check the block size
 	CHECK_ERR(block_size % MIN_BLOCK_SIZE != 0 || block_size > MAX_BLOCK_SIZE || 
 		block_size < MIN_BLOCK_SIZE, 
-		"error: Block size must be a multiple of %d and less than %d\n \
-		and greater or equal than %d\n",
+		"error: Block size must be a multiple of %d and less than %d\n"
+		"and greater or equal than %d\n",
 		MIN_BLOCK_SIZE, MAX_BLOCK_SIZE, MIN_BLOCK_SIZE)
 
 	// check the file size
 	CHECK_ERR(file_size < block_size * 4 || (file_size % block_size != 0), 
-		"error: File size must be greater than the (%d * 4) \
-		and multiple of block size, because at least, there will be \
-		a super block, a fat block, a main dir entry block and a data block\n",
+		"error: File size must be greater than the (%d * 4) "
+		"and multiple of block size, because at least, there will be "
+		"a super block, a fat block, a main dir entry block and a data block\n",
 		block_size)
 
 	// check the file name
@@ -91,8 +91,8 @@ static int fwrite_fat_blocks(int total_block_nb, int block_size, int first_dir_e
 }
 
 static int compute_fat_block_nb(int fat_len, int block_size) {
-	// why int? because the file system can be 2^32 bytes size and if a size block = 512
-	// so 2^32 / 512 = 8388608 (0x800000) ==> 24 bits
+	// why int? because the size (int) of the file system can be up to +2147483136 bytes (it is a signed int)
+	// and if a size block = 512 so 2147483136 / 512 = 4194303 (0x3FFFFF) ==> 24 bits
 	int fat_occupied_bytes = fat_len * sizeof(int);
 	int fat_block_nb = 1;
 	int div = fat_occupied_bytes / block_size;

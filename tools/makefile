@@ -20,7 +20,7 @@ clean_img:
 	rm -rf *.img
 
 test_fs_create_big: fs_create clean_img
-	./fs_create doge_fs 512 fs.img 307200
+	./fs_create doge_fs 512 fs.img 2147483136
 
 test_fs_create_small: fs_create clean_img
 	./fs_create doge_fs 512 fs.img 3072
@@ -33,6 +33,9 @@ test_fs_list: fs_list
 
 test_fs_del: fs_del
 	./fs_del hello.txt fs.img
+
+test_fs_info: fs_info
+	./fs_info fs.img
 
 rebuild: clean all
 
