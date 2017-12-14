@@ -60,6 +60,8 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 	int last_pos = 0;
 	int pos = sb->first_dir_entry * sb->block_size;
 	int readed_data = 0;
+	bool empty_space_found = false;
+	int empty_space_offset = 0;
 	do {
 		readed_data = 0;
 		last_pos = pos / sb->block_size;
@@ -74,11 +76,14 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 			// printf("dir:\n\tname: %s\n\tstart: %d\n", temp->name, temp->start);
 			CHECK_ERR(strcmp(temp->name, file_name) == 0 && fat[temp->start] != -1, 
 				"File with name \"%s\" already exists in file system!\n", file_name)
+
+			if (fat[temp->start] == -1 && !empty_space_found) {
+				empty_space_found = true;
+				empty_space_offset = pos + readed_data - sizeof(dir_entry_t);
+			}
+
 		} // fat[temp->start] is -1 means that the place is available
 		while (fat[temp->start] != -1 && readed_data < sb->block_size);
-		if (fat[temp->start] == -1) {
-			break;
-		}
 		pos = sb->block_size * fat[last_pos];
 	} while (pos != 0);
 	
@@ -93,7 +98,11 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 		fat[last_pos] = next_index;
 		fat[next_index] = 0;
 		CHECK_ERR(fseek(fd, next_index * sb->block_size, SEEK_SET) != 0, 
-		"Seeking file failed!\n")
+			"Seeking file failed!\n")
+	}
+	else if (empty_space_found) {
+		CHECK_ERR(fseek(fd, empty_space_offset, SEEK_SET) != 0, 
+			"Seeking file failed!\n")
 	}
 	else {
 		CHECK_ERR(fseek(fd, -sizeof(dir_entry_t), SEEK_CUR) != 0, "Seeking file failed!\n")
@@ -133,6 +142,7 @@ static int update_fat_and_dir_entry(int file_needed_block, int* available_blocks
 }
 
 static int write_all(super_block_t* sb, FILE* fd, int* fat, char* file_name) {
+	printf("File name: %s\n", file_name);
 	// update fat and dir_entry
 	int file_needed_block = get_needed_block(file_name, sb);
 	int available_blocks[file_needed_block];

@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
                 printf("dir:\n\tname: %s\n\tstart: %d\n", entry->name, entry->start);
                 
                 // Delete file
-                if (strcmp(entry->name, file_name) == 0 && fat[entry->start] != -1) {
+                if (fat[entry->start] != -1 && strcmp(entry->name, file_name) == 0) {
                     found = true;
                     int index = entry->start;
                     int new_index;
@@ -63,8 +63,8 @@ int main(int argc, char *argv[]) {
                         fat[index] = -1;
                         index = new_index;
                     } while(new_index != 0);
-                    entry->start = 0;
-                    CHECK_ERR(fwrite(entry, sizeof(dir_entry_t), 1, fd) == 0, "Failure in writing data!!\n")
+                    // entry->start = 0;
+                    // CHECK_ERR(fwrite(entry, sizeof(dir_entry_t), 1, fd) == 0, "Failure in writing data!!\n")
                 }
             } while (fat[entry->start] != -1 && readed_data < sb->block_size && !found);
             pos = sb->block_size * fat[last_pos];

@@ -22,11 +22,14 @@ clean_img:
 test_fs_create_big: fs_create clean_img
 	./fs_create doge_fs 512 fs.img 2147483136
 
+test_fs_create_medium: fs_create clean_img
+	./fs_create doge_fs 512 fs.img 307200
+
 test_fs_create_small: fs_create clean_img
 	./fs_create doge_fs 512 fs.img 3072
 
 test_fs_add: fs_add
-	./fs_add txt_files/VICTOR.txt fs.img
+	./fs_add txt_files/hello.txt fs.img
 
 test_fs_list: fs_list
 	./fs_list fs.img
