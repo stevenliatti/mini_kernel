@@ -2,12 +2,14 @@ SRCS=$(wildcard fs_*.c)
 OBJC=$(SRCS:%.c=%.o)
 OUT=$(OBJC:%.o=%)
 ARGS=-Wall -Wextra -g -std=gnu11 -m32
+FS_NAME=fs
+COMMON=../common
 
 .SECONDARY:
 
 all: $(OUT)
 
-fs_%: fs_%.o tools.o
+fs_%: fs_%.o tools.o $(COMMON)/common.o
 	gcc $(ARGS) $^ -o $@
 
 %.o: %.c
@@ -20,25 +22,28 @@ clean_img:
 	rm -rf *.img
 
 test_fs_create_big: fs_create clean_img
-	./fs_create doge_fs 512 fs.img 2147483136
+	./fs_create doge_fs 512 $(FS_NAME).img 2147483136
 
 test_fs_create_medium: fs_create clean_img
-	./fs_create doge_fs 512 fs.img 307200
+	./fs_create doge_fs 512 $(FS_NAME).img 307200
 
 test_fs_create_small: fs_create clean_img
-	./fs_create doge_fs 512 fs.img 3072
+	./fs_create doge_fs 512 $(FS_NAME).img 3072
 
 test_fs_add: fs_add
-	./fs_add txt_files/hello.txt fs.img
+	./fs_add txt_files/hello.txt $(FS_NAME).img
 
 test_fs_list: fs_list
-	./fs_list fs.img
+	./fs_list $(FS_NAME).img
 
 test_fs_del: fs_del
-	./fs_del hello.txt fs.img
+	./fs_del hello.txt $(FS_NAME).img
 
 test_fs_info: fs_info
-	./fs_info fs.img
+	./fs_info $(FS_NAME).img
+
+test_fs_add_files: fs_add
+	./add_files.sh
 
 rebuild: clean all
 

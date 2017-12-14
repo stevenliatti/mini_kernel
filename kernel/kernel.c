@@ -17,6 +17,7 @@
 #include "idt.h"
 #include "x86.h"
 #include "keyboard.h"
+#include "fs_api.h"
 #include "test.h"
 
 /**

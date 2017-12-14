@@ -5,9 +5,10 @@ OBJC=$(SRCC:%.c=%.o)
 OBJASM=$(SRCASM:%.s=%.o)
 DEPS=$(OBJC:%.o=%.d)
 ARGS=-Wall -Wextra -g -static -std=gnu11 -m32 -ffreestanding -nostdlib -lgcc -MMD
+COMMON=../common
 
-$(KERNEL_NAME).elf: $(OBJC) $(OBJASM)
-	gcc -T $(KERNEL_NAME).ld $(ARGS) $^ -o $@
+$(KERNEL_NAME).elf: $(OBJC) $(OBJASM) $(COMMON)/common.o
+	gcc -g -T $(KERNEL_NAME).ld $(ARGS) $^ -o $@
 
 test_screen:
 	make TEST_MODE=-DTEST_SCREEN
@@ -16,10 +17,10 @@ test_timer:
 	make TEST_MODE=-DTEST_TIMER
 
 %.o: %.c
-	gcc $(TEST_MODE) $(ARGS) -c $< -o $@
+	gcc -g $(TEST_MODE) $(ARGS) -c $< -o $@
 
 %_asm.o: %_asm.s
-	nasm -f elf32 $^
+	nasm -g -f elf32 $^
 
 clean:
 	rm -rf $(KERNEL_NAME).elf *.o *.d

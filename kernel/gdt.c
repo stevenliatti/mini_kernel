@@ -33,8 +33,8 @@ static gdt_entry_t build_entry(uint32_t base, uint32_t limit, uint8_t type, uint
 	gdt_entry_t entry;
 	// For a TSS and LDT, base is the addresse of the TSS/LDT structure
 	// and limit is the size of the structure.
-	entry.lim15_0 = limit & 0xffff;
-	entry.base15_0 = base & 0xffff;
+	entry.lim15_0 = limit & 0xfffff;
+	entry.base15_0 = base & 0xfffff;
 	entry.base23_16 = (base >> 16) & 0xff;
 	entry.type = type;  // See TYPE_xxx flags
 	entry.s = s;        // 1 for segments; 0 for system (TSS, LDT, gates)
@@ -71,8 +71,8 @@ void gdt_init() {
 	// initialize 3 segment descriptors: NULL, code segment, data segment.
 	// Code and data segments must have a privilege level of 0.
 	gdt_table[0] = gdt_make_null_segment();
-	gdt_table[1] = gdt_make_code_segment(0, 0xFFFFF, 0);
-	gdt_table[2] = gdt_make_data_segment(0, 0xFFFFF, 0);
+	gdt_table[1] = gdt_make_code_segment(0, 0xFFFF, 0);
+	gdt_table[2] = gdt_make_data_segment(0, 0xFFFF, 0);
 
 	// setup gdt_ptr so it points to the GDT and ensure it has the right limit.
 	gdt_ptr.base = (uint32_t) &gdt_table;

@@ -1,4 +1,5 @@
 #include "tools.h"
+#include "../common/common.h"
 
 static int valid_arguments(char* file_name, char* fs_name) {
 	CHECK_ERR(strlen(basename(file_name)) >= ENTRY_NAME_SIZE, "file_name too long, must be <= %d\n", 
