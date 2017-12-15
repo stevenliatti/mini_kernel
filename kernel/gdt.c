@@ -71,8 +71,8 @@ void gdt_init() {
 	// initialize 3 segment descriptors: NULL, code segment, data segment.
 	// Code and data segments must have a privilege level of 0.
 	gdt_table[0] = gdt_make_null_segment();
-	gdt_table[1] = gdt_make_code_segment(0, 0xFFFF, 0);
-	gdt_table[2] = gdt_make_data_segment(0, 0xFFFF, 0);
+	gdt_table[1] = gdt_make_code_segment(0, 0xFFFFF, 0);
+	gdt_table[2] = gdt_make_data_segment(0, 0xFFFFF, 0);
 
 	// setup gdt_ptr so it points to the GDT and ensure it has the right limit.
 	gdt_ptr.base = (uint32_t) &gdt_table;

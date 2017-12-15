@@ -15,6 +15,9 @@ fs_%: fs_%.o tools.o $(COMMON)/common.o
 %.o: %.c
 	gcc $(ARGS) -c $<
 
+$(COMMON)/common.o:
+	$(MAKE) common_libc -C $(COMMON)
+
 clean:
 	rm -rf $(OUT) *.o *.d
 

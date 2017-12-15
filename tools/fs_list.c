@@ -1,4 +1,5 @@
 #include "tools.h"
+#include "../common/common.h"
 
 static int valid_arguments(char* fs_name) {
 	FILE* fd = fopen(fs_name, "r");

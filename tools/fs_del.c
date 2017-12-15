@@ -1,4 +1,5 @@
 #include "tools.h"
+#include "../common/common.h"
 
 int main(int argc, char *argv[]) {
     if (argc == 3) {

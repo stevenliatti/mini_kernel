@@ -2,6 +2,20 @@
 #include "ide.h"
 #include "screen.h"
 
+
+// Créé un itérateur permettant d'itérer sur les fichiers du système de fichiers.
+file_iterator_t file_iterator();
+
+// Renvoie true si il y a encore un fichier sur lequel itérer.
+bool file_has_next(file_iterator_t *it) {
+	return false;
+}
+
+// Copie dans filename le nom du prochain fichier pointé par l’itérateur.
+void file_next(char *filename, file_iterator_t *it) {
+
+}
+
 // Renvoie dans stat les méta-informations liées au fichier passé en argument ; la structure
 // stat_t doit contenir au minimum le champ size qui est la taille du fichier. Retourne 0 en
 // cas de succès et -1 en cas d'échec.
@@ -35,16 +49,3 @@ int file_seek(int fd, uint offset) {
 void file_close(int fd) {
 
 }
-
-// Créé un itérateur permettant d'itérer sur les fichiers du système de fichiers.
-// file_iterator_t file_iterator();
-
-// Renvoie true si il y a encore un fichier sur lequel itérer.
-// bool file_has_next(file_iterator_t *it) {
-// 	return false;
-// }
-
-// Copie dans filename le nom du prochain fichier pointé par l’itérateur.
-// void file_next(char *filename, file_iterator_t *it) {
-
-// }
