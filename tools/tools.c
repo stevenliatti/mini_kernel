@@ -1,12 +1,41 @@
 #include "tools.h"
 #include <sys/stat.h>
 
-int get_file_size(const char * file_name) {
+/**
+ * @brief  This function use stat to get size of file from his name (use sys/stat.h)
+ *
+ * @param  file_name the file name
+ * @return the size of file
+ */
+int get_file_size(const char* file_name) {
 	struct stat sb;
-	CHECK_ERR(stat(file_name, & sb) != 0, "error: stat failed for \"%s\"\n", file_name)
+	CHECK_ERR(stat(file_name, & sb) != 0, "Failure in stat \"%s\"\n", file_name)
 	return sb.st_size;
 }
 
+/**
+ * @brief  This function load the fat from image file.
+ *
+ * @param  fd file descriptor of image
+ * @param  sb the super block
+ * @param  fat a double pointer containing the fat
+ * @return EXIT_SUCCESS or EXIT_FAILURE in case of success or failure
+ */
+int load_fat(FILE* fd, super_block_t* sb, int** fat) {
+	int fat_pos = sb->block_size;
+	CHECK_ERR(fseek(fd, fat_pos, SEEK_SET) != 0, "Seeking file failed!\n")
+	*fat = malloc(sb->fat_len * sizeof(int));
+	CHECK_ERR(*fat == NULL, "Failure in allocating memory!!\n")
+	CHECK_ERR(fread(*fat, sizeof(int), sb->fat_len, fd) == 0, "Failure in reading fat table\n")
+	return EXIT_SUCCESS;
+}
+
+/**
+ * @brief  This function the given fat.
+ *
+ * @param  fat our fat
+ * @param  fat_len the size of fat
+ */
 void print_fat(int* fat, int fat_len) {
 	printf("fat table: \n|");
 	for (int i = 0; i < fat_len; i++) {
@@ -15,13 +44,44 @@ void print_fat(int* fat, int fat_len) {
 	printf("\n");
 }
 
+/**
+ * @brief  This function load the super block from image file.
+ *
+ * @param  fd file descriptor of image
+ * @param  sb a double pointer containing the super block
+ * @return EXIT_SUCCESS or EXIT_FAILURE in case of success or failure
+ */
+int load_super_block(FILE* fd, super_block_t** sb) {
+	*sb = malloc(sizeof(super_block_t));
+	CHECK_ERR(*sb == NULL, "Failure in allocating memory!!\n")
+	CHECK_ERR(fread(*sb, sizeof(super_block_t), 1, fd) == 0, "Failure in reading super block\n")
+	return EXIT_SUCCESS;
+}
+
+/**
+ * @brief  This function the given super block.
+ *
+ * @param  super_block the super block
+ */
 void print_super_block(super_block_t* super_block) {
 	printf("super_block : \n");
 	printf("\tmagic: %x\n", super_block->magic);
 	printf("\tversion: %d\n", super_block->version);
 	printf("\tlabel: %s\n", super_block->label);
-	printf("\tblock_size: %d\n", super_block->block_size);
-	printf("\tfat_len: %d\n", super_block->fat_len);
-	printf("\tfat_block_nb: %d\n", super_block->fat_block_nb);
-	printf("\tfirst_dir_entry: %d\n", super_block->first_dir_entry);
+	printf("\tblock_size: %d bytes\n", super_block->block_size);
+	printf("\tfat_len: %d blocks\n", super_block->fat_len);
+	printf("\tfat_block_nb: %d blocks\n", super_block->fat_block_nb);
+	printf("\tfirst_entry: %d (block)\n", super_block->first_entry);
+}
+
+/**
+ * @brief  This function check if the arguments are correct.
+ *
+ * @param  fs_name the file system's name
+ * @return EXIT_SUCCESS or EXIT_FAILURE in case of success or failure
+ */
+int valid_fs_name(char* fs_name) {
+	FILE* fd = fopen(fs_name, "r");
+	CHECK_ERR(fd == NULL, "Error: File system with name \"%s\" doesn't exist\n", fs_name)
+	return EXIT_SUCCESS;
 }
