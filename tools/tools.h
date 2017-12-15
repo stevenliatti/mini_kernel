@@ -11,6 +11,4 @@
 
 int get_file_size(const char * file_name);
 
-void print_fat(int* fat, int fat_len);
-
 #endif

@@ -20,6 +20,14 @@
 #include "fs_api.h"
 #include "test.h"
 
+// from fs_api.c
+extern super_block_t sb;
+
+// from fs_api.c
+// Double pointer to point on the address of the first element
+// in the reserved continuous block (see above in the code)
+extern int** fat;			
+
 /**
  * @brief entry point of kernel. Mode test available
  * 
@@ -45,6 +53,18 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	printf("PIC has been initialized.\n");
 	printf("Timer has been initialized.\n");
 	printf("Memory upper : %d\n", boot_info->mem_upper);
+
+	// load and display the super block
+	load_super_block();
+	print_super_block(&sb);
+	
+	// load and display the fat table
+	int fat_buffer[sb.fat_len];		// to reserve a continuous block of fat_length int
+	load_fat(&fat_buffer); 			// pass the address of the first element of the continuous block
+	print_fat(*fat, sb.fat_len);
+
+	file_iterator_t it = file_iterator();
+	printf("file_has_next: %d\n", file_has_next(&it));
 	
 	while (1) {
 		uchar c = getc();

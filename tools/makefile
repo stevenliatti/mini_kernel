@@ -28,13 +28,13 @@ test_fs_create_big: fs_create clean_img
 	./fs_create doge_fs 512 $(FS_NAME).img 2147483136
 
 test_fs_create_medium: fs_create clean_img
-	./fs_create doge_fs 512 $(FS_NAME).img 307200
+	./fs_create doge_fs 1024 $(FS_NAME).img 307200
 
 test_fs_create_small: fs_create clean_img
-	./fs_create doge_fs 512 $(FS_NAME).img 3072
+	./fs_create doge_fs 512 $(FS_NAME).img 5120
 
 test_fs_add: fs_add
-	./fs_add txt_files/hello.txt $(FS_NAME).img
+	./fs_add txt_files/AARON.txt $(FS_NAME).img
 
 test_fs_list: fs_list
 	./fs_list $(FS_NAME).img
@@ -45,8 +45,8 @@ test_fs_del: fs_del
 test_fs_info: fs_info
 	./fs_info $(FS_NAME).img
 
-test_fs_add_files: fs_add
-	./add_files.sh
+test_fs_add_files: fs_add fs_del
+	./scenario.sh
 
 rebuild: clean all
 

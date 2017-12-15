@@ -23,5 +23,6 @@ typedef struct super_block_st {
 } __attribute__((packed)) super_block_t;
 
 void print_super_block(super_block_t* super_block);
+void print_fat(int* fat, int len);
 
 #endif
