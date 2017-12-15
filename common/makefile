@@ -7,11 +7,11 @@ ARGSKERNEL=-Wall -Wextra -g -static -m32 -ffreestanding -nostdlib -lgcc -MMD
 
 all: $(OBJC)
 
-common_libc: common.c
-	gcc -DLIBC $(ARGSLIBC) -c $< -o common.o
+common_libc.o: common.c
+	gcc -DLIBC $(ARGSLIBC) -c $< -o $@
 
-common_kernel: common.c
-	gcc -DKERNEL $(ARGSKERNEL) -c $< -o common.o
+common_kernel.o: common.c
+	gcc -DKERNEL $(ARGSKERNEL) -c $< -o $@
 
 clean:
 	rm -rf *.o *.d

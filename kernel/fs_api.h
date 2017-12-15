@@ -4,7 +4,7 @@
 #include "../common/common.h"
 #include "../common/types.h"
 
-typedef dir_entry_t stat_t;
+typedef entry_t stat_t;
 
 typedef struct file_iterator_st {
 	int current_entry_offset;		// offset of the current entry in the fs

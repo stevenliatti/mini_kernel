@@ -17,7 +17,6 @@ debug: kernel_rule fs_rule $(OS_NAME).iso
 
 fs_rule: common_libc
 	$(MAKE) test_fs_create_medium test_fs_add_files -C $(TOOLS_FOLDER)
-	$(MAKE) clean -C $(COMMON_FOLDER)
 
 $(OS_NAME).iso: $(KERNEL_BOOT)
 	genisoimage -R -b boot/grub/stage2_eltorito -input-charset utf8 -no-emul-boot -boot-info-table -o $(OS_NAME).iso $(OS_NAME)
@@ -29,13 +28,12 @@ $(KERNEL_BOOT): $(KERNEL_BUILD) grub/*
 
 kernel_rule: common_kernel
 	$(MAKE) $(KERNEL_NAME).elf -C $(KERNEL_FOLDER)
-	$(MAKE) clean -C $(COMMON_FOLDER)
 
 common_libc:
-	$(MAKE) common_libc -C $(COMMON_FOLDER)
+	$(MAKE) common_libc.o -C $(COMMON_FOLDER)
 
 common_kernel:
-	$(MAKE) common_kernel -C $(COMMON_FOLDER)
+	$(MAKE) common_kernel.o -C $(COMMON_FOLDER)
 
 test_screen:
 	$(MAKE) $@ -C $(KERNEL_FOLDER)
@@ -46,6 +44,7 @@ test_timer:
 clean:
 	rm -rf $(OS_NAME)/ $(OS_NAME).iso
 	$(MAKE) clean -C $(KERNEL_FOLDER)
+	$(MAKE) clean -C $(COMMON_FOLDER)
 	$(MAKE) clean -C $(TOOLS_FOLDER)
 
 help:

@@ -7,7 +7,7 @@ DEPS=$(OBJC:%.o=%.d)
 ARGS=-Wall -Wextra -g -static -std=gnu11 -m32 -ffreestanding -nostdlib -lgcc -MMD
 COMMON=../common
 
-$(KERNEL_NAME).elf: $(OBJC) $(OBJASM) $(COMMON)/common.o
+$(KERNEL_NAME).elf: $(OBJC) $(OBJASM) $(COMMON)/common_kernel.o
 	gcc -g -T $(KERNEL_NAME).ld $(ARGS) $^ -o $@
 
 test_screen:
@@ -15,6 +15,9 @@ test_screen:
 
 test_timer:
 	make TEST_MODE=-DTEST_TIMER
+
+$(COMMON)/common_kernel.o:
+	$(MAKE) common_kernel.o -C $(COMMON)
 
 %.o: %.c
 	gcc -g $(TEST_MODE) $(ARGS) -c $< -o $@

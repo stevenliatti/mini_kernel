@@ -8,6 +8,11 @@
 
 #include "common.h"
 
+/**
+ * @brief  This function the given super block.
+ *
+ * @param  super_block the super block
+ */
 void print_super_block(super_block_t* super_block) {
 	printf("super_block : \n");
 	printf("    magic: %x\n", super_block->magic);
@@ -16,7 +21,7 @@ void print_super_block(super_block_t* super_block) {
 	printf("    block_size: %d\n", super_block->block_size);
 	printf("    fat_len: %d\n", super_block->fat_len);
 	printf("    fat_block_nb: %d\n", super_block->fat_block_nb);
-	printf("    first_dir_entry: %d\n", super_block->first_dir_entry);
+	printf("    first_entry: %d\n", super_block->first_entry);
 }
 
 void print_fat(int* fat, int fat_len) {

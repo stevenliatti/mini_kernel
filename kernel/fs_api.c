@@ -36,9 +36,9 @@ static int get_next_entry_offset(int current_offset, int block_size, char sector
 		for (int i = 0; i < sector_per_block; i++) {
 			char buffer[SECTOR_SIZE];
 			read_sector(sector_index + i, buffer);
-			for (int j = 0; j < SECTOR_SIZE; j += sizeof(dir_entry_t)) {
-				dir_entry_t temp;
-				memcpy(&temp, buffer + j, sizeof(dir_entry_t));
+			for (int j = 0; j < SECTOR_SIZE; j += sizeof(entry_t)) {
+				entry_t temp;
+				memcpy(&temp, buffer + j, sizeof(entry_t));
 				if (fat[temp.start] != -1) {
 					return block_index * block_size + j;
 				}
@@ -53,7 +53,7 @@ static int get_next_entry_offset(int current_offset, int block_size, char sector
 file_iterator_t file_iterator() {
 	// create iterator
 	file_iterator_t it;
-	it.current_entry_offset = sb.first_dir_entry * sb.block_size;
+	it.current_entry_offset = sb.first_entry * sb.block_size;
 	it.next_entry_offset = get_next_entry_offset(it.current_entry_offset, sb.block_size, sector_per_block);
 	return it;
 }

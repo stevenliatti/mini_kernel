@@ -9,14 +9,14 @@ COMMON=../common
 
 all: $(OUT)
 
-fs_%: fs_%.o tools.o $(COMMON)/common.o
+fs_%: fs_%.o tools.o $(COMMON)/common_libc.o
 	gcc $(ARGS) $^ -o $@
 
 %.o: %.c
 	gcc $(ARGS) -c $<
 
-$(COMMON)/common.o:
-	$(MAKE) common_libc -C $(COMMON)
+$(COMMON)/common_libc.o:
+	$(MAKE) common_libc.o -C $(COMMON)
 
 clean:
 	rm -rf $(OUT) *.o *.d
