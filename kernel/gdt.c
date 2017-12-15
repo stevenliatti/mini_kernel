@@ -33,8 +33,8 @@ static gdt_entry_t build_entry(uint32_t base, uint32_t limit, uint8_t type, uint
 	gdt_entry_t entry;
 	// For a TSS and LDT, base is the addresse of the TSS/LDT structure
 	// and limit is the size of the structure.
-	entry.lim15_0 = limit & 0xffff;
-	entry.base15_0 = base & 0xffff;
+	entry.lim15_0 = limit & 0xfffff;
+	entry.base15_0 = base & 0xfffff;
 	entry.base23_16 = (base >> 16) & 0xff;
 	entry.type = type;  // See TYPE_xxx flags
 	entry.s = s;        // 1 for segments; 0 for system (TSS, LDT, gates)

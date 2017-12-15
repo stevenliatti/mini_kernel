@@ -1,4 +1,5 @@
 #include "tools.h"
+#include "../common/common.h"
 
 /**
  * @brief  Entry point of program, load differents structures and delete the file to fs.

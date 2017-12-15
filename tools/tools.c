@@ -59,22 +59,6 @@ int load_super_block(FILE* fd, super_block_t** sb) {
 }
 
 /**
- * @brief  This function the given super block.
- *
- * @param  super_block the super block
- */
-void print_super_block(super_block_t* super_block) {
-	printf("super_block : \n");
-	printf("\tmagic: %x\n", super_block->magic);
-	printf("\tversion: %d\n", super_block->version);
-	printf("\tlabel: %s\n", super_block->label);
-	printf("\tblock_size: %d bytes\n", super_block->block_size);
-	printf("\tfat_len: %d blocks\n", super_block->fat_len);
-	printf("\tfat_block_nb: %d blocks\n", super_block->fat_block_nb);
-	printf("\tfirst_entry: %d (block)\n", super_block->first_entry);
-}
-
-/**
  * @brief  This function check if the arguments are correct.
  *
  * @param  fs_name the file system's name

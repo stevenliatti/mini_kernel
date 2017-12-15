@@ -1,4 +1,5 @@
 #include "tools.h"
+#include "../common/common.h"
 
 /**
  * @brief  This function get the metadata of metadata block index given.

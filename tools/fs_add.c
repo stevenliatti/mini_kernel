@@ -1,4 +1,5 @@
 #include "tools.h"
+#include "../common/common.h"
 
 /**
  * @brief  This function check if the arguments are correct.

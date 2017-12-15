@@ -1,4 +1,5 @@
 #include "tools.h"
+#include "../common/common.h"
 
 /**
  * @brief  This function compute the percentage of file system space in use.

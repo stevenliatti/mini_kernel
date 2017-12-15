@@ -66,13 +66,6 @@ static const char* exception_messages[] = {
 	"Exception 20 - Virtualization Exception"
 };
 
-// Handlers (array of functions) : represent handlers functions executed
-// for each interuption
-static void (*handlers[]) (void) = {
-	timer_handler,
-	keyboard_handler
-};
-
 // Exception handler
 void exception_handler(regs_t *regs) {
 	clr_scr();
@@ -85,7 +78,17 @@ void exception_handler(regs_t *regs) {
 
 // IRQ handler
 void irq_handler(regs_t *regs) {
-	(*handlers[regs->number])();
+    switch (regs->number) {
+        case 0:
+            timer_handler();
+        case 1:
+            keyboard_handler();
+            break;
+        case 14:
+            break;
+        default:
+            printf("irq handler %d not implemented\n", regs->number);
+    }
 	pic_eoi(regs->number);
 }
 
