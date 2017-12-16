@@ -1,21 +1,23 @@
 SRCS=$(wildcard fs_*.c)
 OBJC=$(SRCS:%.c=%.o)
+DEPS=$(OBJC:%.o=%.d)
 OUT=$(OBJC:%.o=%)
-ARGS=-Wall -Wextra -g -std=gnu11 -m32
+ARGS=-Wall -Wextra -g -std=gnu11 -m32 -MMD
 FS_NAME=fs
 COMMON=../common
+COMMON_LIBC=$(COMMON)/common_libc.o
 
 .SECONDARY:
 
 all: $(OUT)
 
-fs_%: fs_%.o tools.o $(COMMON)/common_libc.o
+fs_%: fs_%.o tools.o $(COMMON_LIBC)
 	gcc $(ARGS) $^ -o $@
 
 %.o: %.c
 	gcc $(ARGS) -c $<
 
-$(COMMON)/common_libc.o:
+$(COMMON_LIBC):
 	$(MAKE) common_libc.o -C $(COMMON)
 
 clean:
@@ -51,3 +53,5 @@ test_fs_add_files: fs_add fs_del
 rebuild: clean all
 
 .PHONY: clean rebuild
+
+-include $(DEPS)

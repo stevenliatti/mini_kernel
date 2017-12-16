@@ -55,6 +55,14 @@ int main(int argc, char *argv[]) {
 			pos = sb->block_size * fat[last_pos];
 		} while (pos != 0 && !found);
 
+		if (found) {
+			printf("%s has been deleted ! (size: %d bytes, start block: %d)\n", argv[1], 
+				entry->size, entry->start);
+		}
+		else {
+			printf("%s not found in file system !\n", argv[1]);
+		}
+
 		// Write the fat in the fs
 		pos = sb->block_size;
 		CHECK_ERR(fseek(fd, pos, SEEK_SET) != 0, "Seeking file failed!\n")

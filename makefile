@@ -30,10 +30,10 @@ kernel_rule: common_kernel
 	$(MAKE) $(KERNEL_NAME).elf -C $(KERNEL_FOLDER)
 
 common_libc:
-	$(MAKE) common_libc.o -C $(COMMON_FOLDER)
+	$(MAKE) $@.o -C $(COMMON_FOLDER)
 
 common_kernel:
-	$(MAKE) common_kernel.o -C $(COMMON_FOLDER)
+	$(MAKE) $@.o -C $(COMMON_FOLDER)
 
 test_screen:
 	$(MAKE) $@ -C $(KERNEL_FOLDER)

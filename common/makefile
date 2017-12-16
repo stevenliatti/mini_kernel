@@ -1,11 +1,10 @@
 SRCS=$(wildcard *.c)
 OBJC=$(SRCS:%.c=%.o)
-ARGSLIBC=-Wall -Wextra -g -std=gnu11 -m32
+DEPS=common_libc.d common_kernel.d
+ARGSLIBC=-Wall -Wextra -g -std=gnu11 -m32 -MMD
 ARGSKERNEL=-Wall -Wextra -g -static -m32 -ffreestanding -nostdlib -lgcc -MMD
 
 .SECONDARY:
-
-all: $(OBJC)
 
 common_libc.o: common.c
 	gcc -DLIBC $(ARGSLIBC) -c $< -o $@
@@ -19,3 +18,5 @@ clean:
 rebuild: clean all
 
 .PHONY: clean rebuild
+
+-include $(DEPS)
