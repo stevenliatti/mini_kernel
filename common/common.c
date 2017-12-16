@@ -24,6 +24,12 @@ void print_super_block(super_block_t* super_block) {
 	printf("    first_entry: %d\n", super_block->first_entry);
 }
 
+/**
+ * @brief  This function the given fat.
+ *
+ * @param  fat our fat
+ * @param  fat_len the size of fat
+ */
 void print_fat(int* fat, int fat_len) {
 	printf("fat table: \n|");
 	for (int i = 0; i < fat_len; i++) {

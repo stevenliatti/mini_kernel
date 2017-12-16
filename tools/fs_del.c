@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 						index = new_index;
 					} while (new_index != 0);
 				}
-			} while (fat[entry->start] != -1 && readed_data < sb->block_size && !found);
+			} while (entry->start != 0 && readed_data < sb->block_size && !found);
 			pos = sb->block_size * fat[last_pos];
 		} while (pos != 0 && !found);
 
