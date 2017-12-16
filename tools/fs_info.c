@@ -1,3 +1,14 @@
+/**
+ * @file 		fs_info.c
+ * @brief 		Tool for get infos about an image file system.
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		December 16, 2017
+ * @version		1.0
+ */
+
 #include "tools.h"
 #include "../common/common.h"
 

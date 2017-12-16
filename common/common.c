@@ -1,3 +1,17 @@
+/**
+ * @file 		common.c
+ * @brief 		Functions in common for the file system's tools and kernel.
+ * 				There is two rules associated at this file in makefile, one 
+ *				to compile the file with stdio for tools files and the other 
+ *				to compile the file with screen.h for kernel files.
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		December 16, 2017
+ * @version		1.0
+ */
+
 #ifdef LIBC
 #include <stdio.h>
 #endif

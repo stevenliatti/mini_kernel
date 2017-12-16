@@ -52,6 +52,16 @@ test_fs_add_files: fs_add fs_del
 
 rebuild: clean all
 
+help:
+	@echo "Available targets :"
+	@echo "\thelp : this help"
+	@echo "\tall (default) : compile $(OUT)"
+	@echo "\t$(COMMON_LIBC) : compile the common.o file with the stdio lib"
+	@echo "\ttest_fs_* : multiple rules to test all tools (see in makefile for more details)"
+	@echo "\tclean : remove $(OUT), *.o and *.d files"
+	@echo "\tclean_img : remove *.img files"
+	@echo "\trebuild : call clean and all"
+
 .PHONY: clean rebuild
 
 -include $(DEPS)

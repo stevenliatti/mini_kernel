@@ -1,3 +1,14 @@
+/**
+ * @file 		tools.h
+ * @brief 		Header of functions for the file system's tools.
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		December 16, 2017
+ * @version		1.0
+ */
+
 #ifndef _TOOLS_H_
 #define _TOOLS_H_
 
