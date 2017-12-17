@@ -12,7 +12,7 @@
 #include "tools.h"
 #include "../common/common.h"
 
-#define FS_MAGIC 0x66
+#define FS_MAGIC 0x42
 #define FS_VERSION 1
 #define MIN_BLOCK_SIZE 512
 #define MAX_BLOCK_SIZE (8 * MIN_BLOCK_SIZE)
