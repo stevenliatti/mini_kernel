@@ -36,12 +36,12 @@ static int valid_arguments(char* file_name, char* fs_name) {
  * @brief  This function return the index of next available block.
  *
  * @param  fat our fat
- * @param  fat_len the fat length
+ * @param  blocks_count the fat length
  * @param  first the index of first entry
  * @return the index of next available block, or zero if failed
  */
-static int get_next_available_block(int* fat, int fat_len, int first) {
-	for (int i = first + 1; i < fat_len; i++) {
+static int get_next_available_block(int* fat, int blocks_count, int first) {
+	for (int i = first + 1; i < blocks_count; i++) {
 		if (fat[i] == (int)0xffffffff) {
 			return i;
 		}
@@ -55,15 +55,15 @@ static int get_next_available_block(int* fat, int fat_len, int first) {
  * @param  needed_block the array of index of blocks
  * @param  fat our fat
  * @param  first the index of first entry
- * @param  fat_len the fat length
+ * @param  blocks_count the fat length
  * @param  needed_block_nb the number of needed blocks (for the file added)
  * @return EXIT_SUCCESS or EXIT_FAILURE in case of success or lack of blocks
  */
-static int get_available_blocks(int* needed_block, int* fat, int first, int fat_len,
+static int get_available_blocks(int* needed_block, int* fat, int first, int blocks_count,
 	int needed_block_nb) {
 	int j = 0;
 	int i = first;
-	while (j < needed_block_nb && (i = get_next_available_block(fat, fat_len, i)) != 0) {
+	while (j < needed_block_nb && (i = get_next_available_block(fat, blocks_count, i)) != 0) {
 		needed_block[j] = i;
 		j++;
 	}
@@ -129,7 +129,7 @@ static int find_empty_entry(char* file_name, int* fat, super_block_t* sb, FILE* 
 	} while (pos != 0);
 
 	if (readed_data == sb->block_size && pos == 0 && fat[temp->start] != -1) {
-		int next_index = get_next_available_block(fat, sb->fat_len, sb->first_entry);
+		int next_index = get_next_available_block(fat, sb->blocks_count, sb->first_entry);
 		CHECK_ERR(next_index == 0, "No space available for the meta-data!\n")
 
 		fat[last_pos] = next_index;
@@ -160,7 +160,7 @@ static int update_fat(int file_needed_block, int* available_blocks,
 	super_block_t* sb, int* fat) {
 
 	CHECK_ERR(get_available_blocks(available_blocks, fat, sb->first_entry,
-		sb->fat_len, file_needed_block), "No blocks available!\n")
+		sb->blocks_count, file_needed_block), "No blocks available!\n")
 	printf("File content will be added in blocks:\n");
 	printf("|");
 	for (int i = 0; i < file_needed_block; i++)	{
@@ -205,7 +205,7 @@ static int write_all(super_block_t* sb, FILE* fd, int* fat, char* file_name) {
 	// write the fat in the fs
 	int pos = sb->block_size;
 	CHECK_ERR(fseek(fd, pos, SEEK_SET) != 0, "Seeking file failed!\n")
-	CHECK_ERR(fwrite(fat, sizeof(int), sb->fat_len, fd) == 0, "Failure in writing data!\n")
+	CHECK_ERR(fwrite(fat, sizeof(int), sb->blocks_count, fd) == 0, "Failure in writing data!\n")
 
 	// write the file content in the fs
 	FILE* fd2 = fopen(file_name, "r");

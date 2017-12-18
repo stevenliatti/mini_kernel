@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 		// Write the fat in the fs
 		pos = sb->block_size;
 		CHECK_ERR(fseek(fd, pos, SEEK_SET) != 0, "Seeking file failed!\n")
-		CHECK_ERR(fwrite(fat, sizeof(int), sb->fat_len, fd) == 0, "Failure in writing data!\n")
+		CHECK_ERR(fwrite(fat, sizeof(int), sb->blocks_count, fd) == 0, "Failure in writing data!\n")
 
 		fclose(fd);
 		return EXIT_SUCCESS;

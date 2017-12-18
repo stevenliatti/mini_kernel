@@ -29,7 +29,7 @@ typedef struct super_block_st {
 	char version;
 	char label[LABEL_SIZE];
 	int block_size;
-	int fat_len;
+	int blocks_count;
 	int fat_block_nb;
 	int first_entry;
 } __attribute__((packed)) super_block_t;

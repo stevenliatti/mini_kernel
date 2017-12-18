@@ -59,9 +59,9 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	print_super_block(&sb);
 	
 	// load and display the fat table
-	int fat_buffer[sb.fat_len];		// to reserve a continuous block of fat_length int
+	int fat_buffer[sb.blocks_count];		// to reserve a continuous block of fat_length int
 	load_fat(&fat_buffer); 			// pass the address of the first element of the continuous block
-	print_fat(*fat, sb.fat_len);
+	print_fat(*fat, sb.blocks_count);
 
 	file_iterator_t it = file_iterator();
 	printf("file_has_next: %d\n", file_has_next(&it));

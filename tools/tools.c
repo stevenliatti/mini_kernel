@@ -35,9 +35,9 @@ int get_file_size(const char* file_name) {
 int load_fat(FILE* fd, super_block_t* sb, int** fat) {
 	int fat_pos = sb->block_size;
 	CHECK_ERR(fseek(fd, fat_pos, SEEK_SET) != 0, "Seeking file failed!\n")
-	*fat = malloc(sb->fat_len * sizeof(int));
+	*fat = malloc(sb->blocks_count * sizeof(int));
 	CHECK_ERR(*fat == NULL, "Failure in allocating memory!!\n")
-	CHECK_ERR(fread(*fat, sizeof(int), sb->fat_len, fd) == 0, "Failure in reading fat table\n")
+	CHECK_ERR(fread(*fat, sizeof(int), sb->blocks_count, fd) == 0, "Failure in reading fat table\n")
 	return EXIT_SUCCESS;
 }
 

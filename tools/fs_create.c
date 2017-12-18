@@ -57,13 +57,13 @@ static int valid_arguments(char* label, int block_size, int file_size, char* fil
  * @param  label the label of file system
  * @param  block_size the block's size in bytes
  * @param  fat_block_nb the block's number occupied by the fat
- * @param  fat_len the block's number total referenced by fat (also the final total of blocks)
+ * @param  blocks_count the block's number total referenced by fat (also the final total of blocks)
  * @param  first_entry_index the block where the first meta data begins
  * @param  fd the file descriptor of image file
  * @param  total a variable to store the total bytes of file system
  * @return EXIT_SUCCESS or EXIT_FAILURE in case of success or failure
  */
-static int fwrite_super_block(char* label, int block_size, int fat_block_nb, int fat_len,
+static int fwrite_super_block(char* label, int block_size, int fat_block_nb, int blocks_count,
 		int first_entry_index, FILE* fd, int* total) {
 	super_block_t* super_block = calloc(1, sizeof(super_block_t));
 	CHECK_ERR(super_block == NULL, "Failure in allocating memory!!\n")
@@ -72,7 +72,7 @@ static int fwrite_super_block(char* label, int block_size, int fat_block_nb, int
 	super_block->version = FS_VERSION;
 	strcpy(super_block->label, label);
 	super_block->block_size = block_size;
-	super_block->fat_len = fat_len;
+	super_block->blocks_count = blocks_count;
 	super_block->fat_block_nb = fat_block_nb;
 	super_block->first_entry = first_entry_index;
 
@@ -104,15 +104,15 @@ static int fwrite_super_block(char* label, int block_size, int fat_block_nb, int
  */
 static int fwrite_fat_blocks(int total_block_nb, int block_size, int first_entry_index,
 	FILE* fd, int* total) {
-	int fat_len = total_block_nb;
-	int fat_occupied_bytes = fat_len * sizeof(int);
-	int* fat = calloc(fat_len, sizeof(int));
+	int blocks_count = total_block_nb;
+	int fat_occupied_bytes = blocks_count * sizeof(int);
+	int* fat = calloc(blocks_count, sizeof(int));
 	CHECK_ERR(fat == NULL, "Failure in allocating memory!!\n")
 
-	for (int i = 0; i < fat_len; i++) { fat[i] = 0xffffffff; }
+	for (int i = 0; i < blocks_count; i++) { fat[i] = 0xffffffff; }
 
 	fat[first_entry_index] = 0;
-	CHECK_ERR(fwrite(fat, sizeof(int), fat_len, fd) == 0, "Failure in writing data!!\n")
+	CHECK_ERR(fwrite(fat, sizeof(int), blocks_count, fd) == 0, "Failure in writing data!!\n")
 
 	printf("fat size (bytes): %d\n", fat_occupied_bytes);
 	*total += fat_occupied_bytes;
@@ -132,14 +132,14 @@ static int fwrite_fat_blocks(int total_block_nb, int block_size, int first_entry
 /**
  * @brief  This function compute the needed blocks for fat.
  *
- * @param  fat_len the total block's number (fat len)
+ * @param  blocks_count the total block's number (fat len)
  * @param  block_size the block's size in bytes
  * @return the needed blocks for fat
  */
-static int compute_fat_block_nb(int fat_len, int block_size) {
+static int compute_fat_block_nb(int blocks_count, int block_size) {
 	// why int? because the size (int) of the file system can be up to +2147483136 bytes (it is a signed int)
 	// and if a size block = 512 so 2147483136 / 512 = 4194303 (0x3FFFFF) ==> 24 bits
-	int fat_occupied_bytes = fat_len * sizeof(int);
+	int fat_occupied_bytes = blocks_count * sizeof(int);
 	int fat_block_nb = 1;
 	int div = fat_occupied_bytes / block_size;
 	if (div != 0) {

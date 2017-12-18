@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
 		int used_blocks_nb = 0;
 		int free_blocks_nb = 0;
-		for (int i = sb->first_entry; i < sb->fat_len; i++) {
+		for (int i = sb->first_entry; i < sb->blocks_count; i++) {
 			if (fat[i] == -1) {
 				free_blocks_nb++;
 			} else {
@@ -54,9 +54,9 @@ int main(int argc, char *argv[]) {
 		}
 
 		printf("\nUsed blocks number: %7d \t %10d B\t", used_blocks_nb, used_blocks_nb * sb->block_size);
-		printf("%9.5f%%\n", percentage(sb->fat_len - sb->first_entry, used_blocks_nb));
+		printf("%9.5f%%\n", percentage(sb->blocks_count - sb->first_entry, used_blocks_nb));
 		printf("Free blocks number: %7d \t %10d B\t", free_blocks_nb, free_blocks_nb * sb->block_size);
-		printf("%9.5f%%\n", percentage(sb->fat_len - sb->first_entry, free_blocks_nb));
+		printf("%9.5f%%\n", percentage(sb->blocks_count - sb->first_entry, free_blocks_nb));
 
 		fclose(fd);
 		return EXIT_SUCCESS;

@@ -22,7 +22,7 @@ void load_fat(int** fat_buffer) {
 	for (int i = 0; i < sector_per_fat; i++) {
 		read_sector(fat_sector + i, buffer + i * SECTOR_SIZE);
 	}
-	memcpy(*fat_buffer, buffer, sb.fat_len * sizeof(int));
+	memcpy(*fat_buffer, buffer, sb.blocks_count * sizeof(int));
 	fat = fat_buffer; // make fat point on the address of the first element of fat_buffer
 }
 
