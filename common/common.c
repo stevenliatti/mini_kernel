@@ -27,15 +27,15 @@
  *
  * @param  super_block the super block
  */
-void print_super_block(super_block_t* super_block) {
+void print_super_block(super_block_t super_block) {
 	printf("super_block : \n");
-	printf("    magic: %x\n", super_block->magic);
-	printf("    version: %d\n", super_block->version);
-	printf("    label: %s\n", super_block->label);
-	printf("    block_size: %d\n", super_block->block_size);
-	printf("    blocks_count: %d\n", super_block->blocks_count);
-	printf("    fat_block_nb: %d\n", super_block->fat_block_nb);
-	printf("    first_entry: %d\n", super_block->first_entry);
+	printf("    magic: %x\n", super_block.magic);
+	printf("    version: %d\n", super_block.version);
+	printf("    label: %s\n", super_block.label);
+	printf("    block_size: %d\n", super_block.block_size);
+	printf("    blocks_count: %d\n", super_block.blocks_count);
+	printf("    fat_block_nb: %d\n", super_block.fat_block_nb);
+	printf("    first_entry: %d\n", super_block.first_entry);
 }
 
 /**

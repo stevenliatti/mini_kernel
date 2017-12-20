@@ -16,7 +16,7 @@ debug: kernel_rule fs_rule $(OS_NAME).iso
 	qemu-system-i386 -monitor stdio -hda $(FS_NAME).img -cdrom $(OS_NAME).iso -s -S
 
 fs_rule: common_libc
-	$(MAKE) test_fs_create_medium test_fs_add_files -C $(TOOLS_FOLDER)
+	$(MAKE) test_fs_create_small test_fs_add_files -C $(TOOLS_FOLDER)
 
 $(OS_NAME).iso: $(KERNEL_BOOT)
 	genisoimage -R -b boot/grub/stage2_eltorito -input-charset utf8 -no-emul-boot -boot-info-table -o $(OS_NAME).iso $(OS_NAME)

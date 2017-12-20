@@ -76,7 +76,7 @@ static int fwrite_super_block(char* label, int block_size, int fat_block_nb, int
 	super_block->fat_block_nb = fat_block_nb;
 	super_block->first_entry = first_entry_index;
 
-	print_super_block(super_block);
+	print_super_block(*super_block);
 	CHECK_ERR(fwrite(super_block, sizeof(super_block_t), 1, fd) == 0,"Failure in writing data!!\n")
 
 	printf("super block occupied size (bytes): %d\n", sizeof(super_block_t));

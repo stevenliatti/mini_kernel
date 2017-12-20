@@ -34,7 +34,7 @@ typedef struct super_block_st {
 	int first_entry;
 } __attribute__((packed)) super_block_t;
 
-void print_super_block(super_block_t* super_block);
+void print_super_block(super_block_t super_block);
 void print_fat(int* fat, int len);
 
 #endif

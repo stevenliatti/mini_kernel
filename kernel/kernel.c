@@ -17,16 +17,31 @@
 #include "idt.h"
 #include "x86.h"
 #include "keyboard.h"
-#include "fs_api.h"
 #include "test.h"
+#include "../common/common.h"
+#include "ide.h"
+#include "fs_api.h"
 
-// from fs_api.c
-extern super_block_t sb;
+super_block_t sb;
+char sector_per_block;
+int* fat;
 
-// from fs_api.c
-// Double pointer to point on the address of the first element
-// in the reserved continuous block (see above in the code)
-extern int** fat;			
+void load_super_block(super_block_t* sb) {
+	char buffer[SECTOR_SIZE];
+	read_sector(0, buffer);
+	memcpy(sb, buffer, sizeof(super_block_t));
+}
+
+void load_fat(int fat_buffer[], super_block_t sb, int sector_per_block) {
+	int fat_sector = sector_per_block;		// just after the super block
+	int sector_per_fat = sb.fat_block_nb * sector_per_block;
+
+	char buffer[sector_per_fat * SECTOR_SIZE];
+	for (int i = 0; i < sector_per_fat; i++) {
+		read_sector(fat_sector + i, buffer + i * SECTOR_SIZE);
+	}
+	memcpy(fat_buffer, buffer, sb.blocks_count * sizeof(int));
+}
 
 /**
  * @brief entry point of kernel. Mode test available
@@ -55,16 +70,23 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	printf("Memory upper : %d\n", boot_info->mem_upper);
 
 	// load and display the super block
-	load_super_block();
-	print_super_block(&sb);
+	load_super_block(&sb);
+	print_super_block(sb);
+
+	sector_per_block = sb.block_size / SECTOR_SIZE;
 	
 	// load and display the fat table
-	int fat_buffer[sb.blocks_count];		// to reserve a continuous block of fat_length int
-	load_fat(&fat_buffer); 			// pass the address of the first element of the continuous block
-	print_fat(*fat, sb.blocks_count);
+	load_fat(fat, sb, sector_per_block);
+	print_fat(fat, sb.blocks_count);
 
 	file_iterator_t it = file_iterator();
-	printf("file_has_next: %d\n", file_has_next(&it));
+
+	char filename[ENTRY_NAME_SIZE];
+	while (file_has_next(&it)) {
+		file_next(filename, &it);
+		// file_stat(filename, &st);
+		printf("File: %s\n", filename);
+	}
 	
 	while (1) {
 		uchar c = getc();

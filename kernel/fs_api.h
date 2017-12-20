@@ -8,11 +8,8 @@ typedef entry_t stat_t;
 
 typedef struct file_iterator_st {
 	int current_entry_offset;		// offset of the current entry in the fs
-	int next_entry_offset;			// offset of the next entry in the fs
+	// int next_entry_offset;			// offset of the next entry in the fs
 } __attribute__((packed)) file_iterator_t;
-
-void load_super_block();
-void load_fat();
 
 file_iterator_t file_iterator();
 bool file_has_next(file_iterator_t *it);
