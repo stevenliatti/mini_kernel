@@ -39,7 +39,7 @@
 \section{Description}
 Ce rapport décrit le système de fichiers "Doge FS" utilisé dans notre kernel. Doge FS est basé sur
 \href{https://en.wikipedia.org/wiki/File_Allocation_Table}{File Allocation Table (FAT)}, un système
-de fichier très répandu. Une image formatée en Doge FS contient des blocs de bytes (multiple de 512).
+de fichiers très répandu. Une image formatée en Doge FS contient des blocs de bytes (multiple de 512).
 Les tous premiers bytes d'une image (situés dans le premier bloc) contiennent les informations de base
 du système, nous l'appelons le "super bloc". Le(s) bloc(s) suivant(s) contien(nen)t la FAT, un tableau de
 listes chainées d'indices de blocs. Finalement, après la FAT, les blocs suivants contiennent soit des
@@ -50,12 +50,12 @@ Voici le détail des 3 structures de données mentionnées ci-dessus :
 \subsection{\mintinline{c}{super_block_t}} Contient les informations de base du système :
 
 \begin{tabular}{|c|l|p{.5\linewidth}|}	\hline
-	\textbf{Taille (en octets)}	& \textbf{Nom} & \textbf{Description} \\ \hline
+	\textbf{Taille (en bytes)}	& \textbf{Nom} & \textbf{Description} \\ \hline
 	1	& \mintinline{c}{magic}			& La signature, à 0x42, ou 66 en base 10 				\\ \hline
 	1	& \mintinline{c}{version}		& La version du système 								\\ \hline
 	20	& \mintinline{c}{label}			& Le nom du système de fichier (ici "doge\_os")			\\ \hline
 	4	& \mintinline{c}{block_size}	& La taille d'un bloc (multiple de 512, jusqu'à 4096) 	\\ \hline
-	4	& \mintinline{c}{blocks_count}		& Le nombre total de blocs indexés par la FAT 			\\ \hline
+	4	& \mintinline{c}{blocks_count}		& Le nombre total de blocs, indexés par la FAT 			\\ \hline
 	4	& \mintinline{c}{fat_block_nb}	& Le nombre de blocs occupés par la FAT elle-même 		\\ \hline
 	4	& \mintinline{c}{first_entry}	& L'indice du premier bloc de méta-données				\\ \hline
 \end{tabular}
@@ -63,12 +63,13 @@ Voici le détail des 3 structures de données mentionnées ci-dessus :
 \subsection{\mintinline{c}{entry_t}} Représente les méta-données, c'est une liste d'entrées de fichiers :
 
 \begin{tabular}{|c|l|p{.5\linewidth}|}	\hline
-	\textbf{Taille (en octets)}	& \textbf{Nom} & \textbf{Description} \\ \hline
+	\textbf{Taille (en bytes)}	& \textbf{Nom} & \textbf{Description} \\ \hline
 	24	& \mintinline{c}{name} 	& Le nom du fichier \\ \hline
 	4 	& \mintinline{c}{size} 	& La taille en bytes du fichier \\ \hline
 	4 	& \mintinline{c}{start} & L'indice du premier bloc de données du fichier \\ \hline
 \end{tabular}
 
+\newpage
 \subsection{FAT} C'est un tableau où chaque case représente un bloc du système de fichier et peut contenir :
 \begin{itemize}
 	\item -1 : indique que le bloc est libre et n'a pas de suivant
@@ -95,7 +96,7 @@ caractères pour un nom de fichier, une entrée a une taille de 32 bytes (24 byt
 4 bytes d'indice de premier bloc de données), par conséquent un bloc de 512 bytes peut en contenir 16 
 ($block_{size} / 32$).
 \bigbreak
-Dans cet exemple, 2 blocs sont alloués pour les méta-données, les blocs 2 et 3. 
+Dans cet exemple, 1 bloc est alloué pour les méta-données, le bloc 2. 
 Le premier fichier, "hello.txt" occupe un bloc et se trouve à l'indice 4, qui contient un zéro, indiquant 
 qu'il s'agit de la fin de la chaine. Le deuxième fichier, "code.c" occupe 2 blocs, aux indices 5 et 6 dans la FAT.
 Les autres fichiers remplissent la FAT en séquence selon la même analogie.
@@ -110,9 +111,8 @@ donné que l'écriture de fichiers côté kernel n'est pas requise dans ce TP, l
 consultée. Si nous devions gérer les cas d'écriture, nous pourrions imaginer un mécanisme d'écriture intermittente
 qui mettrait à jour la FAT sur le disque lorsque nécessaire.
 
-% TODO: enlever numéros du tab entry et changer un peu ordre dans la FAT
+% TODO: enlever numéros du tab entry et mettre 0 à FAT[2] et -1 à FAT[3]
 
-\newpage
 \section{Avantages et inconvénients}
 \subsection{Avantages}
 \begin{itemize}
@@ -123,8 +123,9 @@ qui mettrait à jour la FAT sur le disque lorsque nécessaire.
 \end{itemize}
 \subsection{Inconvénients}
 \begin{itemize}
-	\item Overhead important pour le stockage de la FAT (disque et RAM)
-	\item Accès séquentiel potentiellement lent, bien que limité dans notre cas
+	\item Overhead important pour le stockage de la FAT (disque et RAM). À titre d'exemple, pour une taille de 
+	blocs de 512 bytes et pour une image disque de 2'147'483'136 bytes (2 GiB), la FAT occupera plus de 16 MB 
+	(16'777'212 bytes) en RAM.
 \end{itemize}
 
 \end{document}

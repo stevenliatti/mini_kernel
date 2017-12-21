@@ -3,10 +3,25 @@
 #include "screen.h"
 #include "base.h"
 
+#define DESCRIPTORS_NB 100
+
 // from kernel.c
 extern super_block_t sb;
 extern int* fat;
 extern char sector_per_block;
+
+// typedef struct file_descriptor_st {
+// 	int id;
+	
+// } __attribute__((packed)) file_descriptor_t;
+
+static int file_descriptor[DESCRIPTORS_NB];
+
+void init_file_descriptor() {
+	for (int i = 0; i < DESCRIPTORS_NB; i++) {
+		file_descriptor[i] = -1;
+	}
+}
 
 static int get_current_entry_offset(int current_offset, int block_size) {
 	int block_index = current_offset / block_size;
@@ -70,7 +85,30 @@ bool file_exists(char *filename) {
 
 // Ouvre un fichier et renvoie un descripteur de fichier pour y accéder ou -1 en cas d'échec.
 int file_open(char *filename) {
-	return 0;
+	if (file_exists(filename)) {
+		stat_t st;
+		file_iterator_t it = file_iterator();
+		bool found = false;
+		int offset = 0;
+		while (file_has_next(&it)) {
+			file_next(filename, &it);
+			file_stat(filename, &st); // TODO: check file_stat or not ?
+			if (strncmp(filename, st.name, ENTRY_NAME_SIZE) == 0 && fat[st.start] =! -1) {
+				found = true;
+				offset = sector_per_block * st.start;
+			}
+		}
+
+		if (found) {
+			for (int i = 0; i < DESCRIPTORS_NB; i++) {
+				if (file_descriptor[i] == -1) {
+					file_descriptor[i] = offset;
+					return i;
+				}
+			}
+		}
+	}
+	return -1;
 }
 
 // Essaie de lire count bytes depuis le fichier référencé par fd et les place dans le buffer 
@@ -87,5 +125,7 @@ int file_seek(int fd, uint offset) {
 
 // Ferme le fichier référencé par le descripteur fd.
 void file_close(int fd) {
-
+	if (fd >= 0 && fd < DESCRIPTORS_NB) {
+		file_descriptor[fd] = -1;
+	}
 }
