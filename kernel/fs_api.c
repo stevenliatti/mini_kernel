@@ -11,22 +11,24 @@ extern int* fat;
 extern char sector_per_block;
 
 typedef struct file_descriptor_st {
-	int current_offset;
-	int start_offset;
-} __attribute__((packed)) file_descriptor_t;
+	int current_offset_in_block;
+	int current_block;
+	stat_t st;
+} file_descriptor_t;
 
 static file_descriptor_t file_descriptor[DESCRIPTORS_NB];
 
 void init_file_descriptor() {
 	for (int i = 0; i < DESCRIPTORS_NB; i++) {
-		file_descriptor[i].current_offset = -1;
-		file_descriptor[i].start_offset = -1;
+		file_descriptor[i].current_offset_in_block = -1;
+		file_descriptor[i].current_block = -1;
+		file_descriptor[i].st.start = -1;
 	}
 }
 
-static int get_current_entry_offset(int current_offset, int block_size) {
-	int block_index = current_offset / block_size;
-	int entry_offset_in_block = current_offset % block_size;
+static int get_current_entry_offset(int current_offset_in_block, int block_size) {
+	int block_index = current_offset_in_block / block_size;
+	int entry_offset_in_block = current_offset_in_block % block_size;
 	int sector_index = block_index * sector_per_block;
 
 	while(fat[block_index] != -1) {
@@ -90,21 +92,25 @@ int file_open(char *filename) {
 		stat_t st;
 		file_iterator_t it = file_iterator();
 		bool found = false;
-		int offset = 0;
+		stat_t temp_stat;
 		while (file_has_next(&it)) {
 			file_next(filename, &it);
 			file_stat(filename, &st); // TODO: check file_stat or not ?
-			if (strncmp(filename, st.name, ENTRY_NAME_SIZE) == 0 && fat[st.start] != -1) {
+			if (strncmp(filename, st.name, ENTRY_NAME_SIZE) == 0) {
 				found = true;
-				offset = sector_per_block * st.start;
+				temp_stat.size = st.size;
+				temp_stat.start = st.start;
 			}
 		}
 
 		if (found) {
 			for (int i = 0; i < DESCRIPTORS_NB; i++) {
-				if (file_descriptor[i].current_offset == -1) {
-					file_descriptor[i].current_offset = offset;
-					file_descriptor[i].start_offset = offset;
+				if (file_descriptor[i].current_offset_in_block == -1) {
+					file_descriptor[i].current_offset_in_block = 0;
+					file_descriptor[i].current_block = temp_stat.start;
+					memcpy(file_descriptor[i].st.name, filename, ENTRY_NAME_SIZE);
+					file_descriptor[i].st.size = temp_stat.size;
+					file_descriptor[i].st.start = temp_stat.start;
 					return i;
 				}
 			}
@@ -116,15 +122,23 @@ int file_open(char *filename) {
 // Essaie de lire count bytes depuis le fichier référencé par fd et les place dans le buffer
 // buf. Renvoie le nombre de bytes lus, ou 0 en cas de fin de fichier, ou -1 en cas d’erreur.
 int file_read(int fd, void *buf, uint count) {
-	return 0;
+	// TODO:
+	if (fd >= 0 && fd < DESCRIPTORS_NB) {
+		int readed_blocks = count / sb.block_size;
+		char buffer[SECTOR_SIZE];
+		// read_sector(file_descriptor[fd].current_block, buffer);
+		// memcpy(buf, buffer + file_descriptor[fd].current_offset_in_block, count);
+	}
+	return -1;
 }
 
-// Positionne la position pointeur du fichier ouvert (référencé par le descripteur fd) à offset
+// Positionne la position pointeur du fichier ouvert (référencé par le descripteur fd) à temp_stat
 // par rapport au début du fichier. Renvoie la nouvelle position ou -1 en cas d’échec.
-int file_seek(int fd, uint offset) {
+int file_seek(int fd, uint temp_stat) {
 	if (fd >= 0 && fd < DESCRIPTORS_NB) { // TODO: check if fd already opened ?
-		file_descriptor[fd].current_offset = file_descriptor[fd].start_offset + offset;
-		return file_descriptor[fd].current_offset;
+		// TODO: use current_block and current_offset_in_block relative
+		// file_descriptor[fd].current_offset_in_block = file_descriptor[fd].start_block + temp_stat;
+		return file_descriptor[fd].current_offset_in_block;
 	}
 	return -1;
 }
@@ -132,7 +146,7 @@ int file_seek(int fd, uint offset) {
 // Ferme le fichier référencé par le descripteur fd.
 void file_close(int fd) {
 	if (fd >= 0 && fd < DESCRIPTORS_NB) {
-		file_descriptor[fd].current_offset = -1;
-		file_descriptor[fd].start_offset = -1;
+		file_descriptor[fd].current_offset_in_block = -1;
+		// file_descriptor[fd].current_block = -1;
 	}
 }
