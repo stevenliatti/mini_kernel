@@ -10,16 +10,17 @@ extern super_block_t sb;
 extern int* fat;
 extern char sector_per_block;
 
-// typedef struct file_descriptor_st {
-// 	int id;
-	
-// } __attribute__((packed)) file_descriptor_t;
+typedef struct file_descriptor_st {
+	int current_offset;
+	int start_offset;
+} __attribute__((packed)) file_descriptor_t;
 
-static int file_descriptor[DESCRIPTORS_NB];
+static file_descriptor_t file_descriptor[DESCRIPTORS_NB];
 
 void init_file_descriptor() {
 	for (int i = 0; i < DESCRIPTORS_NB; i++) {
-		file_descriptor[i] = -1;
+		file_descriptor[i].current_offset = -1;
+		file_descriptor[i].start_offset = -1;
 	}
 }
 
@@ -93,7 +94,7 @@ int file_open(char *filename) {
 		while (file_has_next(&it)) {
 			file_next(filename, &it);
 			file_stat(filename, &st); // TODO: check file_stat or not ?
-			if (strncmp(filename, st.name, ENTRY_NAME_SIZE) == 0 && fat[st.start] =! -1) {
+			if (strncmp(filename, st.name, ENTRY_NAME_SIZE) == 0 && fat[st.start] != -1) {
 				found = true;
 				offset = sector_per_block * st.start;
 			}
@@ -101,8 +102,9 @@ int file_open(char *filename) {
 
 		if (found) {
 			for (int i = 0; i < DESCRIPTORS_NB; i++) {
-				if (file_descriptor[i] == -1) {
-					file_descriptor[i] = offset;
+				if (file_descriptor[i].current_offset == -1) {
+					file_descriptor[i].current_offset = offset;
+					file_descriptor[i].start_offset = offset;
 					return i;
 				}
 			}
@@ -111,7 +113,7 @@ int file_open(char *filename) {
 	return -1;
 }
 
-// Essaie de lire count bytes depuis le fichier référencé par fd et les place dans le buffer 
+// Essaie de lire count bytes depuis le fichier référencé par fd et les place dans le buffer
 // buf. Renvoie le nombre de bytes lus, ou 0 en cas de fin de fichier, ou -1 en cas d’erreur.
 int file_read(int fd, void *buf, uint count) {
 	return 0;
@@ -120,12 +122,17 @@ int file_read(int fd, void *buf, uint count) {
 // Positionne la position pointeur du fichier ouvert (référencé par le descripteur fd) à offset
 // par rapport au début du fichier. Renvoie la nouvelle position ou -1 en cas d’échec.
 int file_seek(int fd, uint offset) {
-	return 0;
+	if (fd >= 0 && fd < DESCRIPTORS_NB) { // TODO: check if fd already opened ?
+		file_descriptor[fd].current_offset = file_descriptor[fd].start_offset + offset;
+		return file_descriptor[fd].current_offset;
+	}
+	return -1;
 }
 
 // Ferme le fichier référencé par le descripteur fd.
 void file_close(int fd) {
 	if (fd >= 0 && fd < DESCRIPTORS_NB) {
-		file_descriptor[fd] = -1;
+		file_descriptor[fd].current_offset = -1;
+		file_descriptor[fd].start_offset = -1;
 	}
 }
