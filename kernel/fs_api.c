@@ -26,7 +26,7 @@ void init_file_descriptor() {
 	}
 }
 
-static int get_next_entry_offset(file_iterator_t* it, char* comm) {
+static int get_next_entry_offset(file_iterator_t* it) {
 	int entry_offset_in_block = it->entry_offset_in_current_block + sizeof(entry_t);
 
 	int block_index = it->current_block;
@@ -61,6 +61,15 @@ static int get_next_entry_offset(file_iterator_t* it, char* comm) {
 	return -1;
 }
 
+entry_t get_entry(int offset) {
+	char buffer[SECTOR_SIZE];
+	read_sector(offset / SECTOR_SIZE, buffer);
+	int entry_offset_in_sector = offset % SECTOR_SIZE;
+	entry_t entry;
+	memcpy(&entry, buffer + entry_offset_in_sector, sizeof(entry_t));
+	return entry;
+}
+
 // Créé un itérateur permettant d'itérer sur les fichiers du système de fichiers.
 file_iterator_t file_iterator() {
 	// create iterator
@@ -72,28 +81,47 @@ file_iterator_t file_iterator() {
 
 // Renvoie true si il y a encore un fichier sur lequel itérer.
 bool file_has_next(file_iterator_t *it) {
-	int next_offset = get_next_entry_offset(it, "file_has_next");
+	int next_offset = get_next_entry_offset(it);
 	return next_offset != -1;
 }
 
 // Copie dans filename le nom du prochain fichier pointé par l’itérateur.
 void file_next(char *filename, file_iterator_t *it) {
-	int next_offset = get_next_entry_offset(it, "file_next");
-	char buffer[SECTOR_SIZE];
-	read_sector(next_offset / SECTOR_SIZE, buffer);
-	int entry_offset_in_sector = next_offset % SECTOR_SIZE;
-	entry_t next_entry;
-	memcpy(&next_entry, buffer + entry_offset_in_sector, sizeof(entry_t));
-	memcpy(filename, &(next_entry.name), ENTRY_NAME_SIZE);
+	int next_offset = get_next_entry_offset(it);
+	entry_t next_entry = get_entry(next_offset);
+	memcpy(filename, next_entry.name, ENTRY_NAME_SIZE);
 	it->entry_offset_in_current_block = next_offset % sb.block_size;
 	it->current_block = next_offset / sb.block_size;
+}
+
+int get_file_blocks_nb(int start) {
+	int blocks_count = 1;
+	while (fat[start] != 0) {
+		start = fat[start];
+		blocks_count++;
+	}
+	return blocks_count;
 }
 
 // Renvoie dans stat les méta-informations liées au fichier passé en argument ; la structure
 // stat_t doit contenir au minimum le champ size qui est la taille du fichier. Retourne 0 en
 // cas de succès et -1 en cas d'échec.
 int file_stat(char *filename, stat_t *stat) {
-	return 0;
+	file_iterator_t it = file_iterator();
+	int next_offset = 0;
+	while ((next_offset = get_next_entry_offset(&it)) != -1) {
+		entry_t entry = get_entry(next_offset);
+		if (strncmp(filename, entry.name, ENTRY_NAME_SIZE) == 0) {
+			stat->size = entry.size;
+			stat->block_size = sb.block_size;
+			memcpy(stat->name, filename, ENTRY_NAME_SIZE);
+			stat->used_blocks_nb = get_file_blocks_nb(entry.start);
+			return 0;
+		}
+        it.entry_offset_in_current_block = next_offset % sb.block_size;
+        it.current_block = next_offset / sb.block_size;
+	}
+	return -1;
 }
 
 // Renvoie true si le fichier passé en argument existe.

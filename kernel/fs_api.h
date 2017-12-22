@@ -4,7 +4,13 @@
 #include "../common/common.h"
 #include "../common/types.h"
 
-typedef entry_t stat_t;
+typedef struct stat_st {
+	char name[ENTRY_NAME_SIZE];
+	int size;
+	int used_blocks_nb;
+	int start;
+	int block_size;
+} __attribute__((packed)) stat_t;
 
 typedef struct file_iterator_st {
 	int entry_offset_in_current_block;		// offset of the current entry in the current block

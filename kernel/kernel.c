@@ -80,12 +80,13 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	print_fat(fat, sb.blocks_count);
 
 	file_iterator_t it = file_iterator();
-
+	stat_t st;
 	char filename[ENTRY_NAME_SIZE];
 	while (file_has_next(&it)) {
 		file_next(filename, &it);
-		// file_stat(filename, &st);
-		printf("File: %s\n", filename);
+		file_stat(filename, &st);
+		printf("File name: %s\n", st.name);
+		printf("Size: %d bytes      Used blocks nb: %d      Block size: %d\n", st.size, st.used_blocks_nb, st.block_size);
 	}
 	
 	while (1) {
