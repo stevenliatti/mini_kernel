@@ -8,25 +8,38 @@ extern super_block_t sb;
 extern int* fat;
 extern char sector_per_block;
 
-static int get_current_entry_offset(int current_offset, int block_size) {
-	int block_index = current_offset / block_size;
-	int entry_offset_in_block = current_offset % block_size;
-	int sector_index = block_index * sector_per_block;
+static int get_next_entry_offset(file_iterator_t* it, char* comm) {
+	int entry_offset_in_block = it->entry_offset_in_current_block + sizeof(entry_t);
 
-	while(fat[block_index] != -1) {
-		for (int i = 0; i < sector_per_block; i++) {
+	int block_index = it->current_block;
+	if (entry_offset_in_block == sb.block_size) {
+		block_index = fat[it->current_block];
+		entry_offset_in_block = 0;
+	}
+	if (block_index == 0) {
+		return -1;
+	}
+	do {
+		int sector_index = block_index * sector_per_block;
+
+		int start_sector = entry_offset_in_block / SECTOR_SIZE;
+
+		for (int i = start_sector; i < sector_per_block; i++) {
 			char buffer[SECTOR_SIZE];
 			read_sector(sector_index + i, buffer);
-			for (int j = entry_offset_in_block; j < SECTOR_SIZE; j += sizeof(entry_t)) {
-				entry_t temp;
-				memcpy(&temp, buffer + j, sizeof(entry_t));
-				if (fat[temp.start] != -1) {
-					return block_index * block_size + j;
+
+			int entry_offset_in_sector = entry_offset_in_block % SECTOR_SIZE;
+			for (int j = entry_offset_in_sector; j < SECTOR_SIZE; j += sizeof(entry_t)) {
+				entry_t temp_entry;
+				memcpy(&temp_entry, buffer + j, sizeof(entry_t));
+				if (fat[temp_entry.start] != -1) {
+					return block_index * sb.block_size + j + (i * SECTOR_SIZE);
 				}
 			}
 		}
 		block_index = fat[block_index];
-	}
+		entry_offset_in_block = 0;
+	} while (block_index != 0);
 	return -1;
 }
 
@@ -34,26 +47,28 @@ static int get_current_entry_offset(int current_offset, int block_size) {
 file_iterator_t file_iterator() {
 	// create iterator
 	file_iterator_t it;
-	it.current_entry_offset = sb.first_entry * sb.block_size - sizeof(entry_t);
+	it.entry_offset_in_current_block = -sizeof(entry_t);
+	it.current_block = sb.first_entry;
 	return it;
 }
 
 // Renvoie true si il y a encore un fichier sur lequel itérer.
 bool file_has_next(file_iterator_t *it) {
-	int next_offset = get_current_entry_offset(it->current_entry_offset + sizeof(entry_t), sb.block_size);
+	int next_offset = get_next_entry_offset(it, "file_has_next");
 	return next_offset != -1;
 }
 
 // Copie dans filename le nom du prochain fichier pointé par l’itérateur.
 void file_next(char *filename, file_iterator_t *it) {
-	int next_offset = get_current_entry_offset(it->current_entry_offset + sizeof(entry_t), sb.block_size);
+	int next_offset = get_next_entry_offset(it, "file_next");
 	char buffer[SECTOR_SIZE];
 	read_sector(next_offset / SECTOR_SIZE, buffer);
 	int entry_offset_in_sector = next_offset % SECTOR_SIZE;
 	entry_t next_entry;
 	memcpy(&next_entry, buffer + entry_offset_in_sector, sizeof(entry_t));
 	memcpy(filename, &(next_entry.name), ENTRY_NAME_SIZE);
-	it->current_entry_offset = next_offset;
+	it->entry_offset_in_current_block = next_offset % sb.block_size;
+	it->current_block = next_offset / sb.block_size;
 }
 
 // Renvoie dans stat les méta-informations liées au fichier passé en argument ; la structure

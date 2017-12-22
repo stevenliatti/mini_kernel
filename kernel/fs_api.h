@@ -7,8 +7,8 @@
 typedef entry_t stat_t;
 
 typedef struct file_iterator_st {
-	int current_entry_offset;		// offset of the current entry in the fs
-	// int next_entry_offset;			// offset of the next entry in the fs
+	int entry_offset_in_current_block;		// offset of the current entry in the current block
+	int current_block;
 } __attribute__((packed)) file_iterator_t;
 
 file_iterator_t file_iterator();
