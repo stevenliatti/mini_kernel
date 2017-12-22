@@ -40,7 +40,7 @@ void *memcpy(void *dst, void *src, uint count) {
 }
 
 /**
- * @brief  compare two strings
+ * @brief  compare two strings in given length
  * 
  * @param  p first string
  * @param  q second string
@@ -54,6 +54,25 @@ int strncmp(const char *p, const char *q, uint n) {
 		if (*p++ != *q++)
 			return *(uchar*)(p - 1) - *(uchar*)(q - 1);
 	return 0;
+}
+
+/**
+ * @brief  compare two strings
+ *
+ * @param  s1 first string
+ * @param  s2 second string
+ * @return   an int greater than, equal to, or less than zero,
+ * 			accordingly as the string pointed to by s1 is greater than,
+ * 			equal to, or less than the string pointed to by s2.
+ * @source http://clc-wiki.net/wiki/C_standard_library:string.h:strcmp#Implementation
+ */
+int strcmp(const char* s1, const char* s2)
+{
+	while(*s1 && (*s1==*s2)) {
+		s1++;
+		s2++;
+	}
+	return *(const uchar*)s1-*(const uchar*)s2;
 }
 
 /**

@@ -88,6 +88,19 @@ void kernel_entry(multiboot_info_t* boot_info) {
 		printf("File name: %s\n", st.name);
 		printf("Size: %d bytes      Used blocks nb: %d      Block size: %d\n", st.size, st.used_blocks_nb, st.block_size);
 	}
+
+    char search_file1[] = "s.txt";
+    if (file_exists(search_file1)) {
+        printf("File \"%s\" exists\n", search_file1);
+    } else {
+        printf("File \"%s\" don't exist\n", search_file1);
+    }
+    char search_file2[] = "x.txt";
+    if (file_exists(search_file2)) {
+        printf("File \"%s\" exists\n", search_file2);
+    } else {
+        printf("File \"%s\" don't exist\n", search_file2);
+    }
 	
 	while (1) {
 		uchar c = getc();

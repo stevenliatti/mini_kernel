@@ -126,6 +126,16 @@ int file_stat(char *filename, stat_t *stat) {
 
 // Renvoie true si le fichier passé en argument existe.
 bool file_exists(char *filename) {
+	file_iterator_t it = file_iterator();
+	int next_offset = 0;
+	while ((next_offset = get_next_entry_offset(&it)) != -1) {
+		entry_t entry = get_entry(next_offset);
+		if (strcmp(filename, entry.name) == 0) {
+			return true;
+		}
+        it.entry_offset_in_current_block = next_offset % sb.block_size;
+        it.current_block = next_offset / sb.block_size;
+	}
 	return false;
 }
 
