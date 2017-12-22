@@ -3,27 +3,16 @@
 #include "screen.h"
 #include "base.h"
 
-#define DESCRIPTORS_NB 100
-
 // from kernel.c
 extern super_block_t sb;
 extern int* fat;
 extern char sector_per_block;
-
-typedef struct file_descriptor_st {
-	int current_offset_in_block;
-	int current_block;
-	stat_t st;
-} file_descriptor_t;
-
 static file_descriptor_t file_descriptor[DESCRIPTORS_NB];
 
 void init_file_descriptor() {
-	for (int i = 0; i < DESCRIPTORS_NB; i++) {
-		file_descriptor[i].current_offset_in_block = -1;
-		file_descriptor[i].current_block = -1;
-		file_descriptor[i].st.start = -1;
-	}
+    for (int i = 0; i < DESCRIPTORS_NB; i++) {
+        file_descriptor[i].is_free = true;
+    }
 }
 
 static int get_next_entry_offset(file_iterator_t* it) {
@@ -111,7 +100,7 @@ int file_stat(char *filename, stat_t *stat) {
 	int next_offset = 0;
 	while ((next_offset = get_next_entry_offset(&it)) != -1) {
 		entry_t entry = get_entry(next_offset);
-		if (strncmp(filename, entry.name, ENTRY_NAME_SIZE) == 0) {
+		if (strcmp(filename, entry.name) == 0) {
 			stat->size = entry.size;
 			stat->block_size = sb.block_size;
 			memcpy(stat->name, filename, ENTRY_NAME_SIZE);
@@ -139,35 +128,32 @@ bool file_exists(char *filename) {
 	return false;
 }
 
+int get_free_fd() {
+	for (int i = 0; i < DESCRIPTORS_NB; i++) {
+		if (file_descriptor[i].is_free) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 // Ouvre un fichier et renvoie un descripteur de fichier pour y accéder ou -1 en cas d'échec.
 int file_open(char *filename) {
 	if (file_exists(filename)) {
-		stat_t st;
-		file_iterator_t it = file_iterator();
 		bool found = false;
-		stat_t temp_stat;
-		while (file_has_next(&it)) {
-			file_next(filename, &it);
-			file_stat(filename, &st); // TODO: check file_stat or not ?
-			if (strncmp(filename, st.name, ENTRY_NAME_SIZE) == 0) {
-				found = true;
-				temp_stat.size = st.size;
-				temp_stat.start = st.start;
-			}
+		stat_t st;
+		// file_iterator_t it = file_iterator();
+		if (file_stat(filename, &st) == -1) {
+			printf("Error in file_stat\n");
+			return -1;
 		}
-
-		if (found) {
-			for (int i = 0; i < DESCRIPTORS_NB; i++) {
-				if (file_descriptor[i].current_offset_in_block == -1) {
-					file_descriptor[i].current_offset_in_block = 0;
-					file_descriptor[i].current_block = temp_stat.start;
-					memcpy(file_descriptor[i].st.name, filename, ENTRY_NAME_SIZE);
-					file_descriptor[i].st.size = temp_stat.size;
-					file_descriptor[i].st.start = temp_stat.start;
-					return i;
-				}
-			}
-		}
+		int fd = get_free_fd();
+		file_descriptor[fd].is_free = false;
+		file_descriptor[fd].start_block = st.start;
+		file_descriptor[fd].current_offset_in_block = 0;
+		file_descriptor[fd].current_block = st.start;
+		file_descriptor[fd].file_size = st.size;
+		return fd;
 	}
 	return -1;
 }
@@ -199,7 +185,8 @@ int file_seek(int fd, uint temp_stat) {
 // Ferme le fichier référencé par le descripteur fd.
 void file_close(int fd) {
 	if (fd >= 0 && fd < DESCRIPTORS_NB) {
-		file_descriptor[fd].current_offset_in_block = -1;
-		// file_descriptor[fd].current_block = -1;
+		file_descriptor[fd].is_free = true;
+	} else {
+		printf("Error in closing file descriptor\n");
 	}
 }

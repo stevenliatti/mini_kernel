@@ -26,13 +26,13 @@ super_block_t sb;
 char sector_per_block;
 int* fat;
 
-void load_super_block(super_block_t* sb) {
+void load_super_block() {
 	char buffer[SECTOR_SIZE];
 	read_sector(0, buffer);
-	memcpy(sb, buffer, sizeof(super_block_t));
+	memcpy(&sb, buffer, sizeof(super_block_t));
 }
 
-void load_fat(int fat_buffer[], super_block_t sb, int sector_per_block) {
+void load_fat() {
 	int fat_sector = sector_per_block;		// just after the super block
 	int sector_per_fat = sb.fat_block_nb * sector_per_block;
 
@@ -40,7 +40,7 @@ void load_fat(int fat_buffer[], super_block_t sb, int sector_per_block) {
 	for (int i = 0; i < sector_per_fat; i++) {
 		read_sector(fat_sector + i, buffer + i * SECTOR_SIZE);
 	}
-	memcpy(fat_buffer, buffer, sb.blocks_count * sizeof(int));
+	memcpy(fat, buffer, sb.blocks_count * sizeof(int));
 }
 
 /**
@@ -70,13 +70,13 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	printf("Memory upper : %d\n", boot_info->mem_upper);
 
 	// load and display the super block
-	load_super_block(&sb);
+	load_super_block();
 	print_super_block(sb);
 
-	sector_per_block = sb.block_size / SECTOR_SIZE;
+	sector_per_block = (char) (sb.block_size / SECTOR_SIZE);
 	
 	// load and display the fat table
-	load_fat(fat, sb, sector_per_block);
+	load_fat();
 	print_fat(fat, sb.blocks_count);
 
 	file_iterator_t it = file_iterator();
@@ -89,18 +89,42 @@ void kernel_entry(multiboot_info_t* boot_info) {
 		printf("Size: %d bytes      Used blocks nb: %d      Block size: %d\n", st.size, st.used_blocks_nb, st.block_size);
 	}
 
-    char search_file1[] = "s.txt";
-    if (file_exists(search_file1)) {
-        printf("File \"%s\" exists\n", search_file1);
-    } else {
-        printf("File \"%s\" don't exist\n", search_file1);
-    }
-    char search_file2[] = "x.txt";
-    if (file_exists(search_file2)) {
-        printf("File \"%s\" exists\n", search_file2);
-    } else {
-        printf("File \"%s\" don't exist\n", search_file2);
-    }
+	char file1[] = "s.txt";
+	if (file_exists(file1)) {
+		printf("File \"%s\" exists\n", file1);
+	} else {
+		printf("File \"%s\" don't exist\n", file1);
+	}
+	char file2[] = "x.txt";
+	if (file_exists(file2)) {
+		printf("File \"%s\" exists\n", file2);
+	} else {
+		printf("File \"%s\" don't exist\n", file2);
+	}
+
+	init_file_descriptor();
+
+	int fd1 = -1;
+	if ((fd1 = file_open(file1)) == -1) {
+		printf("Error in opening file \"%s\"\n", file1);
+	} else {
+		printf("File \"%s\" oppened and fd = %d\n", file1, fd1);
+	}
+
+	int fd2 = -1;
+	if ((fd2 = file_open("raed.txt")) == -1) {
+		printf("Error in opening file \"%s\"\n", "raed.txt");
+	} else {
+		printf("File \"%s\" oppened and fd = %d\n", "raed.txt", fd2);
+	}
+
+	file_close(fd1);
+
+	if ((fd2 = file_open("raed.txt")) == -1) {
+		printf("Error in opening file \"%s\"\n", "raed.txt");
+	} else {
+		printf("File \"%s\" oppened and fd = %d\n", "raed.txt", fd2);
+	}
 	
 	while (1) {
 		uchar c = getc();

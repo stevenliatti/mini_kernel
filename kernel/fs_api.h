@@ -4,6 +4,8 @@
 #include "../common/common.h"
 #include "../common/types.h"
 
+#define DESCRIPTORS_NB 100
+
 typedef struct stat_st {
 	char name[ENTRY_NAME_SIZE];
 	int size;
@@ -17,6 +19,15 @@ typedef struct file_iterator_st {
 	int current_block;
 } __attribute__((packed)) file_iterator_t;
 
+typedef struct file_descriptor_st {
+	int start_block;
+	int current_offset_in_block;
+	int current_block;
+	int file_size;
+	bool is_free;
+} __attribute__((packed)) file_descriptor_t;
+
+void init_file_descriptor();
 file_iterator_t file_iterator();
 bool file_has_next(file_iterator_t *it);
 void file_next(char *filename, file_iterator_t *it);
