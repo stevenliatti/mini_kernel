@@ -21,4 +21,4 @@
         -i!$$$$$$$$$$$$$$YYYYYYYYYYYYYY$$$$$$$$$$$YYY
 
   Welcome to Doge OS !!!
-  Wow, such kernel, much file system, Wow
+  Wow, such kernel, much file system, Wow 

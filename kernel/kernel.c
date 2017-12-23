@@ -26,12 +26,18 @@ super_block_t sb;
 char sector_per_block;
 int* fat;
 
+/**
+ * @brief load the super block
+ */
 static void load_super_block() {
 	char buffer[SECTOR_SIZE];
 	read_sector(0, buffer);
 	memcpy(&sb, buffer, sizeof(super_block_t));
 }
 
+/**
+ * @brief load the FAT
+ */
 static void load_fat() {
 	int fat_sector = sector_per_block;		// just after the super block
 	int sector_per_fat = sb.fat_block_nb * sector_per_block;
@@ -75,14 +81,17 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	printf("PIC has been initialized.\n");
 	printf("Timer has been initialized.\n");
 	printf("Memory upper : %d\n", boot_info->mem_upper);
-	printf("Super block loaded\n");
-	printf("FAT loaded\n");
-	sleep(3000);
-	print_super_block(sb);
-	print_fat(fat, sb.blocks_count);
-	printf("\nSplash screen in 3 seconds ...\n");
 	sleep(3000);
 
+	printf("\nSuper block loaded\n");
+	print_super_block(sb);
+	sleep(3000);
+	printf("\nFAT loaded\n");
+	print_fat(fat, sb.blocks_count);
+	
+	printf("\nSplash screen in 5 seconds ...\n");
+	sleep(5000);
+	
 	int fd = -1;
 	char file[] = "splash.txt";
 	if ((fd = file_open(file)) == -1) {

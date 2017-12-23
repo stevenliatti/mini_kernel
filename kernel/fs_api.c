@@ -1,3 +1,14 @@
+/**
+ * @file 		fs_api.c
+ * @brief 		File system API functions.
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		December 23, 2017
+ * @version		1.0
+ */
+
 #include "fs_api.h"
 #include "ide.h"
 #include "screen.h"
@@ -9,6 +20,11 @@ extern int* fat;
 extern char sector_per_block;
 static file_descriptor_t file_descriptor[DESCRIPTORS_NB];
 
+/**
+ * @brief  Init array of file descriptor.
+ * 
+ * @return value in memory video
+ */
 void init_file_descriptor() {
 	for (int i = 0; i < DESCRIPTORS_NB; i++) {
 		file_descriptor[i].is_free = true;
@@ -16,10 +32,16 @@ void init_file_descriptor() {
 	}
 }
 
+/**
+ * @brief  Calculate and return the next offset of next entry.
+ * 
+ * @param  it a pointer on file_iterator
+ * @return the next offset of next entry or -1 if there is not anymore entries
+ */
 static int get_next_entry_offset(file_iterator_t* it) {
 	int entry_offset_in_block = it->entry_offset_in_current_block + sizeof(entry_t);
-
 	int block_index = it->current_block;
+
 	if (entry_offset_in_block == sb.block_size) {
 		block_index = fat[it->current_block];
 		entry_offset_in_block = 0;
@@ -27,9 +49,9 @@ static int get_next_entry_offset(file_iterator_t* it) {
 	if (block_index == 0) {
 		return -1;
 	}
+
 	do {
 		int sector_index = block_index * sector_per_block;
-
 		int start_sector = entry_offset_in_block / SECTOR_SIZE;
 
 		for (int i = start_sector; i < sector_per_block; i++) {
@@ -51,6 +73,12 @@ static int get_next_entry_offset(file_iterator_t* it) {
 	return -1;
 }
 
+/**
+ * @brief  Return the entry at given offset
+ * 
+ * @param  offset in bytes
+ * @return the entry at given offset
+ */
 static entry_t get_entry(int offset) {
 	char buffer[SECTOR_SIZE];
 	read_sector(offset / SECTOR_SIZE, buffer);
@@ -60,22 +88,35 @@ static entry_t get_entry(int offset) {
 	return entry;
 }
 
-// Créé un itérateur permettant d'itérer sur les fichiers du système de fichiers.
+/**
+ * @brief  Create an iterator which allows to iterate on file system's files.
+ * 
+ * @return an iterator
+ */
 file_iterator_t file_iterator() {
-	// create iterator
 	file_iterator_t it;
 	it.entry_offset_in_current_block = -sizeof(entry_t);
 	it.current_block = sb.first_entry;
 	return it;
 }
 
-// Renvoie true si il y a encore un fichier sur lequel itérer.
+/**
+ * @brief  Return true if there is still one file to iterate over.
+ * 
+ * @param  it a pointer on file_iterator
+ * @return true if there is still one file to iterate over, false otherwise
+ */
 bool file_has_next(file_iterator_t *it) {
 	int next_offset = get_next_entry_offset(it);
 	return next_offset != -1;
 }
 
-// Copie dans filename le nom du prochain fichier pointé par l’itérateur.
+/**
+ * @brief  Copy in filename the name of next file pointed by it.
+ * 
+ * @param  filename the file name
+ * @param  it a pointer on file_iterator
+ */
 void file_next(char *filename, file_iterator_t *it) {
 	int next_offset = get_next_entry_offset(it);
 	entry_t next_entry = get_entry(next_offset);
@@ -84,6 +125,12 @@ void file_next(char *filename, file_iterator_t *it) {
 	it->current_block = next_offset / sb.block_size;
 }
 
+/**
+ * @brief  Return the number of occupied blocks by a file.
+ * 
+ * @param  start index of first block
+ * @return the number of occupied blocks by a file
+ */
 static int get_file_blocks_nb(int start) {
 	int blocks_count = 1;
 	while (fat[start] != 0) {
@@ -93,9 +140,13 @@ static int get_file_blocks_nb(int start) {
 	return blocks_count;
 }
 
-// Renvoie dans stat les méta-informations liées au fichier passé en argument ; la structure
-// stat_t doit contenir au minimum le champ size qui est la taille du fichier. Retourne 0 en
-// cas de succès et -1 en cas d'échec.
+/**
+ * @brief  Fill stat with infos about the file in argument.
+ * 
+ * @param  filename the file name
+ * @param  stat a structure to store infos about file
+ * @return 0 in case of success, -1 otherwise
+ */
 int file_stat(char *filename, stat_t *stat) {
 	file_iterator_t it = file_iterator();
 	int next_offset = 0;
@@ -114,7 +165,12 @@ int file_stat(char *filename, stat_t *stat) {
 	return -1;
 }
 
-// Renvoie true si le fichier passé en argument existe.
+/**
+ * @brief  Return true if the file exist.
+ * 
+ * @param  filename the file name
+ * @return true if the file exist, false otherwise
+ */
 bool file_exists(char *filename) {
 	file_iterator_t it = file_iterator();
 	int next_offset = 0;
@@ -129,6 +185,11 @@ bool file_exists(char *filename) {
 	return false;
 }
 
+/**
+ * @brief  Return the next file descriptor availaible.
+ * 
+ * @return the next file descriptor availaible, -1 otherwise
+ */
 static int get_free_fd() {
 	for (int i = 0; i < DESCRIPTORS_NB; i++) {
 		if (file_descriptor[i].is_free) {
@@ -138,7 +199,12 @@ static int get_free_fd() {
 	return -1;
 }
 
-// Ouvre un fichier et renvoie un descripteur de fichier pour y accéder ou -1 en cas d'échec.
+/**
+ * @brief  Open a file and return a file descriptor to access it.
+ * 
+ * @param  filename the file name
+ * @return a file descriptor to access it, -1 otherwise
+ */
 int file_open(char *filename) {
 	if (file_exists(filename)) {
 		stat_t st;
@@ -157,15 +223,27 @@ int file_open(char *filename) {
 	return -1;
 }
 
-// Essaie de lire count bytes depuis le fichier référencé par fd et les place dans le buffer
-// buf. Renvoie le nombre de bytes lus, ou 0 en cas de fin de fichier, ou -1 en cas d’erreur.
+/**
+ * @brief  Try to read count bytes from file pointed by fd and put it in buf.
+ * Return the number of readed bytes, zero if we are at the end of file or -1 if error.
+ * 
+ * @param  fd the file descriptor
+ * @param  buf a buffer to store file data
+ * @param  count the number of desired bytes to read
+ * @return the number of readed bytes, zero if we are at the end of file or -1 if error
+ */
 int file_read(int fd, void *buf, uint count) {
 	if (fd >= 0 && fd < DESCRIPTORS_NB) {
 		if (file_descriptor[fd].is_free) {
 			printf("The file descriptor in unknown (file_read)\n");
 			return -1;
 		}
+
 		uint rest_bytes = (uint) (file_descriptor[fd].file_size - file_descriptor[fd].readed_bytes);
+		if (rest_bytes == 0) {
+			return 0;
+		}
+
 		// if count is greater than the rest of the file
 		if (count > rest_bytes) {
 			count = rest_bytes;
@@ -206,8 +284,14 @@ int file_read(int fd, void *buf, uint count) {
 	return -1;
 }
 
-// Positionne la position pointeur du fichier ouvert (référencé par le descripteur fd) à offset
-// par rapport au début du fichier. Renvoie la nouvelle position ou -1 en cas d’échec.
+/**
+ * @brief  Set position of cursor on file to offset in argument compared to the begin of file.
+ * Return the new position or -1 of fail.
+ * 
+ * @param  fd the file descriptor
+ * @param  offset the offset where to place the cursor
+ * @return the new position or -1 of fail
+ */
 int file_seek(int fd, uint offset) {
 	if (fd >= 0 && fd < DESCRIPTORS_NB) {
 		if (file_descriptor[fd].is_free) {
@@ -231,7 +315,11 @@ int file_seek(int fd, uint offset) {
 	return -1;
 }
 
-// Ferme le fichier référencé par le descripteur fd.
+/**
+ * @brief  Close the file pointed by fd.
+ *
+ * @param  fd the file descriptor
+ */
 void file_close(int fd) {
 	if (fd >= 0 && fd < DESCRIPTORS_NB) {
 		file_descriptor[fd].is_free = true;

@@ -61,9 +61,9 @@ int strncmp(const char *p, const char *q, uint n) {
  *
  * @param  s1 first string
  * @param  s2 second string
- * @return   an int greater than, equal to, or less than zero,
- * 			accordingly as the string pointed to by s1 is greater than,
- * 			equal to, or less than the string pointed to by s2.
+ * @return an int greater than, equal to, or less than zero,
+ * 		   accordingly as the string pointed to by s1 is greater than,
+ * 		   equal to, or less than the string pointed to by s2.
  * @source http://clc-wiki.net/wiki/C_standard_library:string.h:strcmp#Implementation
  */
 int strcmp(const char* s1, const char* s2) {

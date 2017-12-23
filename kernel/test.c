@@ -51,6 +51,9 @@ void test_screen() {
 #include "timer.h"
 #include "screen.h"
 
+/**
+ * @brief do timer tests
+ */
 void test_timer() {
     int sleeps = 15;
     printf("Timer test !\n");
@@ -79,6 +82,9 @@ void test_timer() {
 extern super_block_t sb;
 extern int* fat;
 
+/**
+ * @brief do file system tests
+ */
 void test_fs() {
 	print_super_block(sb);
 	print_fat(fat, sb.blocks_count);
