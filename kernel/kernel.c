@@ -121,13 +121,13 @@ void kernel_entry(multiboot_info_t* boot_info) {
 		printf("File \"%s\" oppened and fd = %d\n", "raed.txt", fd2);
 	}
 
-	char str1[5]; // +1 for the character \0
-	int bytes = file_read(fd1, str1, 4);
+	char str1[514]; // +1 for the character \0
+	int bytes = file_read(fd1, str1, 513);
 	printf("Readed (%d bytes):\n", bytes);
 	printf("%s\n", str1);
 
-	char str2[5]; // +1 for the character \0
-	bytes = file_read(fd1, str2, 4);
+	char str2[2001]; // +1 for the character \0
+	bytes = file_read(fd1, str2, 2000);
 	printf("Readed (%d bytes):\n", bytes);
 	printf("%s\n", str2);
 	

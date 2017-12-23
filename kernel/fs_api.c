@@ -161,6 +161,10 @@ int file_open(char *filename) {
 // buf. Renvoie le nombre de bytes lus, ou 0 en cas de fin de fichier, ou -1 en cas d’erreur.
 int file_read(int fd, void *buf, uint count) {
 	if (fd >= 0 && fd < DESCRIPTORS_NB) {
+		if (file_descriptor[fd].is_free) {
+			printf("The file descriptor in unknown\n");
+			return -1;
+		}
 		uint rest_bytes = (uint) (file_descriptor[fd].file_size - file_descriptor[fd].readed_bytes);
 		// if count is greater than the rest of the file
 		if (count > rest_bytes) {
@@ -169,27 +173,29 @@ int file_read(int fd, void *buf, uint count) {
 		int bytes_count = count;
 
 		int buf_index = 0;
-        int sector_index = file_descriptor[fd].current_block * sector_per_block;
-        int offset_in_sector = file_descriptor[fd].current_offset_in_block;
+
+        int current_offset_in_block = file_descriptor[fd].current_offset_in_block;
 		while (count > 0) {
+            int sector_index = file_descriptor[fd].current_block * sector_per_block + current_offset_in_block / SECTOR_SIZE;
+            int offset_in_sector = current_offset_in_block % SECTOR_SIZE;
+
 			char buffer[SECTOR_SIZE];
 			read_sector(sector_index, buffer);
 			if (count >= SECTOR_SIZE) {
-				memcpy( buf + buf_index, buffer + offset_in_sector, SECTOR_SIZE);
-				count -= SECTOR_SIZE;
-				buf_index += SECTOR_SIZE;
+				memcpy( buf + buf_index, buffer + offset_in_sector, SECTOR_SIZE - offset_in_sector);
+				count -= SECTOR_SIZE - offset_in_sector;
+				buf_index += SECTOR_SIZE - offset_in_sector;
+                current_offset_in_block += SECTOR_SIZE - offset_in_sector;
 			} else {
 				memcpy(buf + buf_index, buffer + offset_in_sector, count);
                 buf_index += count;
+                current_offset_in_block += count;
 				count = 0;
 			}
 			if (buf_index % sb.block_size == 0) {
 				file_descriptor[fd].current_block = fat[file_descriptor[fd].current_block];
-				file_descriptor[fd].current_offset_in_block = 0;
-                sector_index = file_descriptor[fd].current_block * sector_per_block;
-			} else {
-                sector_index++;
-            }
+                current_offset_in_block = 0;
+			}
 		}
 		file_descriptor[fd].current_offset_in_block += buf_index;
         file_descriptor[fd].readed_bytes += bytes_count;
