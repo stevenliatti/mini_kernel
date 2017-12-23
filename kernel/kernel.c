@@ -77,9 +77,24 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	printf("Memory upper : %d\n", boot_info->mem_upper);
 	printf("Super block loaded\n");
 	printf("FAT loaded\n");
-
+	sleep(3000);
 	print_super_block(sb);
 	print_fat(fat, sb.blocks_count);
+	printf("\nSplash screen in 3 seconds ...\n");
+	sleep(3000);
+
+	int fd = -1;
+	char file[] = "splash.txt";
+	if ((fd = file_open(file)) == -1) {
+		printf("Error in opening file \"%s\"\n", file);
+	}
+	else {
+		stat_t st;
+		file_stat(file, &st);
+		char str[st.size + 1];
+		file_read(fd, str, st.size);
+		printf("%s\n", str);
+	}
 
 	while (1) {
 		uchar c = getc();
