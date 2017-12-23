@@ -12,6 +12,7 @@ static file_descriptor_t file_descriptor[DESCRIPTORS_NB];
 void init_file_descriptor() {
     for (int i = 0; i < DESCRIPTORS_NB; i++) {
         file_descriptor[i].is_free = true;
+        file_descriptor[i].readed_bytes = 0;
     }
 }
 
@@ -102,9 +103,9 @@ int file_stat(char *filename, stat_t *stat) {
 		entry_t entry = get_entry(next_offset);
 		if (strcmp(filename, entry.name) == 0) {
 			stat->size = entry.size;
-			stat->block_size = sb.block_size;
 			memcpy(stat->name, filename, ENTRY_NAME_SIZE);
 			stat->used_blocks_nb = get_file_blocks_nb(entry.start);
+            stat->start = entry.start;
 			return 0;
 		}
         it.entry_offset_in_current_block = next_offset % sb.block_size;
@@ -140,9 +141,7 @@ int get_free_fd() {
 // Ouvre un fichier et renvoie un descripteur de fichier pour y accéder ou -1 en cas d'échec.
 int file_open(char *filename) {
 	if (file_exists(filename)) {
-		bool found = false;
 		stat_t st;
-		// file_iterator_t it = file_iterator();
 		if (file_stat(filename, &st) == -1) {
 			printf("Error in file_stat\n");
 			return -1;
@@ -161,12 +160,40 @@ int file_open(char *filename) {
 // Essaie de lire count bytes depuis le fichier référencé par fd et les place dans le buffer
 // buf. Renvoie le nombre de bytes lus, ou 0 en cas de fin de fichier, ou -1 en cas d’erreur.
 int file_read(int fd, void *buf, uint count) {
-	// TODO:
 	if (fd >= 0 && fd < DESCRIPTORS_NB) {
-		int readed_blocks = count / sb.block_size;
-		char buffer[SECTOR_SIZE];
-		// read_sector(file_descriptor[fd].current_block, buffer);
-		// memcpy(buf, buffer + file_descriptor[fd].current_offset_in_block, count);
+		uint rest_bytes = (uint) (file_descriptor[fd].file_size - file_descriptor[fd].readed_bytes);
+		// if count is greater than the rest of the file
+		if (count > rest_bytes) {
+			count = rest_bytes;
+		}
+		int bytes_count = count;
+
+		int buf_index = 0;
+        int sector_index = file_descriptor[fd].current_block * sector_per_block;
+        int offset_in_sector = file_descriptor[fd].current_offset_in_block;
+		while (count > 0) {
+			char buffer[SECTOR_SIZE];
+			read_sector(sector_index, buffer);
+			if (count >= SECTOR_SIZE) {
+				memcpy( buf + buf_index, buffer + offset_in_sector, SECTOR_SIZE);
+				count -= SECTOR_SIZE;
+				buf_index += SECTOR_SIZE;
+			} else {
+				memcpy(buf + buf_index, buffer + offset_in_sector, count);
+                buf_index += count;
+				count = 0;
+			}
+			if (buf_index % sb.block_size == 0) {
+				file_descriptor[fd].current_block = fat[file_descriptor[fd].current_block];
+				file_descriptor[fd].current_offset_in_block = 0;
+                sector_index = file_descriptor[fd].current_block * sector_per_block;
+			} else {
+                sector_index++;
+            }
+		}
+		file_descriptor[fd].current_offset_in_block += buf_index;
+        file_descriptor[fd].readed_bytes += bytes_count;
+		return bytes_count;
 	}
 	return -1;
 }

@@ -11,7 +11,6 @@ typedef struct stat_st {
 	int size;
 	int used_blocks_nb;
 	int start;
-	int block_size;
 } __attribute__((packed)) stat_t;
 
 typedef struct file_iterator_st {
@@ -25,6 +24,7 @@ typedef struct file_descriptor_st {
 	int current_block;
 	int file_size;
 	bool is_free;
+	int readed_bytes;
 } __attribute__((packed)) file_descriptor_t;
 
 void init_file_descriptor();
