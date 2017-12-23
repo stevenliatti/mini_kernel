@@ -9,11 +9,11 @@ COMMON_LIBC=$(COMMON)/common_libc.o
 
 .SECONDARY:
 
+all: $(OUT)
+
 fs.img: fs_create fs_add txt_files/*
 	./fs_create doge_fs 1024 $(FS_NAME).img 307200
 	./add_files.sh
-
-all: $(OUT)
 
 fs_%: fs_%.o tools.o $(COMMON_LIBC)
 	gcc $(ARGS) $^ -o $@
@@ -55,9 +55,9 @@ rebuild: clean all
 
 help:
 	@echo "Available targets :"
-	@echo "\tfs.img (default) : create fs.img and add txt_files files"
+	@echo "\tall (default) : compile $(OUT)"
+	@echo "\tfs.img : create fs.img and add txt_files files"
 	@echo "\thelp : this help"
-	@echo "\tall : compile $(OUT)"
 	@echo "\t$(COMMON_LIBC) : compile the common.o file with the stdio lib"
 	@echo "\ttest_fs_* : multiple rules to test all tools (see in makefile for more details)"
 	@echo "\tclean : remove $(OUT), *.o, *.d and *.img files"

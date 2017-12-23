@@ -200,6 +200,7 @@ static int write_all(super_block_t* sb, FILE* fd, int* fat, char* file_name) {
 	entry->size = get_file_size(file_name);
 	entry->start = available_blocks[0];
 	CHECK_ERR(fwrite(entry, sizeof(entry_t), 1, fd) == 0, "Failure in writing data!!\n")
+	free(entry);
 
 	// write the fat in the fs
 	int pos = sb->block_size;
@@ -250,9 +251,12 @@ int main(int argc, char *argv[]) {
 		CHECK_ERR(temp == NULL, "Failure in allocating memory!!\n")
 		CHECK_ERR(find_empty_entry(basename(argv[1]), fat, sb, fd, temp),
 			"Error in find_empty_entry\n")
-
+		free(temp);
+		
 		CHECK_ERR(write_all(sb, fd, fat, argv[1]), "Error in write_all\n")
 
+		free(sb);
+		free(fat);
 		fclose(fd);
 		return EXIT_SUCCESS;
 	}

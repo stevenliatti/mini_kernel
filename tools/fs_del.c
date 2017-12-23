@@ -74,11 +74,15 @@ int main(int argc, char *argv[]) {
 			printf("%s not found in file system !\n", argv[1]);
 		}
 
+		free(entry);
+
 		// Write the fat in the fs
 		pos = sb->block_size;
 		CHECK_ERR(fseek(fd, pos, SEEK_SET) != 0, "Seeking file failed!\n")
 		CHECK_ERR(fwrite(fat, sizeof(int), sb->blocks_count, fd) == 0, "Failure in writing data!\n")
 
+		free(sb);
+		free(fat);
 		fclose(fd);
 		return EXIT_SUCCESS;
 	}

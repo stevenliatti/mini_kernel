@@ -58,6 +58,8 @@ int main(int argc, char *argv[]) {
 		printf("Free blocks number: %7d \t %10d B\t", free_blocks_nb, free_blocks_nb * sb->block_size);
 		printf("%9.5f%%\n", percentage(sb->blocks_count - sb->first_entry, free_blocks_nb));
 
+		free(sb);
+		free(fat);
 		fclose(fd);
 		return EXIT_SUCCESS;
 	}
