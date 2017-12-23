@@ -14,7 +14,7 @@ typedef struct stat_st {
 } __attribute__((packed)) stat_t;
 
 typedef struct file_iterator_st {
-	int entry_offset_in_current_block;		// offset of the current entry in the current block
+	int entry_offset_in_current_block;
 	int current_block;
 } __attribute__((packed)) file_iterator_t;
 

@@ -66,8 +66,7 @@ int strncmp(const char *p, const char *q, uint n) {
  * 			equal to, or less than the string pointed to by s2.
  * @source http://clc-wiki.net/wiki/C_standard_library:string.h:strcmp#Implementation
  */
-int strcmp(const char* s1, const char* s2)
-{
+int strcmp(const char* s1, const char* s2) {
 	while(*s1 && (*s1==*s2)) {
 		s1++;
 		s2++;
