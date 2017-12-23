@@ -17,6 +17,9 @@ test_screen:
 test_timer:
 	make TEST_MODE=-DTEST_TIMER
 
+test_fs:
+	make TEST_MODE=-DTEST_FS
+
 $(COMMON_KERNEL):
 	$(MAKE) common_kernel.o -C $(COMMON)
 
@@ -38,9 +41,10 @@ help:
 	@echo "\t$(COMMON_KERNEL) : compile the common.o file with the screen.h"
 	@echo "\ttest_screen : compile kernel to test screen"
 	@echo "\ttest_timer : compile kernel to test timer"
+	@echo "\ttest_fs : compile kernel to test file system"
 	@echo "\tclean : remove $(KERNEL_NAME).elf, *.o and *.d files"
 	@echo "\trebuild : call clean and $(KERNEL_NAME).elf"
 
-.PHONY: clean rebuild
+.PHONY: clean help rebuild
 
 -include $(DEPS)

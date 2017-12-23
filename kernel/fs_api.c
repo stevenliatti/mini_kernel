@@ -214,7 +214,7 @@ int file_seek(int fd, uint offset) {
 			printf("The file descriptor in unknown (file_seek)\n");
 			return -1;
 		}
-		if (offset > file_descriptor[fd].file_size) {
+		if (offset > (uint) file_descriptor[fd].file_size) {
 			offset = file_descriptor[fd].file_size;
 		}
 

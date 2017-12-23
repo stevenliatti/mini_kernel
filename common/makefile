@@ -28,6 +28,6 @@ help:
 	@echo "\tclean : remove *.o and *.d files"
 	@echo "\trebuild : call clean and all"
 
-.PHONY: clean rebuild
+.PHONY: clean help rebuild
 
 -include $(DEPS)

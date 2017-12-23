@@ -9,4 +9,8 @@ extern void test_screen();
 extern void test_timer();
 #endif
 
+#ifdef TEST_FS
+extern void test_fs();
+#endif
+
 #endif

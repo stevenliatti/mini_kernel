@@ -24,7 +24,6 @@ static int valid_arguments(char* file_name, char* fs_name) {
 		ENTRY_NAME_SIZE - 1)
 	FILE* fd = fopen(fs_name, "r");
 	CHECK_ERR(fd == NULL, "Error: File system with name \"%s\" doesn't exist\n", fs_name)
-	fclose(fd);
 
 	fd = fopen(file_name, "r");
 	CHECK_ERR(fd == NULL, "Error: File with name \"%s\" doesn't exist\n", file_name)

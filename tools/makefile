@@ -9,6 +9,10 @@ COMMON_LIBC=$(COMMON)/common_libc.o
 
 .SECONDARY:
 
+fs.img: fs_create fs_add txt_files/*
+	./fs_create doge_fs 1024 $(FS_NAME).img 307200
+	./add_files.sh
+
 all: $(OUT)
 
 fs_%: fs_%.o tools.o $(COMMON_LIBC)
@@ -21,18 +25,15 @@ $(COMMON_LIBC):
 	$(MAKE) common_libc.o -C $(COMMON)
 
 clean:
-	rm -rf $(OUT) *.o *.d
+	rm -rf $(OUT) *.o *.d *.img
 
-clean_img:
-	rm -rf *.img
-
-test_fs_create_big: fs_create clean_img
+test_fs_create_big: fs_create
 	./fs_create doge_fs 512 $(FS_NAME).img 2147483136
 
-test_fs_create_medium: fs_create clean_img
+test_fs_create_medium: fs_create
 	./fs_create doge_fs 4096 $(FS_NAME).img 307200
 
-test_fs_create_small: fs_create clean_img
+test_fs_create_small: fs_create
 	./fs_create doge_fs 1024 $(FS_NAME).img 307200
 
 test_fs_add: fs_add
@@ -54,14 +55,14 @@ rebuild: clean all
 
 help:
 	@echo "Available targets :"
+	@echo "\tfs.img (default) : create fs.img and add txt_files files"
 	@echo "\thelp : this help"
-	@echo "\tall (default) : compile $(OUT)"
+	@echo "\tall : compile $(OUT)"
 	@echo "\t$(COMMON_LIBC) : compile the common.o file with the stdio lib"
 	@echo "\ttest_fs_* : multiple rules to test all tools (see in makefile for more details)"
-	@echo "\tclean : remove $(OUT), *.o and *.d files"
-	@echo "\tclean_img : remove *.img files"
+	@echo "\tclean : remove $(OUT), *.o, *.d and *.img files"
 	@echo "\trebuild : call clean and all"
 
-.PHONY: clean rebuild
+.PHONY: clean help rebuild
 
 -include $(DEPS)

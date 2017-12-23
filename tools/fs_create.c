@@ -23,10 +23,9 @@
  * @param  label the label of file system
  * @param  block_size the block's size in bytes
  * @param  file_size the file's size
- * @param  file_name the file's name
  * @return EXIT_SUCCESS or EXIT_FAILURE in case of success or failure
  */
-static int valid_arguments(char* label, int block_size, int file_size, char* file_name) {
+static int valid_arguments(char* label, int block_size, int file_size) {
 	CHECK_ERR(strlen(label) > LABEL_SIZE, "Error: Label size must be less or equal than %d\n",
 	LABEL_SIZE)
 
@@ -42,12 +41,6 @@ static int valid_arguments(char* label, int block_size, int file_size, char* fil
 		"a super block, a fat block, a main dir entry block and a data block\n",
 		block_size)
 
-	FILE* fd = fopen(file_name, "r");
-	if (fd != NULL) {
-		fprintf(stderr, "Error: File with name \"%s\" already exist\n", file_name);
-		fclose(fd);
-		return EXIT_FAILURE;
-	}
 	return EXIT_SUCCESS;
 }
 
@@ -163,7 +156,7 @@ int main(int argc, char *argv[]) {
 	if (argc == 5) {
 		const int block_size = atoi(argv[2]);
 		const int file_size = atoi(argv[4]);
-		if (valid_arguments(argv[1], block_size, file_size, argv[3])) {
+		if (valid_arguments(argv[1], block_size, file_size)) {
 			return EXIT_FAILURE;
 		}
 
