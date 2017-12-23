@@ -2,9 +2,7 @@
 #define _COMMON_H_
 
 #define LABEL_SIZE 20
-// 24 + 2 * sizeof(int) in the entry_t struct = 32
-// so we can store (block_size / 32) entry in a block
-#define ENTRY_NAME_SIZE 24
+#define ENTRY_NAME_SIZE 56
 
 #define CHECK_ERR(expr, ...) if (expr) { fprintf(stderr, __VA_ARGS__); return EXIT_FAILURE; }
 
