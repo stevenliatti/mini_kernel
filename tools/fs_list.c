@@ -101,6 +101,8 @@ int main(int argc, char *argv[]) {
 		} while (fat[metadata_block_index] != -1);
 
 		printf("\nFiles count: %d\n", files_count);
+
+		print_fat(fat, sb->blocks_count);
 		
 		free(sb);
 		free(fat);

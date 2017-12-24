@@ -78,6 +78,7 @@ void test_timer() {
 #include "../common/common.h"
 #include "ide.h"
 #include "fs_api.h"
+#include "x86.h"
 
 extern super_block_t sb;
 extern int* fat;

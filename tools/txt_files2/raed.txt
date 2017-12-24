@@ -1,0 +1,20 @@
+1. 1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+2.  1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+3.   1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+4.    1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+5.     1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+6.      1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+7.       1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+8.        1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+9.         1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+10.         1xsectors
+11.          1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+12.           1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+13.            1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+14.             1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+15.              1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+16.               1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+17.                1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+18.                 1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+19.                  1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+20.                   1 sectors

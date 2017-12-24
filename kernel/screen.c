@@ -23,6 +23,7 @@
 #define LAST_ADDR       (FIRST_ADDR + SCREEN_WIDTH * SCREEN_HEIGHT * 2)
 #define CHAR_COUNT      (SCREEN_WIDTH * SCREEN_HEIGHT)
 #define RESET_BG_FG 	0xf00
+#define TEB_LEN			4
 
 static screen_t screen;
 
@@ -96,12 +97,18 @@ static void print_char_on_cursor(uchar c) {
 		new_char_y = new_cur_y;
 		print_char_by_xy(new_char_x, new_char_y, '\0');
 	}
+	if (c == '\t') {
+		for (int i = 0; i < TEB_LEN; i++) {
+			print_char_on_cursor(' ');
+			new_cur_x++;
+		}
+	}
 	if (c == '\n') {
 		new_cur_x = 0;
 		new_cur_y++;
 	}
-	if (new_cur_x == SCREEN_WIDTH) {
-		new_cur_x = 0;
+	if (new_cur_x >= SCREEN_WIDTH) {
+		new_cur_x = new_cur_x - SCREEN_WIDTH;
 		new_cur_y++;
 	}
 	if (new_cur_y >= SCREEN_HEIGHT) {
@@ -109,7 +116,7 @@ static void print_char_on_cursor(uchar c) {
 		new_char_y = screen.cursor.y - 1;
 		new_cur_y = SCREEN_HEIGHT - 1;
 	}
-	if (c != '\n' && c != '\b') {
+	if (c != '\n' && c != '\b' && c != '\t') {
 		print_char_by_xy(new_char_x, new_char_y, c);
 	}
 	move_cursor(new_cur_x, new_cur_y);

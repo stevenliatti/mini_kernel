@@ -81,29 +81,55 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	printf("PIC has been initialized.\n");
 	printf("Timer has been initialized.\n");
 	printf("Memory upper : %d\n", boot_info->mem_upper);
-	sleep(3000);
+	sleep(1000);
 
 	printf("\nSuper block loaded\n");
 	print_super_block(sb);
-	sleep(3000);
+	sleep(1000);
 	printf("\nFAT loaded\n");
 	print_fat(fat, sb.blocks_count);
 	
-	printf("\nSplash screen in 5 seconds ...\n");
-	sleep(5000);
+	for (int i = 4; i >= 0; i--) {
+		printf("\nSplash screen in %d seconds ...\n", i);
+		sleep(1000);
+		scr_xy_t cursor_pos = get_cursor_pos();
+		move_cursor(0, cursor_pos.y - 2);
+	}
 	
-	int fd = -1;
-	char file[] = "splash.txt";
-	if ((fd = file_open(file)) == -1) {
-		printf("Error in opening file \"%s\"\n", file);
+	char file1[] = "splash.txt";
+	int fd1 = -1;
+	if ((fd1 = file_open(file1)) == -1) {
+		printf("Error in opening file \"%s\"\n", file1);
 	}
 	else {
-		stat_t st;
-		file_stat(file, &st);
-		char str[st.size + 1];
-		file_read(fd, str, st.size);
-		printf("%s\n", str);
+		printf("File \"%s\" oppened and fd = %d\n", file1, fd1);
 	}
+	char file2[] = "splash2.txt";
+	int fd2 = -1;
+	if ((fd2 = file_open(file2)) == -1) {
+		printf("Error in opening file \"%s\"\n", file2);
+	}
+	else {
+		printf("File \"%s\" oppened and fd = %d\n", file2, fd2);
+	}
+	clr_scr();
+	char str1[30]; // +1 for the character \0
+	int bytes = 0;
+	while (1) {
+		file_seek(fd1, 0);
+		while ((bytes = file_read(fd1, str1, 29)) > 0) {
+			printf("%s", str1);
+		}
+		sleep(500);
+		clr_scr();
+		file_seek(fd2, 0);
+		while ((bytes = file_read(fd2, str1, 29)) > 0) {
+			printf("%s", str1);
+		}
+		sleep(500);
+		clr_scr();
+	}
+	file_close(fd1);
 
 	while (1) {
 		uchar c = getc();

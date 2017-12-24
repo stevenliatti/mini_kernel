@@ -44,7 +44,7 @@ test_timer:
 
 test_fs: common_kernel common_libc
 	$(MAKE) $@ -C $(KERNEL_FOLDER)
-	$(MAKE) test_fs_create_small test_fs_add_files -C $(TOOLS_FOLDER)
+	$(MAKE) test_fs_create_medium test_fs_add_files -C $(TOOLS_FOLDER)
 
 clean:
 	rm -rf $(OS_NAME)/ $(OS_NAME).iso

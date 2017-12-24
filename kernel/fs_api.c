@@ -239,6 +239,7 @@ int file_read(int fd, void *buf, uint count) {
 			return -1;
 		}
 
+        int buf_size = count;
 		uint rest_bytes = (uint) (file_descriptor[fd].file_size - file_descriptor[fd].readed_bytes);
 		if (rest_bytes == 0) {
 			return 0;
@@ -259,7 +260,7 @@ int file_read(int fd, void *buf, uint count) {
 
 			char buffer[SECTOR_SIZE];
 			read_sector(sector_index, buffer);
-			if (count >= SECTOR_SIZE) {
+			if (offset_in_sector + count >= SECTOR_SIZE) {
 				int difference = SECTOR_SIZE - offset_in_sector;
 				memcpy(buf + buf_index, buffer + offset_in_sector, difference);
 				count -= difference;
@@ -277,6 +278,9 @@ int file_read(int fd, void *buf, uint count) {
 				current_offset_in_block = 0;
 			}
 		}
+        if (bytes_count < buf_size) {
+            memset(buf + bytes_count, 0, buf_size - bytes_count);
+        }
 		file_descriptor[fd].current_offset_in_block += buf_index;
 		file_descriptor[fd].readed_bytes += bytes_count;
 		return bytes_count;
