@@ -1,20 +1,20 @@
-1. 1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-2.  1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-3.   1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-4.    1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-5.     1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-6.      1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-7.       1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-8.        1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-9.         1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
+1. 3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+2.  3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+3.   3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+4.    3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+5.     3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+6.      3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+7.       3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+8.        3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+9.         3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
 10.         1xsectors
-11.          1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-12.           1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-13.            1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-14.             1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-15.              1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-16.               1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-17.                1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-18.                 1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-19.                  1 sectors 1 sectors 1 sectors 1 sectors 1 sectors
-20.                   1 sectors
+11.          3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+12.           3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+13.            3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+14.             3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+15.              3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+16.               3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+17.                3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+18.                 3 sEctXrs 3 sectors 3 sectors 3 sectors 3 sectors
+19.                  3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
+20.                   3 sectors

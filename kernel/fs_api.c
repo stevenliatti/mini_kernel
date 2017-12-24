@@ -273,7 +273,7 @@ int file_read(int fd, void *buf, uint count) {
 				current_offset_in_block += count;
 				count = 0;
 			}
-			if (buf_index % sb.block_size == 0) {
+			if (current_offset_in_block % sb.block_size == 0) {
 				file_descriptor[fd].current_block = fat[file_descriptor[fd].current_block];
 				current_offset_in_block = 0;
 			}
