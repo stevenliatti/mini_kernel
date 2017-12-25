@@ -72,7 +72,7 @@ static int fwrite_super_block(char* label, int block_size, int fat_block_nb, int
 	print_super_block(*super_block);
 	CHECK_ERR(fwrite(super_block, sizeof(super_block_t), 1, fd) == 0,"Failure in writing data!!\n")
 
-	printf("super block occupied size (bytes): %d\n", sizeof(super_block_t));
+	printf("super block occupied size (bytes): %lu\n", sizeof(super_block_t));
 	*total += sizeof(super_block_t);
 
 	int rest_size = block_size - sizeof(super_block_t);
@@ -80,7 +80,7 @@ static int fwrite_super_block(char* label, int block_size, int fat_block_nb, int
 	CHECK_ERR(rest == NULL, "Failure in allocating memory!!\n")
 	CHECK_ERR(fwrite(rest, sizeof(char), rest_size, fd) == 0, "Failure in writing data!\n")
 
-	printf("super block remaining bytes: %d\n", rest_size * sizeof(char));
+	printf("super block remaining bytes: %lu\n", rest_size * sizeof(char));
 	*total += rest_size * sizeof(char);
 	return EXIT_SUCCESS;
 }
@@ -117,7 +117,7 @@ static int fwrite_fat_blocks(int total_block_nb, int block_size, int first_entry
 		CHECK_ERR(fwrite(rest, sizeof(char), rest_size, fd) == 0, "Failure in writing data!\n")
 	}
 
-	printf("rest fat (bytes): %d\n", rest_size * sizeof(char));
+	printf("rest fat (bytes): %lu\n", rest_size * sizeof(char));
 	*total += rest_size * sizeof(char);
 	return EXIT_SUCCESS;
 }
@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
 		CHECK_ERR(fwrite(rest, sizeof(char), rest_total_block_nb * block_size, fd) == 0,
 			"Failure in writing data!\n")
 
-		printf("rest of all fs (bytes): %d\n", rest_total_block_nb * block_size * sizeof(char));
+		printf("rest of all fs (bytes): %lu\n", rest_total_block_nb * block_size * sizeof(char));
 		total += rest_total_block_nb * block_size * sizeof(char);
 		fclose(fd);
 		printf("Total (bytes): %d\n", total);

@@ -2,7 +2,7 @@ SRCS=$(wildcard fs_*.c)
 OBJC=$(SRCS:%.c=%.o)
 DEPS=$(OBJC:%.o=%.d)
 OUT=$(OBJC:%.o=%)
-ARGS=-Wall -Wextra -g -std=gnu11 -m32 -MMD
+ARGS=-Wall -Wextra -g -MMD
 FS_NAME=fs
 COMMON=../common
 COMMON_LIBC=$(COMMON)/common_libc.o
