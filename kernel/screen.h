@@ -55,7 +55,7 @@ extern void clr_scr();
 extern void scr_init();
 extern void move_cursor(uchar x, uchar y);
 extern void printf(char* str, ...);
-extern void set_theme(uchar bg_color, uchar fg_color);
+extern void set_theme(uchar fg_color, uchar bg_color);
 extern uchar get_fg_color();
 extern uchar get_bg_color();
 extern scr_xy_t get_cursor_pos();

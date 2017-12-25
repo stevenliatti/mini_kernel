@@ -130,6 +130,7 @@ void kernel_entry(multiboot_info_t* boot_info) {
 		clr_scr();
 	}
 	file_close(fd1);
+	file_close(fd2);
 
 	while (1) {
 		uchar c = getc();

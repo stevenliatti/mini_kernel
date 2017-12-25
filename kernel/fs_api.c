@@ -18,7 +18,7 @@
 extern super_block_t sb;
 extern int* fat;
 extern char sector_per_block;
-static file_descriptor_t file_descriptor[DESCRIPTORS_NB];
+file_descriptor_t file_descriptor[DESCRIPTORS_NB];
 
 /**
  * @brief  Init array of file descriptor.
@@ -119,10 +119,14 @@ bool file_has_next(file_iterator_t *it) {
  */
 void file_next(char *filename, file_iterator_t *it) {
 	int next_offset = get_next_entry_offset(it);
-	entry_t next_entry = get_entry(next_offset);
-	memcpy(filename, next_entry.name, ENTRY_NAME_SIZE);
-	it->entry_offset_in_current_block = next_offset % sb.block_size;
-	it->current_block = next_offset / sb.block_size;
+    if (next_offset == -1)
+        memset(filename, 0, ENTRY_NAME_SIZE);
+    else {
+        entry_t next_entry = get_entry(next_offset);
+        memcpy(filename, next_entry.name, ENTRY_NAME_SIZE);
+    }
+    it->entry_offset_in_current_block = next_offset % sb.block_size;
+    it->current_block = next_offset / sb.block_size;
 }
 
 /**
@@ -281,7 +285,7 @@ int file_read(int fd, void *buf, uint count) {
         if (bytes_count < buf_size) {
             memset(buf + bytes_count, 0, buf_size - bytes_count);
         }
-		file_descriptor[fd].current_offset_in_block += buf_index;
+		file_descriptor[fd].current_offset_in_block = current_offset_in_block;
 		file_descriptor[fd].readed_bytes += bytes_count;
 		return bytes_count;
 	}

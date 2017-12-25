@@ -34,7 +34,7 @@ test_fs_create_medium: fs_create
 	./fs_create doge_fs 1024 $(FS_NAME).img 307200
 
 test_fs_create_small: fs_create
-	./fs_create doge_fs 512 $(FS_NAME).img 5120
+	./fs_create doge_fs 512 $(FS_NAME).img 6656
 
 test_fs_add: fs_add
 	./fs_add txt_files/AARON.txt $(FS_NAME).img
