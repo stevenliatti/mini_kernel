@@ -17,8 +17,6 @@
 #define FIRST_COMMAND 	0xe
 #define SECOND_COMMAND 	0xf
 #define DATA_PORT       0x3d5
-#define SCREEN_WIDTH    80
-#define SCREEN_HEIGHT   25
 #define FIRST_ADDR      (ushort*) 0xb8000
 #define LAST_ADDR       (FIRST_ADDR + SCREEN_WIDTH * SCREEN_HEIGHT * 2)
 #define CHAR_COUNT      (SCREEN_WIDTH * SCREEN_HEIGHT)

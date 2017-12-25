@@ -113,17 +113,17 @@ void kernel_entry(multiboot_info_t* boot_info) {
 		printf("File \"%s\" oppened and fd = %d\n", file2, fd2);
 	}
 	clr_scr();
-	char str1[30]; // +1 for the character \0
+	char str1[1001]; // +1 for the character \0
 	int bytes = 0;
 	while (1) {
 		file_seek(fd1, 0);
-		while ((bytes = file_read(fd1, str1, 29)) > 0) {
+		while ((bytes = file_read(fd1, str1, 1000)) > 0) {
 			printf("%s", str1);
 		}
 		sleep(500);
 		clr_scr();
 		file_seek(fd2, 0);
-		while ((bytes = file_read(fd2, str1, 29)) > 0) {
+		while ((bytes = file_read(fd2, str1, 1000)) > 0) {
 			printf("%s", str1);
 		}
 		sleep(500);

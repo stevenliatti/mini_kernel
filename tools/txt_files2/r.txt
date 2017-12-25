@@ -17,4 +17,4 @@
 17.                3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
 18.                 3 sEctXrs H sectors 3 sectors 3 sectors 3 sectors
 19.                  3 sectors 3 sectors 3 sectors 3 sectors 3 sectors
-20.                   3 sectors
+20.                   F sectors

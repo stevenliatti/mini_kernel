@@ -1,3 +1,14 @@
+/**
+ * @file 		test.h
+ * @brief 		Header of test functions.
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		November 25, 2017
+ * @version		1.0
+ */
+
 #ifndef _TEST_H_
 #define _TEST_H_
 

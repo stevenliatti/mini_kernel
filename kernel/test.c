@@ -1,3 +1,15 @@
+/**
+ * @file 		test.c
+ * @brief 		Test functions for each step of the project :
+ *          	test the screen, test the timer, and test the file system
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		December 25, 2017
+ * @version		1.0
+ */
+
 #ifdef TEST_SCREEN
 
 #include "screen.h"
@@ -86,6 +98,11 @@ void test_timer() {
 extern super_block_t sb;
 extern int* fat;
 
+/**
+ * @brief print string with yellow color (as a title)
+ * 
+ * @param char[] the string to print
+ */
 void print_title(char str[]) {
 	set_theme(YELLOW, DEFAULT_BG);
 	printf("%s", str);
@@ -105,9 +122,9 @@ void test_fs() {
 	printf("So it contains 6656 / 512 = 13 blocks (0 indexed). After executing the scenario\n");
 	printf("of adding/deleting files (/tools/scenario.sh), the file system will have one\n");
 	printf("block reserved for metadata (block 3) and contains 3 files:\n");
-	printf("* file 1: \"r.txt\" with data in blocks 3, 4 and 6\n");
-	printf("* file 2: \"s.txt\" with data in blocks 5, 7, 8 and 9\n");
-	printf("* file 3: \"a.txt\" with data in block 10\n");
+	printf("* file 1: \"r.txt\" (1169 bytes) with data in blocks 3, 4 and 6\n");
+	printf("* file 2: \"s.txt\" (1560 bytes) with data in blocks 5, 7, 8 and 9\n");
+	printf("* file 3: \"a.txt\" (126 bytes) with data in block 10\n");
 	printf("Finally, the fat must indicate that there are two free blocks: 10 and 12.\n\n");
 
 	set_theme(DEFAULT_FG, DEFAULT_BG);
@@ -117,7 +134,7 @@ void test_fs() {
 	clr_scr();
 
 	print_title("\n-- Test for superblock's fields\n");
-	test_super_block();
+	test_super_block(expected_sb);
 	getc();
 
 	print_title("\n-- Test for FAT content\n");
@@ -187,7 +204,8 @@ void test_fs() {
 	test_file_descriptior(fd, expected_fd_struct[0]);
 	getc();
 	clr_scr();
-	print_title("-- Read all content of the file "); printf("%s", filename); print_title(":\n");
+
+	print_title("\n-- Read all content of the file "); printf("%s", filename); print_title(":\n");
 	stat_t st;
 	file_stat(filename, &st);
 	test_file_read(fd, st.size, expected_content1, expected_len[0]);
@@ -196,14 +214,27 @@ void test_fs() {
 	getc();
 	clr_scr();
 
-	print_title("-- file_seek to position 1017 of the file "); printf("\"%s\"", filename); print_title(" and read 21 character:\n");
+	print_title("\n-- file_seek to position 1017 of the file "); printf("\"%s\"", filename); print_title(" and read 21 character:\n");
 	file_seek(fd, 1017);
 	print_title("\t-- File descriptor "); printf("%d", fd); print_title(" after file_seek(fd, 1017):\n");
 	test_file_descriptior(fd, expected_fd_struct[2]);
 	print_title("\t-- Read 21 character:\n");
 	test_file_read(fd, 21, expected_content2, expected_len[1]);
 	print_title("\t-- File descriptor "); printf("%d", fd); print_title(" after file_read of 21 character:\n");
+	print_title("\t(last 7 bytes from block 4 and first 14 bytes from block 6)\n");
 	test_file_descriptior(fd, expected_fd_struct[3]);
+	getc();
+	clr_scr();
+
+	print_title("\n-- file_seek to position 1160 of the file "); printf("\"%s\"", filename); print_title(" and read 100 character:\n");
+	file_seek(fd, 1160);
+	print_title("\t-- File descriptor "); printf("%d", fd); print_title(" after file_seek(fd, 1160):\n");
+	test_file_descriptior(fd, expected_fd_struct[4]);
+	print_title("\t-- Read 100 character:\n");
+	test_file_read(fd, 100, expected_content3, expected_len[2]);
+	print_title("\t-- File descriptor "); printf("%d", fd); print_title(" after file_read of 100 character:\n");
+	print_title("\t(last 9 bytes from block 6, the end of the file)\n");
+	test_file_descriptior(fd, expected_fd_struct[5]);
 
 	file_close(fd);
 

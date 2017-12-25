@@ -15,6 +15,8 @@
 #include "../common/types.h"
 
 #define COLORS_NB       15
+#define SCREEN_WIDTH    80
+#define SCREEN_HEIGHT   25
 
 #define BLACK           0x0
 #define BLUE            0x1

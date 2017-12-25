@@ -1,3 +1,14 @@
+/**
+ * @file 		test_data.h
+ * @brief 		Header of functions used in different tests of the file system
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		November 25, 2017
+ * @version		1.0
+ */
+
 #ifndef _TEST_FS_FUNCTIONS_H_
 #define _TEST_FS_FUNCTIONS_H_
 
@@ -8,7 +19,7 @@
 #define SUCCESS_FG 	GREEN
 #define FAILURE_FG	RED
 
-extern void test_super_block();
+extern void test_super_block(super_block_t expected_sb);
 extern void test_fat(int* expected_fat);
 extern void test_file_iterator(file_iterator_t it, file_iterator_t expected_it);
 extern void test_file_has_next(file_iterator_t it, bool expected_result);

@@ -1,5 +1,27 @@
+/**
+ * @file 		test_data.h
+ * @brief 		Contains the declaration of the expected data output
+ *          	off different tests of the file system functions
+ *
+ * @author 		Steven Liatti
+ * @author 		Raed Abdennadher
+ * @bug 		No known bugs.
+ * @date 		November 25, 2017
+ * @version		1.0
+ */
+
 #ifndef _TEST_DATA_H_
 #define _TEST_DATA_H_
+
+super_block_t expected_sb = {
+	magic: 66,
+	version: 1,
+	label: "doge_fs",
+	block_size: 512,
+	blocks_count: 13,
+	fat_block_nb: 1,
+	first_entry: 2,
+};
 
 int expected_fat[] = {-1, -1, 0, 4, 6, 7, 0, 8, 9, 0, -1, 0, -1};
 
@@ -98,6 +120,22 @@ file_descriptor_t expected_fd_struct[] = {
 		.is_free = false,
 		.readed_bytes = 1038,
 	},
+	{
+		.start_block = 3,
+		.current_offset_in_block = 136,
+		.current_block = 6,
+		.file_size = 1169,
+		.is_free = false,
+		.readed_bytes = 1160,
+	},
+	{
+		.start_block = 3,
+		.current_offset_in_block = 145,
+		.current_block = 6,
+		.file_size = 1169,
+		.is_free = false,
+		.readed_bytes = 1169,
+	},
 };
 
 char expected_content1[] = {
@@ -120,11 +158,13 @@ char expected_content1[] = {
 	"17.                3 sectors 3 sectors 3 sectors 3 sectors 3 sectors\n"
 	"18.                 3 sEctXrs H sectors 3 sectors 3 sectors 3 sectors\n"
 	"19.                  3 sectors 3 sectors 3 sectors 3 sectors 3 sectors\n"
-	"20.                   3 sectors"
+	"20.                   F sectors"
 };
 
 char expected_content2[] = {"3 sEctXrs H sectors 3"};
 
-int expected_len[] = {1169, 21};
+char expected_content3[] = {"F sectors"};
+
+int expected_len[] = {1169, 21, 9};
 
 #endif
