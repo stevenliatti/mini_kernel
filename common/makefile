@@ -1,7 +1,7 @@
 SRCS=$(wildcard *.c)
 OBJC=$(SRCS:%.c=%.o)
 DEPS=common_libc.d common_kernel.d
-ARGSLIBC=-Wall -Wextra -g -std=gnu11 -m32 -MMD
+ARGSLIBC=-Wall -Wextra -g -std=gnu11 -MMD
 ARGSKERNEL=-Wall -Wextra -g -static -std=gnu11 -m32 -ffreestanding -nostdlib -lgcc -MMD
 
 .SECONDARY:
