@@ -164,7 +164,8 @@ void test_fat(int expected_fat[]) {
  */
 void test_file_iterator(file_iterator_t it, file_iterator_t expected_it) {
 	assert_int(it.current_block, expected_it.current_block, "current_block");
-	assert_int(it.entry_offset_in_current_block, expected_it.entry_offset_in_current_block, "entry_offset_in_current_block");
+	assert_int(it.entry_offset_in_current_block, expected_it.entry_offset_in_current_block, 
+		"entry_offset_in_current_block");
 }
 
 /**
@@ -238,7 +239,8 @@ void test_file_open(char filename[], int expected_fd) {
  */
 void test_file_descriptior(int fd, file_descriptor_t expected_fd_struct) {
 	assert_int(file_descriptor[fd].start_block, expected_fd_struct.start_block, "start_block");
-	assert_int(file_descriptor[fd].current_offset_in_block, expected_fd_struct.current_offset_in_block, "current_offset_in_block");
+	assert_int(file_descriptor[fd].current_offset_in_block,
+		expected_fd_struct.current_offset_in_block, "current_offset_in_block");
 	assert_int(file_descriptor[fd].current_block, expected_fd_struct.current_block, "current_block");
 	assert_int(file_descriptor[fd].file_size, expected_fd_struct.file_size, "file_size");
 	assert_int(file_descriptor[fd].is_free, expected_fd_struct.is_free, "is_free");
