@@ -18,10 +18,10 @@
  * @brief do screen tests
  */
 void test_screen() {
-    printf("Screen tests !\n");
-    printf("Some tests to check if scroll, theme functions and printf are working\n");
-    printf("it begin in few moments ...");
-    for(int i = 0; i < 1000000000; i++);
+	printf("Screen tests !\n");
+	printf("Some tests to check if scroll, theme functions and printf are working\n");
+	printf("it begin in few moments ...");
+	for(int i = 0; i < 1000000000; i++);
 	clr_scr();
 
 	set_theme(LIGHT_GREEN, RED);
@@ -67,18 +67,18 @@ void test_screen() {
  * @brief do timer tests
  */
 void test_timer() {
-    int sleeps = 15;
-    printf("Timer test !\n");
-    printf("%d successive sleep of 1 second are made and ticks shows.\n", sleeps);
-    printf("If you change timer frequency, ticks numbers change but the diff\n");
-    printf("is (normaly) still the same\n\n");
-    for(int i = 0; i < sleeps; i++) {
-        int ticks = get_ticks();
-        sleep(1000);		
-        printf("%d sec, %d (ticks), ticks diff = %d\n", i, get_ticks(), get_ticks() - ticks);
-    }
+	int sleeps = 15;
+	printf("Timer test !\n");
+	printf("%d successive sleep of 1 second are made and ticks shows.\n", sleeps);
+	printf("If you change timer frequency, ticks numbers change but the diff\n");
+	printf("is (normaly) still the same\n\n");
+	for(int i = 0; i < sleeps; i++) {
+		int ticks = get_ticks();
+		sleep(1000);		
+		printf("%d sec, %d (ticks), ticks diff = %d\n", i, get_ticks(), get_ticks() - ticks);
+	}
 }
-    
+	
 #endif
 
 
@@ -121,7 +121,7 @@ void test_fs() {
 	printf("per block.\n");
 	printf("So it contains 6656 / 512 = 13 blocks (0 indexed). After executing the scenario\n");
 	printf("of adding/deleting files (/tools/scenario.sh), the file system will have one\n");
-	printf("block reserved for metadata (block 3) and contains 3 files:\n");
+	printf("block reserved for metadata (block 2) and contains 3 files:\n");
 	printf("* file 1: \"r.txt\" (1169 bytes) with data in blocks 3, 4 and 6\n");
 	printf("* file 2: \"s.txt\" (1560 bytes) with data in blocks 5, 7, 8 and 9\n");
 	printf("* file 3: \"a.txt\" (126 bytes) with data in block 10\n");
@@ -135,19 +135,23 @@ void test_fs() {
 
 	print_title("\n-- Test for superblock's fields\n");
 	test_super_block(expected_sb);
+	print_test_num();
 	getc();
 
 	print_title("\n-- Test for FAT content\n");
 	test_fat(expected_fat);
+	print_test_num();
 	getc();
 
 	print_title("\n-- Test for iterator's fields after initialisation\n");
 	file_iterator_t it = file_iterator();
 	test_file_iterator(it, expected_it[0]);
+	print_test_num();
 	getc();
 
 	print_title("\n-- Test for file_has_next function\n");
 	test_file_has_next(it, expected_bool[0]);
+	print_test_num();
 	getc();
 	clr_scr();
 
@@ -164,6 +168,7 @@ void test_fs() {
 			printf("\n\t* Verify if file has next\n");
 			test_file_has_next(it, expected_bool[i]);
 			i++;
+			print_test_num();
 			getc();
 			clr_scr();
 		}
@@ -174,6 +179,7 @@ void test_fs() {
 	test_file_exists(expected_name[1], expected_return[0]);
 	printf("\t* file_exists(\"%s\"):\n", expected_name[4]);
 	test_file_exists(expected_name[4], expected_return[1]);
+	print_test_num();
 	getc();
 	clr_scr();
 
@@ -194,6 +200,7 @@ void test_fs() {
 	file_close(expected_fd[1]);
 	printf("\t* file_close(%d)\n", expected_fd[2]);
 	file_close(expected_fd[2]);
+	print_test_num();
 	getc();
 	clr_scr();
 
@@ -202,6 +209,7 @@ void test_fs() {
 	int fd = file_open(filename);
 	print_title("\t-- File descriptor "); printf("%d", fd); print_title(" after file_open:\n");
 	test_file_descriptior(fd, expected_fd_struct[0]);
+	print_test_num();
 	getc();
 	clr_scr();
 
@@ -211,6 +219,7 @@ void test_fs() {
 	test_file_read(fd, st.size, expected_content1, expected_len[0]);
 	print_title("\t-- File descriptor "); printf("%d", fd); print_title(" after file_read all content:\n");
 	test_file_descriptior(fd, expected_fd_struct[1]);
+	print_test_num();
 	getc();
 	clr_scr();
 
@@ -223,6 +232,7 @@ void test_fs() {
 	print_title("\t-- File descriptor "); printf("%d", fd); print_title(" after file_read of 21 character:\n");
 	print_title("\t(last 7 bytes from block 4 and first 14 bytes from block 6)\n");
 	test_file_descriptior(fd, expected_fd_struct[3]);
+	print_test_num();
 	getc();
 	clr_scr();
 
@@ -235,6 +245,7 @@ void test_fs() {
 	print_title("\t-- File descriptor "); printf("%d", fd); print_title(" after file_read of 100 character:\n");
 	print_title("\t(last 9 bytes from block 6, the end of the file)\n");
 	test_file_descriptior(fd, expected_fd_struct[5]);
+	print_test_num();
 
 	file_close(fd);
 

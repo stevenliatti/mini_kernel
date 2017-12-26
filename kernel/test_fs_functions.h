@@ -19,6 +19,8 @@
 #define SUCCESS_FG 	GREEN
 #define FAILURE_FG	RED
 
+extern void print_test_num();
+
 extern void test_super_block(super_block_t expected_sb);
 extern void test_fat(int* expected_fat);
 extern void test_file_iterator(file_iterator_t it, file_iterator_t expected_it);

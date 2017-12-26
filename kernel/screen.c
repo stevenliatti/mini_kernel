@@ -21,7 +21,7 @@
 #define LAST_ADDR       (FIRST_ADDR + SCREEN_WIDTH * SCREEN_HEIGHT * 2)
 #define CHAR_COUNT      (SCREEN_WIDTH * SCREEN_HEIGHT)
 #define RESET_BG_FG 	0xf00
-#define TEB_LEN			4
+#define TAB_LEN			4
 
 static screen_t screen;
 
@@ -96,7 +96,7 @@ static void print_char_on_cursor(uchar c) {
 		print_char_by_xy(new_char_x, new_char_y, '\0');
 	}
 	if (c == '\t') {
-		for (int i = 0; i < TEB_LEN; i++) {
+		for (int i = 0; i < TAB_LEN; i++) {
 			print_char_on_cursor(' ');
 			new_cur_x++;
 		}

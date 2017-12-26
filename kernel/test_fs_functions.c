@@ -15,9 +15,23 @@
 #include "fs_api.h"
 #include "base.h"
 
+#define TEST_NB 13
+
 extern super_block_t sb;
 extern int* fat;
 extern file_descriptor_t file_descriptor[DESCRIPTORS_NB];
+
+void print_test_num() {
+	static int test_num = 0;
+	test_num++;
+	int last_x = get_cursor_pos().x;
+	int last_y = get_cursor_pos().y;
+	move_cursor(0, 0);
+	set_theme(LIGHT_RED, DEFAULT_BG);
+	printf("Test number %d / %d", test_num, TEST_NB);
+	set_theme(DEFAULT_FG, DEFAULT_BG);
+	move_cursor(last_x, last_y);
+}
 
 /**
  * @brief Compare two character-arrays (strings) and print on screen

@@ -113,24 +113,44 @@ void kernel_entry(multiboot_info_t* boot_info) {
 		printf("File \"%s\" oppened and fd = %d\n", file2, fd2);
 	}
 	clr_scr();
-	char str1[1001]; // +1 for the character \0
-	int bytes = 0;
-	while (1) {
-		file_seek(fd1, 0);
-		while ((bytes = file_read(fd1, str1, 1000)) > 0) {
-			printf("%s", str1);
+
+	stat_t st;
+	if (file_exists(file1) && file_exists(file2)) {
+		int res = file_stat(file1, &st);
+		char str1[st.size + 1]; // +1 for the character \0
+		if (res != 0) {
+			printf("Error in retrieving file stat\n");
+		} 
+		else {
+			int bytes = file_read(fd1, str1, st.size);
+			if (bytes == -1) {
+				printf("Error in reading file\n");
+			}
 		}
-		sleep(500);
-		clr_scr();
-		file_seek(fd2, 0);
-		while ((bytes = file_read(fd2, str1, 1000)) > 0) {
-			printf("%s", str1);
+		res = file_stat(file2, &st);
+		char str2[st.size + 1]; // +1 for the character \0
+		if (res != 0) {
+			printf("Error in retrieving file stat\n");
+		} 
+		else {
+			int bytes = file_read(fd2, str2, st.size);
+			if (bytes == -1) {
+				printf("Error in reading file\n");
+			}
 		}
-		sleep(500);
-		clr_scr();
+
+		while (1) {
+			printf("%s\n", str1);
+			sleep(500);
+			clr_scr();
+			
+			printf("%s\n", str2);
+			sleep(500);
+			clr_scr();
+		}
+		file_close(fd1);
+		file_close(fd2);
 	}
-	file_close(fd1);
-	file_close(fd2);
 
 	while (1) {
 		uchar c = getc();
