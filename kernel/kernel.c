@@ -97,25 +97,25 @@ void kernel_entry(multiboot_info_t* boot_info) {
 	}
 	
 	char file1[] = "splash.txt";
-	int fd1 = -1;
-	if ((fd1 = file_open(file1)) == -1) {
-		printf("Error in opening file \"%s\"\n", file1);
-	}
-	else {
-		printf("File \"%s\" oppened and fd = %d\n", file1, fd1);
-	}
 	char file2[] = "splash2.txt";
-	int fd2 = -1;
-	if ((fd2 = file_open(file2)) == -1) {
-		printf("Error in opening file \"%s\"\n", file2);
-	}
-	else {
-		printf("File \"%s\" oppened and fd = %d\n", file2, fd2);
-	}
-	clr_scr();
-
-	stat_t st;
 	if (file_exists(file1) && file_exists(file2)) {
+		int fd1 = -1;
+		if ((fd1 = file_open(file1)) == -1) {
+			printf("Error in opening file \"%s\"\n", file1);
+		}
+		else {
+			printf("File \"%s\" oppened and fd = %d\n", file1, fd1);
+		}
+		int fd2 = -1;
+		if ((fd2 = file_open(file2)) == -1) {
+			printf("Error in opening file \"%s\"\n", file2);
+		}
+		else {
+			printf("File \"%s\" oppened and fd = %d\n", file2, fd2);
+		}
+		clr_scr();
+
+		stat_t st;
 		int res = file_stat(file1, &st);
 		char str1[st.size + 1]; // +1 for the character \0
 		if (res != 0) {
@@ -139,7 +139,8 @@ void kernel_entry(multiboot_info_t* boot_info) {
 			}
 		}
 
-		while (1) {
+		int i = 0;
+		while (i < 3) {
 			printf("%s\n", str1);
 			sleep(500);
 			clr_scr();
@@ -147,7 +148,9 @@ void kernel_entry(multiboot_info_t* boot_info) {
 			printf("%s\n", str2);
 			sleep(500);
 			clr_scr();
+			i++;
 		}
+		printf("%s\n", str1);
 		file_close(fd1);
 		file_close(fd2);
 	}

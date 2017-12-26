@@ -124,7 +124,7 @@ void test_fs() {
 	printf("block reserved for metadata (block 2) and contains 3 files:\n");
 	printf("* file 1: \"r.txt\" (1169 bytes) with data in blocks 3, 4 and 6\n");
 	printf("* file 2: \"s.txt\" (1560 bytes) with data in blocks 5, 7, 8 and 9\n");
-	printf("* file 3: \"a.txt\" (126 bytes) with data in block 10\n");
+	printf("* file 3: \"b.txt\" (441 bytes) with data in block 11\n");
 	printf("Finally, the fat must indicate that there are two free blocks: 10 and 12.\n\n");
 
 	set_theme(DEFAULT_FG, DEFAULT_BG);
@@ -190,10 +190,10 @@ void test_fs() {
 	test_file_open(expected_name[2], expected_fd[1]);
 	printf("\t* file_open(\"%s\"):\n", expected_name[3]);
 	test_file_open(expected_name[3], expected_fd[2]);
-	printf("\t* file_close(%d)\n", expected_fd[2]);
+	printf("\t* file_close(%d)\n", expected_fd[1]);
 	file_close(expected_fd[1]);
 	printf("\t* file_open(\"%s\"):\n", expected_name[2]);
-	test_file_open(expected_name[1], expected_fd[1]);
+	test_file_open(expected_name[2], expected_fd[1]);
 	printf("\t* file_close(%d)\n", expected_fd[0]);
 	file_close(expected_fd[0]);
 	printf("\t* file_close(%d)\n", expected_fd[1]);
@@ -207,7 +207,8 @@ void test_fs() {
 	print_title("\n-- Test for file_read and file_seek functions and file descriptors table\n");
 	char filename[] = "r.txt";
 	int fd = file_open(filename);
-	print_title("\t-- File descriptor "); printf("%d", fd); print_title(" after file_open:\n");
+	print_title("\t-- File name "); printf("%s, ", filename);
+	print_title("file descriptor "); printf("%d", fd); print_title(" after file_open:\n");
 	test_file_descriptior(fd, expected_fd_struct[0]);
 	print_test_num();
 	getc();
